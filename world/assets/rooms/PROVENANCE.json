@@ -1,0 +1,131 @@
+{
+  "schema": "pipi-room-provenance/v1",
+  "items": [
+    {
+      "source": "inputs/interiors-1/harbor.code-workshop.interior-v4",
+      "path": "world/assets/rooms/harbor.code-workshop.interior-v4.png",
+      "candidate": "harbor.code-workshop.interior-v4",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2385173,
+      "sha256": "1f27f2d18189146574977f29a1253521303e7dce73b8ff8daaf1580ec36183be",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "启航岛左棚小门工坊；与独立工匠岛不同。前柜台不是出口，烟囱与原外景关系需复核；RGB无mask。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    },
+    {
+      "source": "inputs/interiors-1/harbor.test-lighthouse.interior-v2",
+      "path": "world/assets/rooms/harbor.test-lighthouse.interior-v2.png",
+      "candidate": "harbor.test-lighthouse.interior-v2",
+      "width": 1585,
+      "height": 992,
+      "mode": "RGB",
+      "bytes": 2347299,
+      "sha256": "49d39811c334c872967fef63dc67284ff4c3a9fe24485a1bcfe31263b8d2a39c",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "启航岛测试灯塔；紧凑圆塔左开门；后窗比原窄窗宽。不是右上beacon塔。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    },
+    {
+      "source": "inputs/interiors-1/observatory.waterworks.interior-v1",
+      "path": "world/assets/rooms/observatory.waterworks.interior-v1.png",
+      "candidate": "observatory.waterworks.interior-v1",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2415511,
+      "sha256": "41462b258dc389ff2426b9cb5da366613f3e598a08b69b1454c095f4c25b877b",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "右中旧objects/observatory水轮建筑；主屋与侧房合单间的解释待审。槽水/齿轮已烘焙无状态层。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    },
+    {
+      "source": "inputs/interiors-2/beacon.dispatch-tower.interior-v3",
+      "path": "world/assets/rooms/beacon.dispatch-tower.interior-v3.png",
+      "candidate": "beacon.dispatch-tower.interior-v3",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2765144,
+      "sha256": "b9db68daed4718a080812111fd61cbea27a03ec484f193acfe8266ecba9195d7",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "右上独立beacon灯塔；门外石路已修，错误地图改空白待真实七地标绘制；楼梯上层尚未提供，不可传送。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    },
+    {
+      "source": "inputs/interiors-2/protocol.workshop.interior-v3",
+      "path": "world/assets/rooms/protocol.workshop.interior-v3.png",
+      "candidate": "protocol.workshop.interior-v3",
+      "width": 1448,
+      "height": 1086,
+      "mode": "RGB",
+      "bytes": 2468396,
+      "sha256": "8855c819f29bdf69ab7bb51b0bc2b190301e9d88adb6f6c097658bc8216437ad",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "左上projects/protocol草地雪峰岛；已去厚雪、改窗景；门洞似封板问题尚待独审，不能当已通过入口。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    },
+    {
+      "source": "inputs/interiors-2/workshop.clockworks.interior-v1",
+      "path": "world/assets/rooms/workshop.clockworks.interior-v1.png",
+      "candidate": "workshop.clockworks.interior-v1",
+      "width": 1536,
+      "height": 1024,
+      "mode": "RGB",
+      "bytes": 2437364,
+      "sha256": "d566c5f539f88e6356062f5a00e22680fc1eb47251231ecf4af83a6886200040",
+      "status": "candidate-not-final-approved-not-integrated",
+      "exteriorRelationAndDefects": "下中独立工匠岛，选中央较大蓝顶房为锚点是设计草案；精确外景门位尚未确认。",
+      "runtimeTested": false,
+      "pending": [
+        "foreground masks",
+        "navigation/collision",
+        "original cats scale/feet",
+        "door roundtrip",
+        "state assets",
+        "old saves and lesson contracts"
+      ]
+    }
+  ]
+}

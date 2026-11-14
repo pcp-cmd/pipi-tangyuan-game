@@ -1,0 +1,56 @@
+{
+  "schema": "pipi-service-interiors-source/v1",
+  "source": "User-supplied handoff-v2 evidence 25/26; original imagegen candidates retained.",
+  "use": "Authorized private project implementation and trial delivery; no new public distribution grant.",
+  "derivative": "ImageMagick lossless=true exact=true; full decoded RGBA equal, including hidden RGB.",
+  "rows": [
+    {
+      "sceneId": "market.closed-house.interior",
+      "source": {
+        "path": "assets/service-interiors/market.closed-house.interior-candidate-v1.png",
+        "sha256": "374c42494ce7bac38b3724e3c0af3687cb1d1093d695ad7424e5cc3083c138bd"
+      },
+      "runtime": {
+        "path": "assets/service-interiors/market.closed-house.interior-candidate-v1.webp",
+        "sha256": "315c4aa7d8ed90c9cc6c06134dbd53d535204417c9fc5ab3826c294007141add"
+      },
+      "width": 1536,
+      "height": 1024,
+      "geometryVersion": "dedicated-service-interiors-20261114-v1",
+      "servicePage": "companions",
+      "browserValidated": false
+    },
+    {
+      "sceneId": "workshop.closed-house.interior",
+      "source": {
+        "path": "assets/service-interiors/workshop.closed-house.interior-candidate-v1.png",
+        "sha256": "8c3b8da7617a361396954a6f7ee4c52aabcd2d2afce6e887a7e4314ff1a1e9bf"
+      },
+      "runtime": {
+        "path": "assets/service-interiors/workshop.closed-house.interior-candidate-v1.webp",
+        "sha256": "b6d3e8a4993f88ba10a2321aeb109011f8e8f2d3eaba683593c34526804dc927"
+      },
+      "width": 1536,
+      "height": 1024,
+      "geometryVersion": "dedicated-service-interiors-20261114-v1",
+      "servicePage": "discoveries",
+      "browserValidated": false
+    },
+    {
+      "sceneId": "archive.post-office.interior",
+      "source": {
+        "path": "assets/service-interiors/archive.post-office.interior-candidate-v1.png",
+        "sha256": "85825a82c01181fd9517c1864443698941ba3dc3354bddd83e4b0d375ff59c24"
+      },
+      "runtime": {
+        "path": "assets/service-interiors/archive.post-office.interior-candidate-v1.webp",
+        "sha256": "a493fe83424a9098e08bb06dedb0c71cdfaa0f5b98e3d65530c0e0b17312e257"
+      },
+      "width": 1536,
+      "height": 1024,
+      "geometryVersion": "dedicated-service-interiors-20261114-v1",
+      "servicePage": "saves",
+      "browserValidated": false
+    }
+  ]
+}

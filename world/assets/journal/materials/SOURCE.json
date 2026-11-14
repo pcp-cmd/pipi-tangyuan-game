@@ -1,0 +1,64 @@
+{
+  "schema": "pipi-journal-material-source/v1",
+  "date": "2026-11-14",
+  "source": "image_gen.imagegen, user-authorized production game UI materials",
+  "references": "User-supplied visual direction and original project; no third-party game artwork.",
+  "operation": "Original generated PNG bytes copied unchanged; frames applied using CSS border-image, textures separately repeat in original aspect ratio.",
+  "publicLicense": "No new public license grant. Generated for this user's authorized project, not separately sourced third-party licensed artwork.",
+  "materials": [
+    {
+      "file": "ivory-paper-nine-slice-r1.png",
+      "promptStatus": "summary only",
+      "purpose": "Generated isolated ivory paper sheet with irregular layered edge; 9-slice decorative border only, actual text and controls remain DOM.",
+      "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-bda47d5f-506e-4d56-88b8-ef5d4112a3c1.png",
+      "sha256": "65a0bdee16faeb2d3bc89eab92e5e74b5de0585e46812ac5f776e9450f7b0864",
+      "bytes": 2353112,
+      "size": [
+        1254,
+        1254
+      ],
+      "generatedOriginalSha256": "65a0bdee16faeb2d3bc89eab92e5e74b5de0585e46812ac5f776e9450f7b0864"
+    },
+    {
+      "file": "slate-code-nine-slice-r1.png",
+      "promptStatus": "summary only",
+      "purpose": "Generated isolated dark slate writing board with restrained stitched frame; 9-slice decorative border only, actual editor and controls remain DOM.",
+      "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-66a8c154-bf6e-4d41-8e5b-8cd341b668c2.png",
+      "sha256": "085ca6736fb0220c336cf2b06e459a23550a6fb18736e31106009ae71b52bc0b",
+      "bytes": 2318916,
+      "size": [
+        1254,
+        1254
+      ],
+      "generatedOriginalSha256": "085ca6736fb0220c336cf2b06e459a23550a6fb18736e31106009ae71b52bc0b"
+    },
+    {
+      "file": "ivory-paper-tile-r1.png",
+      "prompt": "Create one seamless repeating texture tile only: warm light ivory handmade writing paper for a refined island travel journal game. Fine natural fibers, extremely subtle low contrast grain, no stains, no edges, no folds, no objects, no letters, no symbols, no vignette, no lighting gradient. Uniform neutral diffuse lighting. Color near #f3e5c5. Perfectly flat orthographic surface. Must tile seamlessly on all four edges. This is a production UI material behind real readable Chinese text, not a mockup.",
+      "promptStatus": "exact prompt recorded",
+      "purpose": "Subtle low-contrast repeating paper texture.",
+      "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-c0995e37-969f-4f8c-b9eb-33eeba38db3b.png",
+      "sha256": "8c4050f1722377dbaf7ef1b96c8d9946b6d88a68a18a1c2ca758d2565f12d380",
+      "bytes": 2378009,
+      "size": [
+        1536,
+        1024
+      ],
+      "generatedOriginalSha256": "8c4050f1722377dbaf7ef1b96c8d9946b6d88a68a18a1c2ca758d2565f12d380"
+    },
+    {
+      "file": "slate-code-tile-r1.png",
+      "prompt": "Create one seamless repeating texture tile only: dark desaturated slate blue writing board, refined soft fine-grain cloth/paper for an island code workshop game. Extremely subtle low contrast microtexture. No edges, no folds, no objects, no letters, no symbols, no vignette, no lighting gradient. Uniform neutral diffuse lighting. Color near #263442. Perfectly flat orthographic surface, must tile seamlessly on all four edges. This is a production UI material behind real bright readable code, not a mockup.",
+      "promptStatus": "exact prompt recorded",
+      "purpose": "Subtle low-contrast repeating slate texture.",
+      "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-8ec56365-8f61-49b1-a1c8-e35e63780d0a.png",
+      "sha256": "13a03d8fda441d5870c1e9326438872ade609055d8668ff638c3ed628ddfe9ee",
+      "bytes": 1869070,
+      "size": [
+        1536,
+        1024
+      ],
+      "generatedOriginalSha256": "13a03d8fda441d5870c1e9326438872ade609055d8668ff638c3ed628ddfe9ee"
+    }
+  ]
+}

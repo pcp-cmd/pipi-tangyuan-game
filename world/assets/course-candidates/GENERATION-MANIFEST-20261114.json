@@ -1,0 +1,749 @@
+{
+  "schema": "pipi-imagegen-session/v1",
+  "date": "2026-11-14",
+  "tool": "image_gen.imagegen",
+  "purpose": "Recompose original square/full-scene lesson art as transparent paper-edge travel journal stickers.",
+  "scope": "Project-owned/user-supplied references only; generated full original bitmap files copied unchanged. No third-party game art imported.",
+  "entries": [
+    {
+      "courseId": "ledger",
+      "sourceOrder": 11,
+      "title": "把账本变成 JSON",
+      "scenario": "将账本装进 JSON 文本，再从收到的文本还原。",
+      "original": "./assets/course-candidates/course-11-ledger-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Transform the first image into a transparent die-cut paper travel journal sticker, matching the exact warm pixel-inspired island game art direction of reference image 2. The first image is the lesson illustration content target; image 2 is only the style reference. Course title: 把账本变成 JSON. Its conceptual scenario: 将账本装进 JSON 文本，再从收到的文本还原。. Preserve the key meaningful objects and relations from target image 1, while removing the broad room, landscape, full rectangular picture background and unnecessary minor details. Recompose the same core objects in a compact readable vignette on irregular cream paper with the same naturally torn edge as image 2. Actual transparent outer background. This must be a redrawn sticker composition, not the original square picture with rounded corners or a crop. No added Chinese text, no code, no new numbers, no cats, no invented story objects; retain any original small symbols that convey the lesson, without making a technical answer diagram. Readable at 180 pixels. Crisp warm hand painted pixel style, teal/forest green/ivory/wood tones, restrained shadows and clear object separation. Match image 2's scale and silhouette.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-11-ledger-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-cf2fcc07-9224-4b12-b797-21252a47cd16.png",
+        "generatedOriginalSha256": "8f917a3d1b2193313a24c4b5ae2e0b45adc0d370f403b33f21a699d6c69e3827"
+      },
+      "refinement": {
+        "prompt": "Refine this course sticker for Pipi and Tangyuan. Completely remove every title banner, header, Chinese/English lettering and caption from the top. No letters or numbers anywhere. Preserve the existing central meaningful objects, the visual relations, warm island-journal coloring, fine pixel-inspired edges and irregular ivory paper silhouette. Recompose the remaining objects into a compact cohesive sticker that fits the available canvas, without stretching or cropping. Remove the now-empty banner area rather than leaving a large blank header. Actual transparency outside a crisp paper edge, no background glow, no haze, no rectangle or full-scene backdrop. Do not add story objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/011-ledger-sticker-r2.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-0ea4c687-e288-4d4f-844f-d00ddb7fcc8b.png",
+        "generatedOriginalSha256": "2a06e2a13e4171579ad847311a4404acbb71f070c31496999c782d46d12b6245"
+      }
+    },
+    {
+      "courseId": "stock-class",
+      "sourceOrder": 12,
+      "title": "为商店建立模型",
+      "scenario": "让商店对象管理库存，并拒绝不合理的出售。",
+      "original": "./assets/course-candidates/course-12-stock-class-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Transform the first image into a transparent die-cut paper travel journal sticker, matching the exact warm pixel-inspired island game art direction of reference image 2. The first image is the lesson illustration content target; image 2 is only the style reference. Course title: 为商店建立模型. Its conceptual scenario: 让商店对象管理库存，并拒绝不合理的出售。. Preserve the key meaningful objects and relations from target image 1, while removing the broad room, landscape, full rectangular picture background and unnecessary minor details. Recompose the same core objects in a compact readable vignette on irregular cream paper with the same naturally torn edge as image 2. Actual transparent outer background. This must be a redrawn sticker composition, not the original square picture with rounded corners or a crop. No added Chinese text, no code, no new numbers, no cats, no invented story objects; retain any original small symbols that convey the lesson, without making a technical answer diagram. Readable at 180 pixels. Crisp warm hand painted pixel style, teal/forest green/ivory/wood tones, restrained shadows and clear object separation. Match image 2's scale and silhouette.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-12-stock-class-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-0ee3d851-54b5-40f4-a190-9e559c6ad8b0.png",
+        "generatedOriginalSha256": "d9f985ef372b9cd8233096dd20b45af70ee0ea22e25353c4589236648eed4fa9"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "generator",
+      "sourceOrder": 13,
+      "title": "让物资按需到达",
+      "scenario": "需要下一份补给时，才生成下一项。",
+      "original": "./assets/course-candidates/course-13-generator-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Transform the first image into a transparent die-cut paper travel journal sticker, matching the exact warm pixel-inspired island game art direction of reference image 2. The first image is the lesson illustration content target; image 2 is only the style reference. Course title: 让物资按需到达. Its conceptual scenario: 需要下一份补给时，才生成下一项。. Preserve the key meaningful objects and relations from target image 1, while removing the broad room, landscape, full rectangular picture background and unnecessary minor details. Recompose the same core objects in a compact readable vignette on irregular cream paper with the same naturally torn edge as image 2. Actual transparent outer background. This must be a redrawn sticker composition, not the original square picture with rounded corners or a crop. No added Chinese text, no code, no new numbers, no cats, no invented story objects; retain any original small symbols that convey the lesson, without making a technical answer diagram. Readable at 180 pixels. Crisp warm hand painted pixel style, teal/forest green/ivory/wood tones, restrained shadows and clear object separation. Match image 2's scale and silhouette.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-13-generator-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-19053d57-c4e5-4baf-8a05-2dfbc8e92956.png",
+        "generatedOriginalSha256": "7ffb3208f6d7af73be1170695ae15c943c0322e66a111a53eb1b39c3f78c7ad4"
+      },
+      "refinement": {
+        "prompt": "Refine this course sticker for Pipi and Tangyuan. Completely remove every title banner, header, Chinese/English lettering and caption from the top. No letters or numbers anywhere. Preserve the existing central meaningful objects, the visual relations, warm island-journal coloring, fine pixel-inspired edges and irregular ivory paper silhouette. Recompose the remaining objects into a compact cohesive sticker that fits the available canvas, without stretching or cropping. Remove the now-empty banner area rather than leaving a large blank header. Actual transparency outside a crisp paper edge, no background glow, no haze, no rectangle or full-scene backdrop. Do not add story objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/013-generator-sticker-r2.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-b34e74a7-1c70-40de-b230-0b2ec8941fa5.png",
+        "generatedOriginalSha256": "900e5c0db89bdad6fe73a3fda32210e83c83b47ae43202c264e51b68adf2bc6e"
+      }
+    },
+    {
+      "courseId": "test-case",
+      "sourceOrder": 14,
+      "title": "先证明，再出航",
+      "scenario": "用零除数与小数反例，抓出两种错误实现。",
+      "original": "./assets/course-candidates/course-14-test-case-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Transform the first image into a transparent die-cut paper travel journal sticker, matching the exact warm pixel-inspired island game art direction of reference image 2. The first image is the lesson illustration content target; image 2 is only the style reference. Course title: 先证明，再出航. Its conceptual scenario: 用零除数与小数反例，抓出两种错误实现。. Preserve the key meaningful objects and relations from target image 1, while removing the broad room, landscape, full rectangular picture background and unnecessary minor details. Recompose the same core objects in a compact readable vignette on irregular cream paper with the same naturally torn edge as image 2. Actual transparent outer background. This must be a redrawn sticker composition, not the original square picture with rounded corners or a crop. No added Chinese text, no code, no new numbers, no cats, no invented story objects; retain any original small symbols that convey the lesson, without making a technical answer diagram. Readable at 180 pixels. Crisp warm hand painted pixel style, teal/forest green/ivory/wood tones, restrained shadows and clear object separation. Match image 2's scale and silhouette.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-14-test-case-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-c44a2aa7-d602-4f46-926e-6bdd677742fa.png",
+        "generatedOriginalSha256": "908f5cded4db32d251c36068cb9ee42fd11a28c55d6598a9b5c34627fc7e9ef1"
+      },
+      "refinement": {
+        "prompt": "Refine this course sticker for Pipi and Tangyuan. Completely remove every title banner, header, Chinese/English lettering and caption from the top. No letters or numbers anywhere. Preserve the existing central meaningful objects, the visual relations, warm island-journal coloring, fine pixel-inspired edges and irregular ivory paper silhouette. Recompose the remaining objects into a compact cohesive sticker that fits the available canvas, without stretching or cropping. Remove the now-empty banner area rather than leaving a large blank header. Actual transparency outside a crisp paper edge, no background glow, no haze, no rectangle or full-scene backdrop. Do not add story objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/014-test-case-sticker-r2.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-faacd15f-4514-471f-9325-8b75da187564.png",
+        "generatedOriginalSha256": "ff97752e524565987a2ce4b3d9c2ac062df43fffda1be6977debd4e3f72803ac"
+      }
+    },
+    {
+      "courseId": "tool-router",
+      "sourceOrder": 15,
+      "title": "让 Agent 选对工具",
+      "scenario": "根据意图选查询、购买或询问工具。",
+      "original": "./assets/course-candidates/course-15-tool-router-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 15, 让 Agent 选对工具) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 根据意图选查询、购买或询问工具。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-15-tool-router-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-06d47499-da81-41e3-b8a8-ccd7c87fa4a0.png",
+        "generatedOriginalSha256": "627694e8de018564f20866b82f8812bae4a2f74861b3f55623f3866bda47eb85"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "permission",
+      "sourceOrder": 16,
+      "title": "购买前先看许可",
+      "scenario": "先核对行动和明确许可，再决定能否放行。",
+      "original": "./assets/course-candidates/course-16-permission-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 16, 购买前先看许可) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 先核对行动和明确许可，再决定能否放行。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-16-permission-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-39fb8a4d-64a6-4204-ab05-a2a12701c44b.png",
+        "generatedOriginalSha256": "d7e3d24835bc1faf4a1828506cb06a9ce85da0ed82bffeacebadc756aa540142"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "dedupe",
+      "sourceOrder": 17,
+      "title": "一次订单，只付一次",
+      "scenario": "保留每个订单第一次出现的位置。",
+      "original": "./assets/course-candidates/course-17-dedupe-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 17, 一次订单，只付一次) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 保留每个订单第一次出现的位置。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-17-dedupe-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-37b41656-5273-4068-afe2-47cd5f3a497f.png",
+        "generatedOriginalSha256": "e8a3fcc96ba48518b0cc0c71dfe3de1afef630d5b2930fc2c75898169dff033e"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "retrieval",
+      "sourceOrder": 18,
+      "title": "找到有用的航海笔记",
+      "scenario": "在笔记中检索文字，同时保留原文与顺序。",
+      "original": "./assets/course-candidates/course-18-retrieval-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 18, 找到有用的航海笔记) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 在笔记中检索文字，同时保留原文与顺序。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-18-retrieval-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-734f53ba-da37-4bd3-8995-c4deb3ef5b5f.png",
+        "generatedOriginalSha256": "d9e3acfae8835af55e21dc95bd3e06613417f040b1cebc0da72d81acb3ac2a4a"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-rations",
+      "sourceOrder": 19,
+      "title": "潮汐前的补给",
+      "scenario": "按人数与天数备鱼饼，把余下物资也装进一箱。",
+      "original": "./assets/course-candidates/course-19-harbor-rations-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 19, 潮汐前的补给) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 按人数与天数备鱼饼，把余下物资也装进一箱。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-19-harbor-rations-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-459fe138-2859-4496-9415-b0e068cf928b.png",
+        "generatedOriginalSha256": "0d3face17ab23b422fa994d97c09f7897cf6071b25128a66423a20c684be548a"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-labels",
+      "sourceOrder": 20,
+      "title": "湿掉的行李牌",
+      "scenario": "擦去行李牌两端的空白，统一文字大小写。",
+      "original": "./assets/course-candidates/course-20-harbor-labels-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Create a revised transparent course sticker for the existing Pipi and Tangyuan island Python game. Edit the FIRST reference (course 20, 湿掉的行李牌) to match the SECOND reference's warm pixel-inspired hand painted travel-journal sticker language. Learning situation: 擦去行李牌两端的空白，统一文字大小写。 Preserve key objects and their meaningful relationships from the first image, but genuinely recompose into a compact readable vignette surrounded by a thin irregular warm ivory paper cut edge. Remove broad room/landscape backgrounds, full rectangular framing, floor expanses, unnecessary props and all cats/characters. This must be a newly arranged small sticker, not the unchanged square scene with rounded corners. Actual transparent alpha outside the sticker. No added letters, code, numbers, labels or new narrative details; any original relevant text may be made blank. One composition, no extra objects outside it. Full sticker visible with breathing room, no cropping.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-20-harbor-labels-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-30b5489b-1db0-4693-ae81-7fc6caec3ca8.png",
+        "generatedOriginalSha256": "03150c0d7f14931e1195899cdbda7f82d81f1e3979cd22068b2675656ba385cc"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-fare",
+      "sourceOrder": 21,
+      "title": "渡船售票口",
+      "scenario": "把不同年龄的旅客送进正确票价档。",
+      "original": "./assets/course-candidates/course-21-harbor-fare-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 21, 渡船售票口; purpose 把不同年龄的旅客送进正确票价档。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-21-harbor-fare-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-755516ff-692c-4c0b-9615-35748a43281b.png",
+        "generatedOriginalSha256": "1a12778c56c57dbf0e15a2b99a58c67dfbdbd61093a3a73c7be5bbbb27258617"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-route",
+      "sourceOrder": 22,
+      "title": "沿灯标前行",
+      "scenario": "沿着每次移动记录位置，保留出发点。",
+      "original": "./assets/course-candidates/course-22-harbor-route-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 22, 沿灯标前行; purpose 沿着每次移动记录位置，保留出发点。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-22-harbor-route-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-1c759d35-a9d2-4199-96c1-97cef3cdb81b.png",
+        "generatedOriginalSha256": "6820e905f0b697c3b1e1cbb4b9922acdad3ce81fb5265e1fd9293af103128853"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-quantity",
+      "sourceOrder": 23,
+      "title": "读懂订单数量",
+      "scenario": "读出零到九十九的数量，把非法文字留在闸外。",
+      "original": "./assets/course-candidates/course-23-harbor-quantity-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 23, 读懂订单数量; purpose 读出零到九十九的数量，把非法文字留在闸外。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-23-harbor-quantity-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-cd4e7865-faf2-4095-af66-31aa2cc9c22b.png",
+        "generatedOriginalSha256": "c38d2dc928268b8309cac3d2171909602d5a0de93c4f8e1c2d4b3dcdbb0429b1"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "harbor-manifest",
+      "sourceOrder": 24,
+      "title": "启航许可证",
+      "scenario": "整理物品名称，去掉空项和重复项再签发清单。",
+      "original": "./assets/course-candidates/course-24-harbor-manifest-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 24, 启航许可证; purpose 整理物品名称，去掉空项和重复项再签发清单。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-24-harbor-manifest-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-8248dfaf-a5cf-4530-9611-ba8f4d07e8a4.png",
+        "generatedOriginalSha256": "a8b3d6d2b9da06edc602359259955863ed5c377069004590113748fbf56f4271"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-stock",
+      "sourceOrder": 25,
+      "title": "货栈的缺货单",
+      "scenario": "对照订单和库存，只列真正缺少的数量。",
+      "original": "./assets/course-candidates/course-25-market-stock-pixel-journal-v1.png",
+      "initialGeneration": {
+        "promptStatus": "summary only; exact first-call prompt not retained in generation manifest",
+        "promptSummary": "Recompose the original stock lesson illustration and warehouse visual reference into an isolated travel-journal paper-edge sticker: shelf with rope/green tin/empty storage compartment, corresponding clipboard and pencil; no baked lesson answer.",
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-621cb6f1-8290-4361-a0df-f5fbcd1e8f7e.png",
+        "generatedOriginalSha256": "71f637822b63b93e9fd60c636e11a22f2bf992f3c17df3f1e2d42c85f1fbb3e8"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-receipts",
+      "sourceOrder": 26,
+      "title": "把收据合成账本",
+      "scenario": "把售出与退回的收据合为一份完整账本。",
+      "original": "./assets/course-candidates/course-26-market-receipts-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 26, 把收据合成账本; purpose 把售出与退回的收据合为一份完整账本。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-26-market-receipts-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-a809eddc-a9e5-4dcd-b28e-59f0f0b7fe24.png",
+        "generatedOriginalSha256": "1ce06a97eb8e6ab76784b1d3d9031bc6e4f12e4cc3641a5cf7afaece40e02d19"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-intersection",
+      "sourceOrder": 27,
+      "title": "两艘船都要的货",
+      "scenario": "找到两艘船都需要的货物，再排序登记。",
+      "original": "./assets/course-candidates/course-27-market-intersection-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 27, 两艘船都要的货; purpose 找到两艘船都需要的货物，再排序登记。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove the whole broad rectangular room/landscape, floors, sky, borders and all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely NO background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave any original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-27-market-intersection-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-3166b27d-67d8-45e0-85af-a48255d4b6a5.png",
+        "generatedOriginalSha256": "16765e8aeba826e29ba4b60de703e28339e4c0f971020fcdabc91248380a22e1"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-ranking",
+      "sourceOrder": 28,
+      "title": "集市的出航顺序",
+      "scenario": "先比积分，再用名字处理同分。",
+      "original": "./assets/course-candidates/course-28-market-ranking-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 28, 集市的出航顺序; purpose 先比积分，再用名字处理同分。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-28-market-ranking-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-0139c816-b739-421c-b3c9-315b86c9263c.png",
+        "generatedOriginalSha256": "c4f9221a0245fa0b667fc881192d7c0fa9650b0d164bd00c2344697e2c50c815"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-copy",
+      "sourceOrder": 29,
+      "title": "两只猫的独立补给",
+      "scenario": "为两只猫分别补货，原来的箱单保持不变。",
+      "original": "./assets/course-candidates/course-29-market-copy-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 29, 两只猫的独立补给; purpose 为两只猫分别补货，原来的箱单保持不变。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-29-market-copy-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-fef3add7-4fe7-4f29-b899-54f7880799c6.png",
+        "generatedOriginalSha256": "6aca56fec063c16dd0be6253b5f1dd350a2bb31f39d1022cdf0810f20b96530d"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "market-checkout",
+      "sourceOrder": 30,
+      "title": "不扣半份库存",
+      "scenario": "全部货物都够才出库，缺一项就整单保留。",
+      "original": "./assets/course-candidates/course-30-market-checkout-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 30, 不扣半份库存; purpose 全部货物都够才出库，缺一项就整单保留。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-30-market-checkout-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-c9436787-4e8d-4162-a8ac-c8170c696d2c.png",
+        "generatedOriginalSha256": "c3d8db246643fbb722e9afafc3ec42937dbaa95eb7ed2328038d232d9f34802d"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-defaults",
+      "sourceOrder": 31,
+      "title": "不会串单的便签",
+      "scenario": "每次新便签使用自己的容器，不把旧订单带进来。",
+      "original": "./assets/course-candidates/031-workshop-defaults.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 31, 不会串单的便签; purpose 每次新便签使用自己的容器，不把旧订单带进来。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/031-workshop-defaults.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-1e629863-c3f3-45c8-9a83-b5b6b994a753.png",
+        "generatedOriginalSha256": "a8696ccfb03c115bd3a7ecc04565a53b9c792a48d4327e13a2c116d506cb107a"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-closure",
+      "sourceOrder": 32,
+      "title": "可调节的打折器",
+      "scenario": "把折扣比例留在函数里，之后仍能按它报价。",
+      "original": "./assets/course-candidates/032-workshop-closure.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 32, 可调节的打折器; purpose 把折扣比例留在函数里，之后仍能按它报价。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/032-workshop-closure.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-3f2f033c-c045-445d-8f09-d064c5cf7766.png",
+        "generatedOriginalSha256": "4784f42b2541761f57df3d46ca310039a4a7f1c2544d7208b2adb34aa428aaff"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-composition",
+      "sourceOrder": 33,
+      "title": "串起三个加工站",
+      "scenario": "让前一站的结果成为后一站的输入。",
+      "original": "./assets/course-candidates/033-workshop-composition.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 33, 串起三个加工站; purpose 让前一站的结果成为后一站的输入。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/033-workshop-composition.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-5682106a-ff82-4b22-963f-e41e7848057a.png",
+        "generatedOriginalSha256": "f2c7f0e224b3f8f41953688fc7a6c638897dfb8496fd53bf1bb5e74d72be21f8"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-wallet",
+      "sourceOrder": 34,
+      "title": "会拒绝透支的钱包",
+      "scenario": "让钱包对象保管余额，拒绝超额扣款。",
+      "original": "./assets/course-candidates/034-workshop-wallet-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 34, 会拒绝透支的钱包; purpose 让钱包对象保管余额，拒绝超额扣款。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/034-workshop-wallet-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-19a04c4f-0c3b-43c6-ad10-bd53ed652ae6.png",
+        "generatedOriginalSha256": "a0307620fdb5ff6bbc4af899bd49131c845ece52e0e14db0aceba6c01d98e225"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-iterable",
+      "sourceOrder": 35,
+      "title": "只读一次的货流",
+      "scenario": "消费只能读一遍的货流，不偷偷回头重读。",
+      "original": "./assets/course-candidates/035-workshop-iterable.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 35, 只读一次的货流; purpose 消费只能读一遍的货流，不偷偷回头重读。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/035-workshop-iterable.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-5d53507f-d2a8-4522-9f24-5e2779b45f22.png",
+        "generatedOriginalSha256": "374cf03ca8503928a5f7940bd1e6f89de1d9eaf4ef69ac74c0cba5d7c984818a"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "workshop-result",
+      "sourceOrder": 36,
+      "title": "把失败也变成契约",
+      "scenario": "把成功和预期失败交给明确的结果对象。",
+      "original": "./assets/course-candidates/036-workshop-result.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 36, 把失败也变成契约; purpose 把成功和预期失败交给明确的结果对象。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/036-workshop-result.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-dada4a6e-929c-424e-9a07-c837fdb79d4e.png",
+        "generatedOriginalSha256": "4e95152be5bbab42d7686397d4af65ee312add66cde3e4f47fcb49e6957dfed0"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-json",
+      "sourceOrder": 37,
+      "title": "把漂流瓶还原成订单",
+      "scenario": "先打开 JSON 漂流瓶，再检查里面是不是有效订单。",
+      "original": "./assets/course-candidates/037-archive-json.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 37, 把漂流瓶还原成订单; purpose 先打开 JSON 漂流瓶，再检查里面是不是有效订单。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/037-archive-json.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-0d08c5d7-487a-4c09-99ff-c5479bfe6a87.png",
+        "generatedOriginalSha256": "16df00a4df67497e8d131517451dc50ebbad3437e8656e21a827793a73bb5a1c"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-regex",
+      "sourceOrder": 38,
+      "title": "灯塔通行证",
+      "scenario": "检查整张通行证的格式，不能只匹配其中一段。",
+      "original": "./assets/course-candidates/038-archive-regex.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 38, 灯塔通行证; purpose 检查整张通行证的格式，不能只匹配其中一段。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/038-archive-regex.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-60e07c86-f892-4120-a6fc-501e32311f99.png",
+        "generatedOriginalSha256": "b440cb732e03192da3b80353e15a1df4d5c964bcfd420551bd034411cc39e8e9"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-counter",
+      "sourceOrder": 39,
+      "title": "失散的货物",
+      "scenario": "比较货物数量，找回遗失的每一件。",
+      "original": "./assets/course-candidates/039-archive-counter-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 39, 失散的货物; purpose 比较货物数量，找回遗失的每一件。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/039-archive-counter-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-6eb6b97c-4b3d-4674-b4ea-2262d9cf6604.png",
+        "generatedOriginalSha256": "15a68c5cd8110f2c6b5f0a1895eefb8cfaa9e2dcd04bd7418ff5b7d756fc9be0"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-queue",
+      "sourceOrder": 40,
+      "title": "按到达顺序救援",
+      "scenario": "让到达的求助依次入队，按先后次序救援。",
+      "original": "./assets/course-candidates/040-archive-queue.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 40, 按到达顺序救援; purpose 让到达的求助依次入队，按先后次序救援。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/040-archive-queue.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-2c2185a4-2bec-4dca-ad7a-b2e797a8a9ea.png",
+        "generatedOriginalSha256": "1e5d465b2357168df03b1ead8e9edcf032ff9abcc6e48b4b8567ccbf235e2a9b"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-median",
+      "sourceOrder": 41,
+      "title": "坏传感器的读数",
+      "scenario": "面对偏离的读数，用中位数寻找中间位置。",
+      "original": "./assets/course-candidates/course-41-archive-median-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 41, 坏传感器的读数; purpose 面对偏离的读数，用中位数寻找中间位置。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-41-archive-median-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-8e945445-bdb6-466e-a3fc-0db4e05a1017.png",
+        "generatedOriginalSha256": "cd831860b6cd68c60ecd730e0a8a0045c69d4cc134581d4eda17159a66f7af91"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "archive-distance",
+      "sourceOrder": 42,
+      "title": "地图上的安全半径",
+      "scenario": "从地图坐标算距离，判断安全半径。",
+      "original": "./assets/course-candidates/course-42-archive-distance-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 42, 地图上的安全半径; purpose 从地图坐标算距离，判断安全半径。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-42-archive-distance-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-371bc64c-ad4c-4d37-a029-63026d2d9843.png",
+        "generatedOriginalSha256": "8becb4ecbd54251e97fb15c68d94e7c8f702bf4457e2a0b08df0ae294395cfa2"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-test-cases",
+      "sourceOrder": 43,
+      "title": "找出伪装的检票员",
+      "scenario": "用有区分力的测试找出伪装成正确答案的检票员。",
+      "original": "./assets/course-candidates/course-43-observatory-test-cases-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 43, 找出伪装的检票员; purpose 用有区分力的测试找出伪装成正确答案的检票员。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-43-observatory-test-cases-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-03a88bbb-485c-4ad7-b700-1da6bc46d208.png",
+        "generatedOriginalSha256": "f8e35848fedfb2234b59b04b03ecbdf3e38d2d5217f344cdcda9b2033f47f27b"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-binary",
+      "sourceOrder": 44,
+      "title": "同名货箱的第一箱",
+      "scenario": "缩小查找区间，找到重复货名中的第一箱。",
+      "original": "./assets/course-candidates/course-44-observatory-binary-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 44, 同名货箱的第一箱; purpose 缩小查找区间，找到重复货名中的第一箱。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-44-observatory-binary-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-7ebb2c7e-373c-49d7-ae90-b96dc67b9fc9.png",
+        "generatedOriginalSha256": "bf5e6d00949220d085b25a47291f400c8fd52e0c4f8131b9ad29c5c31558de9f"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-prefix",
+      "sourceOrder": 45,
+      "title": "每天都问前几天赚多少",
+      "scenario": "先累计每天收入，再回答反复出现的区间查询。",
+      "original": "./assets/course-candidates/course-45-observatory-prefix-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 45, 每天都问前几天赚多少; purpose 先累计每天收入，再回答反复出现的区间查询。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-45-observatory-prefix-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-39b013a9-c416-4829-996d-994d92f424f5.png",
+        "generatedOriginalSha256": "cc68cada793acbc5eac28eca53f0a9f085b63f4d98f986ddfd690ed122596e8d"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-cache",
+      "sourceOrder": 46,
+      "title": "过期的海况公告",
+      "scenario": "辨认缓存键与过期边界，让旧公告及时失效。",
+      "original": "./assets/course-candidates/course-46-observatory-cache-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 46, 过期的海况公告; purpose 辨认缓存键与过期边界，让旧公告及时失效。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-46-observatory-cache-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-a0b05bbc-40a7-4dbe-8397-573593c249f5.png",
+        "generatedOriginalSha256": "5cb0dd522a24ddd19cf6bfea683d975c0609b43f2dc0f6aa39d0ac5cb0093b7a"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-replay",
+      "sourceOrder": 47,
+      "title": "把航行记录重新走一遍",
+      "scenario": "按事件重新走过航行记录，核对最终状态。",
+      "original": "./assets/course-candidates/course-47-observatory-replay-pixel-journal-v2.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 47, 把航行记录重新走一遍; purpose 按事件重新走过航行记录，核对最终状态。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-47-observatory-replay-pixel-journal-v2.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-6a957247-1f4b-4895-b73c-34c03b844e25.png",
+        "generatedOriginalSha256": "8b3d013844a94e98913c207886da81944648e9504a6c4905ec1da01477ae6e1c"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "observatory-diagnose",
+      "sourceOrder": 48,
+      "title": "给失败一个可行动的名字",
+      "scenario": "把错误归到能采取下一步行动的类别。",
+      "original": "./assets/course-candidates/course-48-observatory-diagnose-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 48, 给失败一个可行动的名字; purpose 把错误归到能采取下一步行动的类别。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-48-observatory-diagnose-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-c6255de1-b949-4048-ad86-0a46d59c583c.png",
+        "generatedOriginalSha256": "216ba762abdefd9d2b06d29c5a5565c550abdc0fa6e1a8dccfaa0e6fb4697c1b"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "beacon-schema",
+      "sourceOrder": 49,
+      "title": "工具门口的登记台",
+      "scenario": "在工具入口逐项核对字段、类型与边界。",
+      "original": "./assets/course-candidates/course-49-beacon-schema-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 49, 工具门口的登记台; purpose 在工具入口逐项核对字段、类型与边界。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-49-beacon-schema-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-31fd264a-cd1f-4ddc-8f9f-77549e0a6af9.png",
+        "generatedOriginalSha256": "ad2361a443ff9b826289df4682549ef221c3a8048e20a4a2be4f249613f70713"
+      },
+      "refinement": null
+    },
+    {
+      "courseId": "beacon-permission",
+      "sourceOrder": 50,
+      "title": "一次授权的一次航行",
+      "scenario": "核对使用者、行动、参数和期限，授权只管这一次。",
+      "original": "./assets/course-candidates/course-50-beacon-permission-pixel-journal-v1.png",
+      "initialGeneration": {
+        "prompt": "Make a production transparent cutout course sticker for the existing Pipi and Tangyuan island Python game. Transform FIRST source image (course 50, 一次授权的一次航行; purpose 核对使用者、行动、参数和期限，授权只管这一次。) into the SECOND reference's warm pixel-inspired painted travel-journal sticker style. Preserve only meaningful existing objects and relationships, freshly recompose into one compact readable vignette on a thin irregular ivory paper silhouette. Remove broad rectangular rooms, landscapes, floor expanses, sky, full-picture frames, all unnecessary props. Actual alpha transparency outside a crisp sticker edge. Absolutely no background glow, haze, aura, backdrop, colored rectangle or broad drop shadow. No headings, labels, letters, code, numbers, banners, characters or cats; leave original labels blank. This is a genuine recomposition, never a rounded-corner crop. Keep the full sticker inside canvas with breathing room, no cropped objects.",
+        "referenced_image_paths": [
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/course-50-beacon-permission-pixel-journal-v1.png",
+          "/workspace/scratch/50ff8fd632e6/game/world/assets/course-candidates/01-first-steps-journal-r1.png"
+        ],
+        "transparent_background": true,
+        "generatedOriginal": "/workspace/scratch/50ff8fd632e6/generated_images/exec-a73c2131-cbea-4296-8088-99ef32f64786.png",
+        "generatedOriginalSha256": "4994666acd349bcc3ecb115d56690c01e532c8fd1ad63eb5a0b89fe3b672a817"
+      },
+      "refinement": null
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+三间服务屋图像来自用户交接 handoff-v2 的 service-interiors-candidates。
+交接 evidence/25-service-interiors-candidates-README.md 说明使用内建 imagegen 单张生成；
+evidence/26-service-interiors-candidates-MANIFEST.json 记录三张 1536×1024 PNG 的固定 SHA256。
+本轮原字节保留在源码，新增 WebP 为 lossless/exact 格式衍生，完整解码 RGBA 与原图相同。
+它们用于用户授权的本项目私人开发与试玩交付，不作为外部开源游戏素材，不另授公共发布许可。
+场景/碰撞/遮挡/服务功能为本项目代码；图像不构成浏览器、Windows 或玩家掌握的验收证据。
+三张源图与运行图的精确身份见 SOURCE.json 及 world/physical-service-interiors.mjs。
+工坊见闻屋源图外围是白色，未假称透明；本轮未裁切、拉伸、清理背景或改造源像素。

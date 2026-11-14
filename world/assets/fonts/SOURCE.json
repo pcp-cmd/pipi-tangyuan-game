@@ -1,0 +1,185 @@
+{
+  "schema": "pipi-offline-font-source/v1",
+  "upstream": "https://github.com/notofonts/noto-cjk",
+  "sourceDistribution": "Local fonts-noto-cjk package, Noto Sans CJK version 2.004",
+  "fontToolsVersion": "4.61.1",
+  "operation": "Full SC face extraction from pinned TTC; no subset, glyph edit, name replacement, or new dependency.",
+  "licenseFile": "NOTO-LICENSE.txt",
+  "licenseSha256": "849f4ea9c214fa4ac3593b770c699f387534b11ce671264c1b10d85bdcb5997b",
+  "files": [
+    {
+      "file": "noto-sans-cjk-sc-regular.otf",
+      "source": "NotoSansCJK-Regular.ttc",
+      "sourceSha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+      "collectionIndex": 2,
+      "bytes": 16437296,
+      "sha256": "f9880389080888be146381c73ffc748c345121b6303875f38931c48d731b6712",
+      "glyphCount": 65535,
+      "unicodeCodepoints": 44810,
+      "cmapSha256": "7e0ff5edd4e882e27a38569547816c22a1a6be01eb2415e1d66ce92cebbfd4e4",
+      "nameRecords": {
+        "0": [
+          "© 2014-2021 Adobe (http://www.adobe.com/)."
+        ],
+        "1": [
+          "Noto Sans CJK SC"
+        ],
+        "2": [
+          "Regular"
+        ],
+        "3": [
+          "2.004;GOOG;NotoSansCJKsc-Regular;ADOBE"
+        ],
+        "4": [
+          "Noto Sans CJK SC"
+        ],
+        "5": [
+          "Version 2.004;hotconv 1.0.118;makeotfexe 2.5.65603"
+        ],
+        "6": [
+          "NotoSansCJKsc-Regular"
+        ],
+        "7": [
+          "Noto is a trademark of Google Inc."
+        ],
+        "8": [
+          "Adobe"
+        ],
+        "9": [
+          "Ryoko NISHIZUKA 西塚涼子 (kana, bopomofo & ideographs); Paul D. Hunt (Latin, Greek & Cyrillic); Sandoll Communications 산돌커뮤니케이션, Soo-young JANG 장수영 & Joo-yeon KANG 강주연 (hangul elements, letters & syllables)"
+        ],
+        "11": [
+          "http://www.google.com/get/noto/"
+        ],
+        "13": [
+          "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+        ],
+        "14": [
+          "http://scripts.sil.org/OFL"
+        ]
+      },
+      "verification": {
+        "completeGlyphOrder": true,
+        "completeUnicodeCmap": true,
+        "allHorizontalMetrics": true,
+        "fullCffTable": true
+      }
+    },
+    {
+      "file": "noto-sans-cjk-sc-bold.otf",
+      "source": "NotoSansCJK-Bold.ttc",
+      "sourceSha256": "faa5f3656a78b2e2d450d27fe8382c778bc2b6bb5ea29c986664a6a435056ceb",
+      "collectionIndex": 2,
+      "bytes": 17002180,
+      "sha256": "a017d10aa47901ea797cf0c63f9d88f92f46103be64021910bc9f196efbf0a7c",
+      "glyphCount": 65535,
+      "unicodeCodepoints": 44810,
+      "cmapSha256": "7e0ff5edd4e882e27a38569547816c22a1a6be01eb2415e1d66ce92cebbfd4e4",
+      "nameRecords": {
+        "0": [
+          "© 2014-2021 Adobe (http://www.adobe.com/)."
+        ],
+        "1": [
+          "Noto Sans CJK SC"
+        ],
+        "2": [
+          "Bold"
+        ],
+        "3": [
+          "2.004;GOOG;NotoSansCJKsc-Bold;ADOBE"
+        ],
+        "4": [
+          "Noto Sans CJK SC Bold"
+        ],
+        "5": [
+          "Version 2.004;hotconv 1.0.118;makeotfexe 2.5.65603"
+        ],
+        "6": [
+          "NotoSansCJKsc-Bold"
+        ],
+        "7": [
+          "Noto is a trademark of Google Inc."
+        ],
+        "8": [
+          "Adobe"
+        ],
+        "9": [
+          "Ryoko NISHIZUKA 西塚涼子 (kana, bopomofo & ideographs); Paul D. Hunt (Latin, Greek & Cyrillic); Sandoll Communications 산돌커뮤니케이션, Soo-young JANG 장수영 & Joo-yeon KANG 강주연 (hangul elements, letters & syllables)"
+        ],
+        "11": [
+          "http://www.google.com/get/noto/"
+        ],
+        "13": [
+          "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+        ],
+        "14": [
+          "http://scripts.sil.org/OFL"
+        ]
+      },
+      "verification": {
+        "completeGlyphOrder": true,
+        "completeUnicodeCmap": true,
+        "allHorizontalMetrics": true,
+        "fullCffTable": true
+      }
+    },
+    {
+      "file": "noto-sans-mono-cjk-sc-regular.otf",
+      "source": "NotoSansCJK-Regular.ttc",
+      "sourceSha256": "b76b0433203017ca80401b2ee0dd69350349871c4b19d504c34dbdd80541690a",
+      "collectionIndex": 7,
+      "bytes": 16393632,
+      "sha256": "8458c82dae661fda8fe4f7690141e056ee7994cb41daf045fb0dcc40d02ebc79",
+      "glyphCount": 65535,
+      "unicodeCodepoints": 44810,
+      "cmapSha256": "fb770e35a9e6a45d510b5225f12639fdf81e04c15a0f8af054bbd705e0b8a535",
+      "nameRecords": {
+        "0": [
+          "© 2014-2021 Adobe (http://www.adobe.com/)."
+        ],
+        "1": [
+          "Noto Sans Mono CJK SC"
+        ],
+        "2": [
+          "Regular"
+        ],
+        "3": [
+          "2.004;GOOG;NotoSansMonoCJKsc-Regular;ADOBE"
+        ],
+        "4": [
+          "Noto Sans Mono CJK SC"
+        ],
+        "5": [
+          "Version 2.004;hotconv 1.0.118;makeotfexe 2.5.65603"
+        ],
+        "6": [
+          "NotoSansMonoCJKsc-Regular"
+        ],
+        "7": [
+          "Noto is a trademark of Google Inc."
+        ],
+        "8": [
+          "Adobe"
+        ],
+        "9": [
+          "Ryoko NISHIZUKA 西塚涼子 (kana, bopomofo & ideographs); Paul D. Hunt (Latin, Greek & Cyrillic); Sandoll Communications 산돌커뮤니케이션, Soo-young JANG 장수영 & Joo-yeon KANG 강주연 (hangul elements, letters & syllables)"
+        ],
+        "11": [
+          "http://www.google.com/get/noto/"
+        ],
+        "13": [
+          "This Font Software is licensed under the SIL Open Font License, Version 1.1. This Font Software is distributed on an \"AS IS\" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the SIL Open Font License for the specific language, permissions and limitations governing your use of this Font Software."
+        ],
+        "14": [
+          "http://scripts.sil.org/OFL"
+        ]
+      },
+      "verification": {
+        "completeGlyphOrder": true,
+        "completeUnicodeCmap": true,
+        "allHorizontalMetrics": true,
+        "fullCffTable": true
+      }
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "schema": "pipi-journal-art-source/v1",
+  "source": "User-provided 手账互动-v2/双击打开.html",
+  "sourceHtmlSha256": "b9c9024e15ccff67c8350e1eca5c921c64e404f3efbddfc80658f27e15dd6279",
+  "operation": "Verbatim base64 decode of the blank background PNG; no image edit or generation. Real controls are separate DOM.",
+  "asset": {
+    "path": "background.png",
+    "width": 1586,
+    "height": 992,
+    "bytes": 2244288,
+    "sha256": "72f942edc5b0a99fc13d5a4425be8e51f78e2d9d8ff18c776f7e39862793feab"
+  },
+  "licenseStatus": "User-provided project artwork; no separate third-party license declaration was supplied in that prototype. This manifest makes no new license grant."
+}

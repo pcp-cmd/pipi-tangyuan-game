@@ -1,0 +1,6 @@
+The upstream/project notices are retained verbatim. In this trial package,
+the browser runtime is served locally under /dist/runtime/v0.27.7/.
+A historical /runtime path in the original README is not this package URL.
+No interpreter bytes were modified. Node is an unmodified official win-x64 binary.
+Game assets and their existing notices remain under public/world/assets/.
+This is a private local trial package, not a public website deployment.

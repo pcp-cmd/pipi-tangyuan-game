@@ -1,0 +1,26 @@
+/* Names belong to authored timber and wall plaques, not to overlay UI cards.
+   The transparent button may be larger than its artwork to retain a 44px tap. */
+.world .place-hotspot.place-sign[data-place],.world.roaming .place-hotspot.place-sign[data-place]{display:block;translate:none;transform:translate(-50%,-100%);width:max(var(--sign-width),var(--world-min-target,44px));height:max(var(--sign-height),var(--world-min-target,44px));min-width:0;min-height:0;padding:0;border:0;border-radius:0;background:none;box-shadow:none;text-shadow:none;opacity:1;z-index:4;font-size:0;overflow:visible}
+.world .place-hotspot.place-sign[data-place]::after{display:none}
+.world .place-hotspot.place-sign[data-place]:hover{background:none;filter:none}
+.place-sign-visual{position:absolute;left:50%;bottom:0;transform:translateX(-50%);display:block;width:var(--sign-width);height:var(--sign-height);pointer-events:none}
+.place-sign-art{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;pointer-events:none}
+/* Lettering is embedded pixel paths in the plaque SVG, not live UI font.
+   Invisible semantic text retains a measurable painted-name region. */
+.place-sign-title{position:absolute;left:0;width:100%;height:24px;top:29px;font-size:0;line-height:0;color:transparent;pointer-events:none}
+.place-sign[data-sign="hanging"] .place-sign-title{top:39px;height:47px}
+.place-sign[data-sign="wall"] .place-sign-title{top:13px;height:37px}
+.world .place-hotspot.place-sign[data-place]:focus-visible{outline:2px dashed #ffe6ac;outline-offset:3px;background:none}
+.world .place-hotspot.place-sign[data-place]:focus-visible .place-sign-art{filter:drop-shadow(0 1px 1px #f0c777)}
+/* The destination is a cloth pennant planted on the route. Its full changing
+   name remains in the task and its accessible button name, not floating text. */
+.world .destination-marker{width:max(48px,var(--world-min-target,44px));height:max(76px,var(--world-min-target,44px));padding:0;border:0;background:radial-gradient(ellipse 13px 3px at 50% calc(100% - 1px),#26312666 25%,transparent 80%);box-shadow:none;z-index:3;transform:translate(-50%,-100%)}
+.destination-marker>.icon{display:none}.destination-marker>span{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.destination-marker::before{content:"";position:absolute;left:calc(50% - 3px);bottom:0;width:6px;height:70px;background:linear-gradient(90deg,#513d24 0 2px,#c39a57 2px 4px,#79532e 4px);box-shadow:2px 1px #24332655}
+.destination-marker::after{content:"";position:absolute;left:calc(50% + 3px);bottom:37px;width:31px;height:27px;background:linear-gradient(142deg,#e9c577 0 35%,#cf9f49 36% 69%,#ba8438 70%);clip-path:polygon(0 0,100% 4%,76% 50%,100% 96%,0 100%);box-shadow:inset 0 4px #f0cd86,inset 0 -4px #ae733a}
+/* Desktop trial: 90% companion art, unchanged feet, names and portrait art.
+   Shrink-wrap the body hit box, but retain its existing width and name-label size. */
+.world .cat-actor{height:auto}
+.world .cat-actor .cat-art.pets-ready,.world .cat-actor[data-actor="tangyuan"] .cat-art.pets-ready{width:129.6px;height:140.4px}
+.world .cat-actor .cat-art:not(.pets-ready){width:189px;height:169.2px}
+.world .cat-actor[data-actor="tangyuan"] .cat-art:not(.pets-ready){width:149.4px;height:169.2px}

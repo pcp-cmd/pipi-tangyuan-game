@@ -1,0 +1,87 @@
+/* Learning journal: same island materials, clearer history and wayfinding. */
+.journal-wayfinding{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 22px;padding-bottom:14px;border-bottom:1px solid #82947445}
+.journal-wayfinding button{background:#1d3730;border:1px solid #6e825d80;border-radius:100px;min-height:44px;padding:8px 15px;color:#e5dbbc;font:12px var(--ui)}
+.journal-wayfinding button:focus-visible,.journal-search input:focus-visible,.journal-status-filter select:focus-visible{outline:3px solid #ffdfa1;outline-offset:3px}
+.journal-learning-heading{margin:28px 0 16px}
+.journal-learning-heading .eyebrow{color:#e7c58b;letter-spacing:.14em}
+.journal-learning-heading h3{font:500 26px/1.4 var(--display);letter-spacing:.03em;margin:7px 0 10px}
+.journal-learning-heading p{color:#c1cbb7;font-size:12px;line-height:1.9;margin:0}
+.journal-learning-summary{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:1px;background:#7c8c644d;border:1px solid #7c8c644d;border-radius:7px;overflow:hidden;margin:17px 0}
+.journal-learning-summary>div{padding:14px 10px;background:#1b332d;display:flex;flex-direction:column;gap:7px;text-align:center}
+.journal-learning-summary strong{font:500 23px/1.2 var(--display);font-variant-numeric:tabular-nums;color:#f4d59a}
+.journal-learning-summary span{font-size:10px;color:#c3cbb4;line-height:1.5}
+.journal-current{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px;margin-bottom:20px;background:#2a3c2e;border:1px solid #beab70a6;border-radius:7px;box-shadow:inset 3px 0 #dbbd7b}
+.journal-current-copy{display:flex;flex-direction:column;gap:6px;min-width:0}
+.journal-current-copy small{color:#c5caaf;font-size:10px;letter-spacing:.05em}
+.journal-current-copy strong{font:500 16px/1.5 var(--display);overflow-wrap:anywhere}
+.journal-resume{flex:none;padding-inline:12px;font-size:12px;min-height:44px}
+.journal-unavailable,.course-entry .history-unavailable{color:#d7c7a0;font-size:11px;line-height:1.8;margin:8px 0 0}
+.journal-tools{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.journal-tools .course-select{margin:0;display:flex;flex-direction:column;gap:7px;align-items:stretch;font-size:11px}
+.journal-tools .course-select select{width:100%;min-width:0;font-size:12px}
+.journal-search{grid-column:1/-1;display:flex;flex-direction:column;gap:7px;color:#d6d7bc;font-size:11px}
+.journal-search input{min-height:46px;width:100%;min-width:0;font:14px var(--ui);color:#f4e4c1;background:#10251f;border:1px solid #7f916c;border-radius:5px;padding:11px 13px;appearance:none}
+.journal-search input::placeholder{color:#a9b7a1;opacity:1}
+.journal-results-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 14px;min-height:44px;color:#bfcab3;font-size:12px}
+.journal-results-heading button{background:transparent;min-height:44px;padding:8px 0 8px 12px;color:#e6c785;text-decoration:underline;text-underline-offset:4px;font:12px var(--ui)}
+.journal-selection-notice{font-size:12px;line-height:1.8;color:#efce90;margin:8px 0;overflow-wrap:anywhere}
+.journal-selection-notice:empty{display:none}
+.journal-empty{border:1px dashed #839171;padding:25px 18px;border-radius:8px;text-align:center;margin:0 0 24px;color:#c7d1b8;font-size:13px;line-height:1.9}
+.journal-entries{display:grid;gap:14px}
+.course-entry{position:relative;border:1px solid #677c5b91;border-radius:7px;padding:17px;background:linear-gradient(145deg,#234034,#192f28);margin:0;box-shadow:0 2px 7px #081d1a45}
+.course-entry[data-current=true]{border-color:#d2b47b;box-shadow:inset 3px 0 #d2b47b,0 3px 10px #071c1940}
+.course-entry-top{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px;min-height:24px}
+.course-ordinal{font:500 21px/1 var(--display);font-variant-numeric:tabular-nums;color:#ddc48e;letter-spacing:.05em}
+.course-markers{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px}
+.course-markers span{font-size:9px;letter-spacing:.03em;padding:4px 7px;border:1px solid #81936b;background:#2e4534;border-radius:3px;line-height:1.4}
+.course-markers .course-current{color:#f6d89c;border-color:#c4aa70;background:#34412c}
+.course-entry h4{font:500 21px/1.5 var(--display);margin:7px 0 5px;overflow-wrap:anywhere}
+.course-entry .course-topic{font-size:12px;color:#b9c8ad;line-height:1.8;margin:0 0 13px}
+.course-entry>.learning-badge{display:inline-block;max-width:100%;padding:4px 8px;border-radius:3px;border:1px solid #77906a73;color:#c1cbb4;font-size:10px;line-height:1.7;background:#142a23}
+.learning-badge.recheck{color:#f3cf90;border-color:#b4915f;background:#3b3625}
+.learning-badge.guided{color:#e3d3ff;border-color:#9b91b2;background:#302e3b}
+.learning-badge.independent{color:#cde5b6;border-color:#8da977;background:#263e29}
+.learning-badge.practice{color:#d5dfcf;border-color:#8a9a7f;background:#2a3d30}
+.course-entry .course-enter{display:flex;width:100%;margin:14px 0 0;font-size:12px;min-height:45px}
+.learning-history{margin-top:11px;border-top:1px solid #7387644a;padding-top:2px}
+.learning-history>summary{cursor:pointer;min-height:44px;padding:12px 0 9px;font-size:11px;color:#bec9af;line-height:1.7;list-style-position:inside}
+.learning-history>summary:hover{color:#f4d59a}
+.learning-history-body{border-radius:5px;background:#12271fba;padding:13px;margin-bottom:1px}
+.learning-history-body p{font-size:11px;line-height:1.85;margin:0 0 10px;color:#c9d2bb}
+.learning-history-body .history-scope{color:#b7c3a8;padding-left:10px;border-left:2px solid #8f9978}
+.learning-history-body .history-latest-note{color:#edca94}
+.learning-timeline{list-style:none;padding:0;margin:13px 0 10px;display:grid;gap:11px}
+.learning-timeline li{padding-left:11px;border-left:2px solid #839774}
+.learning-attempt-heading{display:flex;gap:8px;flex-wrap:wrap;align-items:baseline;justify-content:space-between}
+.learning-attempt-heading strong{font-size:11px;color:#e0ddbc}
+.learning-attempt-heading time{font-size:10px;color:#acbca0;font-variant-numeric:tabular-nums}
+.learning-timeline li>span{display:block;margin-top:3px;font-size:10px;color:#b4c2a7;line-height:1.8}
+.learning-timeline li[data-passed=false]{border-color:#c3a17b}
+.learning-timeline li[data-passed=false] strong{color:#e9c299}
+.learning-history-body .history-bounds{font-size:10px;color:#aebda0;margin-bottom:0}
+@media(max-width:760px){
+ .journal-wayfinding{margin-bottom:20px;gap:5px}
+ .journal-wayfinding button{font-size:11px;padding-inline:12px}
+ .journal-learning-heading h3{font-size:25px}
+ .journal-tools{gap:10px}
+ .course-entry{padding:15px}
+ .course-entry h4{font-size:20px}
+ .journal-current{padding:14px;gap:9px}
+ .journal-current-copy strong{font-size:15px}
+ .journal-resume{font-size:11px;padding-inline:10px}
+}
+@media(max-width:360px){
+ .journal-learning-summary>div{padding:12px 6px}
+ .journal-learning-summary strong{font-size:21px}
+ .journal-learning-summary span{font-size:9px}
+ .journal-current{align-items:stretch;flex-direction:column}
+ .journal-current .journal-resume{width:100%}
+ .journal-tools{grid-template-columns:1fr}
+ .journal-search{grid-column:auto}
+ .course-entry h4{font-size:19px}
+}
+
+/* A retained locked draft needs a full-width explanation, not a third narrow column. */
+.journal-current{display:grid;grid-template-columns:minmax(0,1fr) auto}
+.journal-current>.journal-unavailable{grid-column:1/-1}
+@media(max-width:360px){.journal-current{grid-template-columns:minmax(0,1fr)}}

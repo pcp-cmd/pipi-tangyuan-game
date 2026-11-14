@@ -1,0 +1,33 @@
+.course-entry > .course-access {
+  display: inline-block;
+  margin-left: 8px;
+  max-width: 100%;
+  color: #cde1b7;
+  font-size: 0.76rem;
+  font-weight: 700;
+  line-height: 1.7;
+}
+.course-entry > .course-access[data-access="locked"] { color: #efce95; }
+.course-entry > .course-access[data-access="unavailable"] { color: #d5cfbb; }
+.lesson-access-details {
+  border-top: 1px solid #7b8d644d;
+  padding-top: 0.65rem;
+  color: #c6d3b5;
+  font-size: 0.85rem;
+  line-height: 1.65;
+}
+.lesson-access-details summary {
+  cursor: pointer;
+  color: #e3c894;
+  font-weight: 700;
+  min-height: 44px;
+  padding: 8px 0;
+}
+.lesson-access-details summary:focus-visible { outline: 3px solid #ffdfa1; outline-offset: 3px; }
+.lesson-access-details p { margin: 0.65rem 0; white-space: pre-line; overflow-wrap: anywhere; }
+.lesson-access-details ul { padding-left: 1.2rem; }
+.lesson-access-details button { text-align: left; min-height: 2.75rem; }
+.course-enter:disabled { opacity: 0.65; cursor: not-allowed; }
+#courseAccessSummary { margin: 0.6rem 0 1rem; color: #c7d4b8; line-height: 1.6; }
+#lessonAccessStatus { border-left: 3px solid #d4a25b; padding-left: 0.75rem; }
+#unmeasuredKnowledge { color: #edcb96; }

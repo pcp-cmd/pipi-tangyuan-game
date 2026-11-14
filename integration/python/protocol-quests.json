@@ -1,0 +1,608 @@
+[
+  {
+    "id": "protocol-lifecycle",
+    "title": "闸门钥匙",
+    "topic": "with · 资源生命周期 · 异常组",
+    "brief": "皮皮要借一台闸门设备。请完成 managed_session(factory)，让借用、工作和归还都有明确顺序，出错时也不丢掉线索。先预测 open 失败后还会发生哪些动作，再运行你的实现。",
+    "description": "皮皮要借一台闸门设备。请完成 managed_session(factory)，让借用、工作和归还都有明确顺序，出错时也不丢掉线索。先预测 open 失败后还会发生哪些动作，再运行你的实现。\n\n1. 返回可供 with 使用的对象。每次进入调用 factory 一次；factory 无参返回带 open()/close() 的资源。open 成功后把同一个资源交给 with 块。\n2. factory 直接失败时原样传播同一个异常，不能关闭尚未取得的资源。资源取得后，open 即使部分失败也必须 close 恰好一次；本题资源允许这样关闭。\n3. 正常退出和块内失败都 close 一次；业务异常原样传播，KeyboardInterrupt 等控制信号也不能吞掉。仅 close 失败时传播该关闭错误。\n4. open 或业务与 close 同时失败时，用 BaseExceptionGroup 保存两个原始异常，顺序为主要错误、清理错误。",
+    "contract": [
+      "返回可供 with 使用的对象。每次进入调用 factory 一次；factory 无参返回带 open()/close() 的资源。open 成功后把同一个资源交给 with 块。",
+      "factory 直接失败时原样传播同一个异常，不能关闭尚未取得的资源。资源取得后，open 即使部分失败也必须 close 恰好一次；本题资源允许这样关闭。",
+      "正常退出和块内失败都 close 一次；业务异常原样传播，KeyboardInterrupt 等控制信号也不能吞掉。仅 close 失败时传播该关闭错误。",
+      "open 或业务与 close 同时失败时，用 BaseExceptionGroup 保存两个原始异常，顺序为主要错误、清理错误。"
+    ],
+    "starter": "from contextlib import contextmanager\n\n@contextmanager\ndef managed_session(factory):\n    # 完成取得、打开、交给 with 块、关闭及同时失败的处理。\n    raise NotImplementedError('请实现资源生命周期')\n    yield\n",
+    "solution": "from contextlib import contextmanager\n\n@contextmanager\ndef managed_session(factory):\n    resource = factory()\n    try:\n        resource.open()\n        yield resource\n    except BaseException as primary:\n        try:\n            resource.close()\n        except BaseException as cleanup:\n            raise BaseExceptionGroup('session and cleanup failed', [primary, cleanup]) from None\n        raise\n    else:\n        resource.close()\n",
+    "concept": "with 把进入、使用和退出组织成协议。contextmanager 中的 yield 把资源交给块内代码；块内异常会回到 yield 处。资源状态与错误证据要分别检查：成功调用 close 不代表业务成功，也不会撤销已经发生的外部效果。",
+    "hint": "画出“尚未取得、已经取得、已经关闭”三个状态。factory 失败与 open 失败发生在不同状态，清理责任也不同。",
+    "hintLevels": [
+      "画出“尚未取得、已经取得、已经关闭”三个状态。factory 失败与 open 失败发生在不同状态，清理责任也不同。",
+      "把 factory 调用放在取得资源之前的边界；资源取得之后，把 open 和 yield 放进同一个清理范围。正常、异常和控制信号都要有出口。",
+      "先保留主要异常，再尝试 close；若 close 也失败，创建按先后保存两个原对象的 BaseExceptionGroup。清理成功后重新抛出原异常，不要返回成功。"
+    ],
+    "boundary": "浏览器运行真实 Python 的资源协议，设备是可观察的内存对象，不是真实宿主文件或闸门。关闭部分打开的设备是本题约定；资源关闭不等于回滚。多资源逆序清理尚未自动评分。",
+    "transfer": "迁移练习（未自动评分）：同时借两台设备，第二台打开失败时按什么顺序归还？先列事件，再注入获取和清理故障，说明哪些业务效果无法靠 close 撤销。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "lifecycle",
+    "checks": [],
+    "function": "managed_session",
+    "targetSymbols": [
+      "managed_session"
+    ],
+    "prerequisites": [
+      "workshop-result",
+      "workshop-iterable"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "contextlib"
+    ],
+    "worldActions": [
+      {
+        "id": "normal-loan",
+        "prompt": "追踪一次正常借用。",
+        "observe": "factory → open → 使用 → close，资源身份不变。"
+      },
+      {
+        "id": "partial-open",
+        "prompt": "让打开过程失败。",
+        "observe": "不进入使用阶段，已经取得的设备仍归还一次。"
+      },
+      {
+        "id": "double-failure",
+        "prompt": "同时让工作与归还失败。",
+        "observe": "两份原错误都留在异常组中，不能只剩最后一份。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "皮皮要借一台闸门设备。请完成 managed_session(factory)，让借用、工作和归还都有明确顺序，出错时也不丢掉线索。先预测 open 失败后还会发生哪些动作，再运行你的实现。",
+      "after": "这组约定已通过：闸门钥匙。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "",
+    "supportDescription": "",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/lifecycle_solution.py",
+      "selectedDefinitions": [
+        "managed_session"
+      ],
+      "embeddedSnapshotSha256": "aff8dc0312876237b72b33be4b79830b1e484fac5eb21fc969da9c67df1b6a6b",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  },
+  {
+    "id": "protocol-cache",
+    "title": "报价缓存器",
+    "topic": "装饰器 · 参数绑定 · 缓存状态",
+    "brief": "汤圆希望复用已经成功取得的报价。完成 memoize_by_key(key_fn)，返回装饰器；数清报价机器真正启动了几次，并在缓存已预热后再检查一次非法参数。",
+    "description": "汤圆希望复用已经成功取得的报价。完成 memoize_by_key(key_fn)，返回装饰器；数清报价机器真正启动了几次，并在缓存已预热后再检查一次非法参数。\n\n1. 装饰普通同步 Python 函数。每次调用先按原函数签名绑定参数；缺失、多余、位置专用或关键字专用约束被违反时抛 TypeError，且不调用 key_fn 或原函数，命中缓存也一样。\n2. 合法调用把相同位置与关键字参数交给 key_fn，得到可哈希业务键。同一被装饰函数的同键成功结果只计算一次；0、False、None、空字符串也可缓存。\n3. 原函数异常保留身份且不缓存，后续相同调用真正重试；key_fn 失败不调用原函数。不同被装饰函数互不共享缓存。\n4. 提供无参 cache_clear()，只清当前函数缓存。保留名称、文档、注解、__wrapped__ 和 inspect.signature 可观察的签名；原函数的自定义属性不能破坏装饰器自己的缓存状态或清理方法。",
+    "contract": [
+      "装饰普通同步 Python 函数。每次调用先按原函数签名绑定参数；缺失、多余、位置专用或关键字专用约束被违反时抛 TypeError，且不调用 key_fn 或原函数，命中缓存也一样。",
+      "合法调用把相同位置与关键字参数交给 key_fn，得到可哈希业务键。同一被装饰函数的同键成功结果只计算一次；0、False、None、空字符串也可缓存。",
+      "原函数异常保留身份且不缓存，后续相同调用真正重试；key_fn 失败不调用原函数。不同被装饰函数互不共享缓存。",
+      "提供无参 cache_clear()，只清当前函数缓存。保留名称、文档、注解、__wrapped__ 和 inspect.signature 可观察的签名；原函数的自定义属性不能破坏装饰器自己的缓存状态或清理方法。"
+    ],
+    "starter": "from functools import wraps\nfrom inspect import signature\n\ndef memoize_by_key(key_fn):\n    # 返回一个装饰器；每个被装饰函数应拥有自己的缓存。\n    raise NotImplementedError('请实现参数透明的缓存装饰器')\n",
+    "solution": "from functools import wraps\n\nfrom inspect import signature\n\ndef memoize_by_key(key_fn):\n    def decorate(function):\n        cache = {}\n        call_signature = signature(function)\n\n        @wraps(function)\n        def wrapped(*args, **kwargs):\n            call_signature.bind(*args, **kwargs)\n            key = key_fn(*args, **kwargs)\n            if key not in cache:\n                cache[key] = function(*args, **kwargs)\n            return cache[key]\n\n        wrapped.cache_clear = cache.clear\n        return wrapped\n    return decorate\n",
+    "concept": "装饰器接收函数并返回新的可调用对象。wraps 保存元信息，不能替你校验调用形状；signature(...).bind(...) 应在计算缓存键之前完成。键是否存在与结果是否为真是两件事，免费报价 0 也是成功结果。",
+    "hint": "分别观察“原函数调用次数”和“最终返回值”。再试免费报价，以及第一次失败、第二次成功的情况。",
+    "hintLevels": [
+      "分别观察“原函数调用次数”和“最终返回值”。再试免费报价，以及第一次失败、第二次成功的情况。",
+      "在每次 decorate(function) 时创建独立字典。包装层先 bind 参数，再求 key；用 key in cache 判断命中，不用结果的真假判断。",
+      "只在原函数成功返回后写入缓存，并把 args/kwargs 原样传递。设置 cache_clear 时防止元信息复制覆盖自己的接口；异常不需要转换成成功值。"
+    ],
+    "boundary": "只面向普通同步函数；不宣称支持实例方法描述符、异步、线程安全、TTL 或容量上限。缓存键由业务定义，结果不自动深复制；有外部副作用的发送、扣款不能直接套用本题缓存。",
+    "transfer": "迁移练习（未自动评分）：把租户和报价数据版本加入键，为同名请求的不同租户/版本计算独立期望，再讨论旧版本清理与可变返回值的政策。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "cache",
+    "checks": [],
+    "function": "memoize_by_key",
+    "targetSymbols": [
+      "memoize_by_key"
+    ],
+    "prerequisites": [
+      "workshop-closure",
+      "workshop-defaults"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "functools",
+      "inspect"
+    ],
+    "worldActions": [
+      {
+        "id": "repeated-quote",
+        "prompt": "用同一业务键查询两次，再换一个键。",
+        "observe": "合法命中不再次启动报价机器，不同键按规则计算。"
+      },
+      {
+        "id": "bound-before-key",
+        "prompt": "预热缓存后故意把位置专用参数写成关键字。",
+        "observe": "保留 TypeError，key_fn 和报价机器均没有新增调用。"
+      },
+      {
+        "id": "retry-after-error",
+        "prompt": "让第一次报价失败，再用相同参数重试。",
+        "observe": "失败没有进入缓存，第二次实际执行。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "汤圆希望复用已经成功取得的报价。完成 memoize_by_key(key_fn)，返回装饰器；数清报价机器真正启动了几次，并在缓存已预热后再检查一次非法参数。",
+      "after": "这组约定已通过：报价缓存器。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "",
+    "supportDescription": "",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/decorators_solution.py",
+      "selectedDefinitions": [
+        "memoize_by_key"
+      ],
+      "embeddedSnapshotSha256": "b51198e9636dd6d8c2cb8a15a63e243713ad3cbe6facf6c8f23de715241101ef",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  },
+  {
+    "id": "protocol-shipment",
+    "title": "不会漂移的运单",
+    "topic": "dataclass · 不变量 · 可变别名",
+    "brief": "运单登记后，外面的装箱清单还会被修改。完成冻结 dataclass Shipment(identifier, weights)，让已登记的重量保持自己的快照；再把 True、零和空列表送到验货台。",
+    "description": "运单登记后，外面的装箱清单还会被修改。完成冻结 dataclass Shipment(identifier, weights)，让已登记的重量保持自己的快照；再把 True、零和空列表送到验货台。\n\n1. Shipment 是 frozen=True 的 dataclass，包含 identifier 与 weights。identifier 必须严格是 str，strip 后非空；类型错误抛 TypeError，空名称抛 ValueError。\n2. weights 输入为有限序列，保存成 tuple 快照；至少一项，每项严格为大于 0 的 int，排除 bool。空、零、负数或其他类型的重量抛 ValueError。\n3. 原重量列表随后改变不能影响运单；普通属性赋值被拒绝。相同规范化内容的运单相等且可哈希。",
+    "contract": [
+      "Shipment 是 frozen=True 的 dataclass，包含 identifier 与 weights。identifier 必须严格是 str，strip 后非空；类型错误抛 TypeError，空名称抛 ValueError。",
+      "weights 输入为有限序列，保存成 tuple 快照；至少一项，每项严格为大于 0 的 int，排除 bool。空、零、负数或其他类型的重量抛 ValueError。",
+      "原重量列表随后改变不能影响运单；普通属性赋值被拒绝。相同规范化内容的运单相等且可哈希。"
+    ],
+    "starter": "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Shipment:\n    identifier: str\n    weights: tuple[int, ...]\n\n    def __post_init__(self):\n        # 校验外部数据，并保存独立、规范化的快照。\n        raise NotImplementedError('请建立运单不变量')\n",
+    "solution": "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Shipment:\n    identifier: str\n    weights: tuple[int, ...]\n\n    def __post_init__(self):\n        if type(self.identifier) is not str:\n            raise TypeError('identifier must be str')\n        name = self.identifier.strip()\n        if not name:\n            raise ValueError('identifier must not be blank')\n        weights = tuple(self.weights)\n        if not weights or any(type(value) is not int or value <= 0 for value in weights):\n            raise ValueError('weights must contain positive integers, excluding bool')\n        object.__setattr__(self, 'identifier', name)\n        object.__setattr__(self, 'weights', weights)\n",
+    "concept": "dataclass 的字段注解不会自动检查输入，frozen 也不会把字段内部的列表冻住。本题保持不变量依靠两件事：构造时存 tuple 快照，且元素只允许不可变的严格整数。",
+    "hint": "先创建运单，再修改传入的列表。若运单也跟着变化，说明它仍保留着调用者的可变对象。",
+    "hintLevels": [
+      "先创建运单，再修改传入的列表。若运单也跟着变化，说明它仍保留着调用者的可变对象。",
+      "在 __post_init__ 中先校验名称，再把 weights 转成 tuple 并逐项验证。isinstance(True, int) 为真，业务数量需要更严格的检查。",
+      "冻结对象的初始化规范化可用 object.__setattr__。保存去空白名称与合法 tuple；之后由 frozen 拒绝普通赋值，让相等与哈希使用规范化字段。"
+    ],
+    "boundary": "只承诺有限重量序列的普通业务接口；不把任意非序列输入的所有异常类型纳入合同。tuple[int, ...] 的固定内容不等于任意嵌套对象深冻结；本题不是防任意代码篡改的安全机制，也未运行外部静态类型检查。",
+    "transfer": "迁移练习（未自动评分）：运单新增嵌套标签时，先决定允许哪些类型，再写一个会暴露浅复制的例子。解释为什么仅加 frozen=True 不能自动保护内部列表。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "shipment",
+    "checks": [],
+    "function": "Shipment",
+    "targetSymbols": [
+      "Shipment"
+    ],
+    "prerequisites": [
+      "workshop-wallet",
+      "market-copy"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "dataclasses"
+    ],
+    "worldActions": [
+      {
+        "id": "freeze-snapshot",
+        "prompt": "登记后改变原装箱列表。",
+        "observe": "已登记重量不变，运单保存自己的 tuple 快照。"
+      },
+      {
+        "id": "invalid-weight",
+        "prompt": "检查 True、零、负数和空重量。",
+        "observe": "每一种不合法重量都在构造边界被拒绝。"
+      },
+      {
+        "id": "same-shipment",
+        "prompt": "比较两张规范化后内容相同的运单。",
+        "observe": "相等且可作字典键，普通修改被阻止。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "运单登记后，外面的装箱清单还会被修改。完成冻结 dataclass Shipment(identifier, weights)，让已登记的重量保持自己的快照；再把 True、零和空列表送到验货台。",
+      "after": "这组约定已通过：不会漂移的运单。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "",
+    "supportDescription": "",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/protocols_solution.py",
+      "selectedDefinitions": [
+        "Shipment"
+      ],
+      "embeddedSnapshotSha256": "a3931e4f192f59240587e7a8937a611e1cdea9c8afbd5f862b827b281980934d",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  },
+  {
+    "id": "protocol-provider",
+    "title": "可替换承运商",
+    "topic": "结构协议 · 依赖注入 · 一次调用",
+    "brief": "同一张运单可以交给不同承运商。声明 QuoteProvider(Protocol)，并实现 quote_batch(shipments, provider)；更换报价对象时，调度函数应保持不变。",
+    "description": "同一张运单可以交给不同承运商。声明 QuoteProvider(Protocol)，并实现 quote_batch(shipments, provider)；更换报价对象时，调度函数应保持不变。\n\n本题提供已验证的 Shipment 运单类，可直接使用；它只负责运单数据，不包含 QuoteProvider 或 quote_batch。你需要声明报价协议并完成批量调度。\n\n1. QuoteProvider 继承 typing.Protocol，声明 quote(self, shipment: Shipment) -> int。一个提供 quote 方法的普通对象可以参与，不要求继承具体承运商类。\n2. quote_batch 按输入顺序对每张运单恰好调用一次 provider.quote，返回 [(identifier, cents), ...]。相同 identifier 不意味着同一运单，不得私自去重或缓存。\n3. 金额必须严格是非负 int；True、False、浮点、字符串、None 和负数都抛 ValueError。非法金额后不再调用后续运单；承运商自身异常保留原对象向上传播。\n4. 空输入返回空列表且零调用。提供者可以有状态，因此检查和输出必须复用同一次 quote 的返回值。",
+    "contract": [
+      "QuoteProvider 继承 typing.Protocol，声明 quote(self, shipment: Shipment) -> int。一个提供 quote 方法的普通对象可以参与，不要求继承具体承运商类。",
+      "quote_batch 按输入顺序对每张运单恰好调用一次 provider.quote，返回 [(identifier, cents), ...]。相同 identifier 不意味着同一运单，不得私自去重或缓存。",
+      "金额必须严格是非负 int；True、False、浮点、字符串、None 和负数都抛 ValueError。非法金额后不再调用后续运单；承运商自身异常保留原对象向上传播。",
+      "空输入返回空列表且零调用。提供者可以有状态，因此检查和输出必须复用同一次 quote 的返回值。"
+    ],
+    "starter": "from typing import Protocol\n\n# 本题提供 Shipment；请补充协议方法，而不是重新实现运单。\nclass QuoteProvider(Protocol):\n    pass\n\ndef quote_batch(shipments, provider):\n    # 对每张运单报价一次，检查金额并按原顺序返回。\n    raise NotImplementedError('请实现结构协议与批量报价')\n",
+    "solution": "from typing import Protocol\n\nclass QuoteProvider(Protocol):\n    def quote(self, shipment: Shipment) -> int:\n        ...\n\ndef quote_batch(shipments: list[Shipment], provider: QuoteProvider) -> list[tuple[str, int]]:\n    result = []\n    for shipment in shipments:\n        cents = provider.quote(shipment)\n        if type(cents) is not int or cents < 0:\n            raise ValueError('provider must return nonnegative integer cents')\n        result.append((shipment.identifier, cents))\n    return result\n",
+    "concept": "把协作者作为参数传入，就能在不改调度逻辑的情况下替换实现。Protocol 描述需要的方法；注解不代替运行时金额校验。不要为了检查一次、输出一次而调用两次有状态的承运商。",
+    "hint": "先想象一个不继承任何基类但有 quote 方法的对象。调度函数只需要这个方法，而不是某个固定承运商名字。",
+    "hintLevels": [
+      "先想象一个不继承任何基类但有 quote 方法的对象。调度函数只需要这个方法，而不是某个固定承运商名字。",
+      "遍历运单时先保存一次报价结果，再检查严格类型和范围，通过后追加二元组。空输入自然不进入循环。",
+      "声明带返回 int 注解的结构协议。批量函数既不按 identifier 去重，也不重试或吞异常；输入顺序和实际调用顺序应一致。"
+    ],
+    "boundary": "本轮验证结构协议声明与动态行为，没有运行 mypy/pyright 等静态类型检查器。runtime_checkable 也不提供完整参数或返回类型验证。中途异常不会撤销此前已发生的外部报价效果。",
+    "transfer": "迁移练习（未自动评分）：添加按地区收最低价的新承运商，保持 quote_batch 与旧回归不变；独立计算新政策期望，再给有状态对象设计能抓住重复调用的测试。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "provider",
+    "checks": [],
+    "function": "quote_batch",
+    "targetSymbols": [
+      "QuoteProvider",
+      "quote_batch"
+    ],
+    "prerequisites": [
+      "protocol-shipment",
+      "workshop-composition"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "dataclasses",
+      "typing"
+    ],
+    "worldActions": [
+      {
+        "id": "replace-carrier",
+        "prompt": "把按重量报价的承运商换成免费承运商。",
+        "observe": "调度函数不变，回执金额随提供者改变。"
+      },
+      {
+        "id": "stateful-carrier",
+        "prompt": "让有状态承运商处理两张同名、不同重量的运单。",
+        "observe": "仍按顺序各调用一次，不能去重或重复报价。"
+      },
+      {
+        "id": "reject-false-money",
+        "prompt": "让承运商返回 True 或负数。",
+        "observe": "无效金额被拒绝，后续运单没有偷偷执行。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "同一张运单可以交给不同承运商。声明 QuoteProvider(Protocol)，并实现 quote_batch(shipments, provider)；更换报价对象时，调度函数应保持不变。",
+      "after": "这组约定已通过：可替换承运商。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "from dataclasses import dataclass\n\n@dataclass(frozen=True)\nclass Shipment:\n    identifier: str\n    weights: tuple[int, ...]\n\n    def __post_init__(self):\n        if type(self.identifier) is not str:\n            raise TypeError('identifier must be str')\n        name = self.identifier.strip()\n        if not name:\n            raise ValueError('identifier must not be blank')\n        weights = tuple(self.weights)\n        if not weights or any(type(value) is not int or value <= 0 for value in weights):\n            raise ValueError('weights must contain positive integers, excluding bool')\n        object.__setattr__(self, 'identifier', name)\n        object.__setattr__(self, 'weights', weights)\n",
+    "supportDescription": "本题提供已验证的 Shipment 运单类，可直接使用；它只负责运单数据，不包含 QuoteProvider 或 quote_batch。你需要声明报价协议并完成批量调度。",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/protocols_solution.py",
+      "selectedDefinitions": [
+        "QuoteProvider",
+        "quote_batch"
+      ],
+      "embeddedSnapshotSha256": "a3931e4f192f59240587e7a8937a611e1cdea9c8afbd5f862b827b281980934d",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  },
+  {
+    "id": "protocol-stream",
+    "title": "逐行货流",
+    "topic": "生成器 · 惰性读取 · 异常来源",
+    "brief": "档案馆的订单很长，皮皮暂时只要下一份。完成 stream_orders(open_source)，先只创建货流，再取一条并提前关闭；观察后面的坏行有没有被过早读取。",
+    "description": "档案馆的订单很长，皮皮暂时只要下一份。完成 stream_orders(open_source)，先只创建货流，再取一条并提前关闭；观察后面的坏行有没有被过早读取。\n\n1. open_source 无参返回可迭代文本行且有 close() 的源；本题约定 close 不抛错。调用 stream_orders 只创建生成器，第一次 next 才打开，未开始就 close 不打开源。\n2. 每次 next 只读取到下一个有效结果，不能先 list(source)。忽略空白行，但错误行号按全部物理行从 1 计数。\n3. 非空行必须是 JSON 对象，恰好含 id/qty；id 严格是非空白 str，qty 严格是正 int 并排除 bool。返回解析得到的原字典，不 strip 或改写 id。\n4. JSON 或结构错误抛 OrderFormatError(line_number)，并用 __cause__ 保留原解析/验证错误；源本身的 OSError 保留原对象，不能伪装成格式错误。\n5. 正常读完、消费方显式提前 close、解析失败和读取失败都关闭源恰好一次。starter 已给出错误类型，不需要改它来掩盖失败。",
+    "contract": [
+      "open_source 无参返回可迭代文本行且有 close() 的源；本题约定 close 不抛错。调用 stream_orders 只创建生成器，第一次 next 才打开，未开始就 close 不打开源。",
+      "每次 next 只读取到下一个有效结果，不能先 list(source)。忽略空白行，但错误行号按全部物理行从 1 计数。",
+      "非空行必须是 JSON 对象，恰好含 id/qty；id 严格是非空白 str，qty 严格是正 int 并排除 bool。返回解析得到的原字典，不 strip 或改写 id。",
+      "JSON 或结构错误抛 OrderFormatError(line_number)，并用 __cause__ 保留原解析/验证错误；源本身的 OSError 保留原对象，不能伪装成格式错误。",
+      "正常读完、消费方显式提前 close、解析失败和读取失败都关闭源恰好一次。starter 已给出错误类型，不需要改它来掩盖失败。"
+    ],
+    "starter": "class OrderFormatError(ValueError):\n    def __init__(self, line_number):\n        self.line_number = line_number\n        super().__init__(f'invalid order on line {line_number}')\n\ndef stream_orders(open_source):\n    # 直到第一次 next 才打开；每次只读取到下个结果。\n    raise NotImplementedError('请实现惰性订单货流与清理')\n    yield\n",
+    "solution": "import json\n\nclass OrderFormatError(ValueError):\n    def __init__(self, line_number):\n        self.line_number = line_number\n        super().__init__(f'invalid order on line {line_number}')\n\ndef stream_orders(open_source):\n    source = open_source()\n    try:\n        for line_number, line in enumerate(source, 1):\n            if not line.strip():\n                continue\n            try:\n                record = json.loads(line)\n                if type(record) is not dict or set(record) != {'id', 'qty'}:\n                    raise ValueError('expected id and qty')\n                if type(record['id']) is not str or not record['id'].strip():\n                    raise ValueError('id must be nonblank str')\n                if type(record['qty']) is not int or record['qty'] <= 0:\n                    raise ValueError('qty must be a positive integer')\n            except ValueError as error:\n                raise OrderFormatError(line_number) from error\n            yield record\n    finally:\n        source.close()\n",
+    "concept": "含 yield 的函数不一定真正惰性：如果先把源读成 list，代价已经发生。生成器拥有它取得的源，finally 负责退出时清理；for 的 break 不保证仍被引用的生成器立即关闭。",
+    "hint": "分开记录“创建、打开、读一行、返回一项、关闭”。创建生成器时应没有打开或读取事件。",
+    "hintLevels": [
+      "分开记录“创建、打开、读一行、返回一项、关闭”。创建生成器时应没有打开或读取事件。",
+      "在逐行循环中 enumerate 物理行；先跳过空白，再解析并检查结构。只捕获解析和结构校验中的错误，不能把源读取错误一起改名。",
+      "外层 try/finally 管理源；内层把 ValueError 链接为 OrderFormatError。每找到一条合格记录就 yield，别改字段，也别预读后面的行。"
+    ],
+    "boundary": "源是浏览器内存中的可观察对象，未证明宿主文件系统或网络读取。这里只处理有限同步文本流，close 不抛错；双故障清理由闸门题处理。无限源、异步生成器、重连与背压仍未验证。",
+    "transfer": "迁移练习（未自动评分）：从日志里取前两条 WARNING，加入空行、无关行和坏尾部，解释物理行号与筛选序号的不同，并明确谁负责提前关闭。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "stream",
+    "checks": [],
+    "function": "stream_orders",
+    "targetSymbols": [
+      "OrderFormatError",
+      "stream_orders"
+    ],
+    "prerequisites": [
+      "protocol-lifecycle",
+      "archive-json"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "json"
+    ],
+    "worldActions": [
+      {
+        "id": "defer-opening",
+        "prompt": "只创建生成器，然后关闭它。",
+        "observe": "打开次数和读取次数都为零。"
+      },
+      {
+        "id": "read-prefix",
+        "prompt": "只取第一份订单，再显式 close。",
+        "observe": "后面的坏尾部未读取，源关闭一次。"
+      },
+      {
+        "id": "error-origin",
+        "prompt": "在空行后放一条坏 JSON，再比较源读取故障。",
+        "observe": "格式错误保留物理行号与 cause，读取错误仍是原 OSError。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "档案馆的订单很长，皮皮暂时只要下一份。完成 stream_orders(open_source)，先只创建货流，再取一条并提前关闭；观察后面的坏行有没有被过早读取。",
+      "after": "这组约定已通过：逐行货流。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "",
+    "supportDescription": "",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/streams_solution.py",
+      "selectedDefinitions": [
+        "OrderFormatError",
+        "stream_orders"
+      ],
+      "embeddedSnapshotSha256": "b70a809ecae094c0f49f469b882cb661d3bccedb1c3e17f1d3de131b844dac82",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  },
+  {
+    "id": "protocol-pipeline",
+    "title": "够数就关闸",
+    "topic": "生成管线 · 早停 · 所有权传递",
+    "brief": "分拣口只需要前 limit 份符合规则的订单。完成 take_matching(open_source, predicate, limit)，在最后一份交到皮皮手上之前关好上游，不再读取坏尾部。",
+    "description": "分拣口只需要前 limit 份符合规则的订单。完成 take_matching(open_source, predicate, limit)，在最后一份交到皮皮手上之前关好上游，不再读取坏尾部。\n\n本题提供已验证的 OrderFormatError 和 stream_orders(open_source)，可直接调用。它们负责逐行读取、校验及源关闭，不包含 take_matching；你负责筛选、数量限制和外层关闭传播。\n\n1. 返回生成器。limit 必须严格是非负 int，排除 bool；非法值在迭代开始时抛 ValueError。limit=0 不打开源、不调用 predicate。\n2. 按源顺序筛选，最多返回 limit 条匹配记录。获得第 limit 条匹配后，先关闭内部生成器，再 yield 该记录，不能读取它之后的坏尾部。\n3. 未达到上限时继续按需读取；消费方显式提前 close 外层时关闭内层。没有匹配时正常耗尽并关闭。\n4. predicate 每条输入只调用一次；predicate 或上游失败时保留原异常并关闭内部生成器。上游负责关闭源，不能再直接重复关闭底层源。",
+    "contract": [
+      "返回生成器。limit 必须严格是非负 int，排除 bool；非法值在迭代开始时抛 ValueError。limit=0 不打开源、不调用 predicate。",
+      "按源顺序筛选，最多返回 limit 条匹配记录。获得第 limit 条匹配后，先关闭内部生成器，再 yield 该记录，不能读取它之后的坏尾部。",
+      "未达到上限时继续按需读取；消费方显式提前 close 外层时关闭内层。没有匹配时正常耗尽并关闭。",
+      "predicate 每条输入只调用一次；predicate 或上游失败时保留原异常并关闭内部生成器。上游负责关闭源，不能再直接重复关闭底层源。"
+    ],
+    "starter": "# 本题提供 stream_orders 与 OrderFormatError。\ndef take_matching(open_source, predicate, limit):\n    # 验证 limit，按需筛选，并在最后匹配 yield 前关闭上游。\n    raise NotImplementedError('请实现有明确关闭责任的早停管线')\n    yield\n",
+    "solution": "def take_matching(open_source, predicate, limit):\n    if type(limit) is not int or limit < 0:\n        raise ValueError('limit must be a nonnegative integer')\n    if limit == 0:\n        return\n    orders = stream_orders(open_source)\n    count = 0\n    try:\n        for order in orders:\n            if predicate(order):\n                count += 1\n                if count == limit:\n                    orders.close()\n                    yield order\n                    return\n                yield order\n    finally:\n        orders.close()\n",
+    "concept": "管线合同同时包含返回值、读取次数和关闭时刻。只用 list(...) 比较结果会漏掉悬挂资源；最后一次 yield 会暂停执行，所以应在把最后一项交出去之前关闭。外层拥有内层，内层拥有源。",
+    "hint": "先模拟 limit=0 和 limit=1。把“发现最后一个匹配、关闭、把记录交出”按合同排序。",
+    "hintLevels": [
+      "先模拟 limit=0 和 limit=1。把“发现最后一个匹配、关闭、把记录交出”按合同排序。",
+      "用计数器只数匹配项；到上限时先 orders.close()，再 yield 并结束。不要依赖下一次 next 才触发关闭。",
+      "在外层 try/finally 中管理内部生成器，应对消费方提前 close 和 predicate 失败。不要把上游先变成 list，也不要用 islice 代替资源归属规则。"
+    ],
+    "boundary": "沿用有限同步源且 close 不抛错的合同。实现正确的早停并不证明支持无限规模、异步背压或网络恢复；去重顺序和内存上限是另一个任务。",
+    "transfer": "迁移练习（未自动评分）：加入按 ID 去重，比较“先去重再限额”和“先限额再去重”的结果，重新规定拥有者和内存边界，再用重复记录与过滤失败检验。",
+    "chapter": 6,
+    "islandId": "protocol",
+    "reward": 20,
+    "xp": 20,
+    "judgeKind": "protocol",
+    "protocolTask": "pipeline",
+    "checks": [],
+    "function": "take_matching",
+    "targetSymbols": [
+      "take_matching"
+    ],
+    "prerequisites": [
+      "protocol-stream",
+      "protocol-lifecycle"
+    ],
+    "prerequisitePolicy": "advisory",
+    "kind": "practice",
+    "language": "python",
+    "capability": "browser-python-protocol",
+    "requiredImports": [
+      "json"
+    ],
+    "worldActions": [
+      {
+        "id": "zero-capacity",
+        "prompt": "把 limit 设成 0。",
+        "observe": "没有开源、读行或筛选事件。"
+      },
+      {
+        "id": "close-before-last",
+        "prompt": "只需要一条匹配，在它后面放坏行。",
+        "observe": "取得匹配结果的当下源已关闭，坏尾部未读取。"
+      },
+      {
+        "id": "close-propagates",
+        "prompt": "先取一项再关闭外层；另让 predicate 抛出错误。",
+        "observe": "两条路径都清理内层，错误路径保留原异常。"
+      }
+    ],
+    "scene": {
+      "district": "雾港协议工坊",
+      "before": "分拣口只需要前 limit 份符合规则的订单。完成 take_matching(open_source, predicate, limit)，在最后一份交到皮皮手上之前关好上游，不再读取坏尾部。",
+      "after": "这组约定已通过：够数就关闸。保留运行证据，再试一次不同输入。",
+      "requiresCurrentSubmissionPass": true
+    },
+    "supportCode": "import json\n\nclass OrderFormatError(ValueError):\n    def __init__(self, line_number):\n        self.line_number = line_number\n        super().__init__(f'invalid order on line {line_number}')\n\ndef stream_orders(open_source):\n    source = open_source()\n    try:\n        for line_number, line in enumerate(source, 1):\n            if not line.strip():\n                continue\n            try:\n                record = json.loads(line)\n                if type(record) is not dict or set(record) != {'id', 'qty'}:\n                    raise ValueError('expected id and qty')\n                if type(record['id']) is not str or not record['id'].strip():\n                    raise ValueError('id must be nonblank str')\n                if type(record['qty']) is not int or record['qty'] <= 0:\n                    raise ValueError('qty must be a positive integer')\n            except ValueError as error:\n                raise OrderFormatError(line_number) from error\n            yield record\n    finally:\n        source.close()\n",
+    "supportDescription": "本题提供已验证的 OrderFormatError 和 stream_orders(open_source)，可直接调用。它们负责逐行读取、校验及源关闭，不包含 take_matching；你负责筛选、数量限制和外层关闭传播。",
+    "supportExecution": "execute supportCode first, then learner code, in one registered module namespace",
+    "reference": "v0.3 advanced native contracts; AE26 skill links F03/F04, not full-module completion",
+    "sourceReference": {
+      "path": "v0.3/advanced/streams_solution.py",
+      "selectedDefinitions": [
+        "take_matching"
+      ],
+      "embeddedSnapshotSha256": "b70a809ecae094c0f49f469b882cb661d3bccedb1c3e17f1d3de131b844dac82",
+      "snapshotNote": "Function/class bodies preserve the reviewed native behavior; prose docstrings omitted."
+    },
+    "releaseStatus": "implemented-local-candidate",
+    "verification": {
+      "content": "structure-checked",
+      "protocolJudge": "see review/formal-cpython.json",
+      "pyodide": "see review/formal-pyodide.json",
+      "browserInteraction": "see browser/evidence/browser-playthrough.json",
+      "learnerMastery": "unobserved"
+    },
+    "review": {
+      "intervalDays": [
+        1,
+        7,
+        21
+      ],
+      "minimumUnassistedPasses": 2,
+      "requiresDifferentContext": true,
+      "status": "unobserved"
+    },
+    "transferStatus": "designed-not-auto-graded"
+  }
+]

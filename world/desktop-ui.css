@@ -1,0 +1,230 @@
+/* Desktop composition. Existing game/session IDs remain the only action ports. */
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip-path: inset(50%); white-space: nowrap; border: 0;
+}
+.panel:has(#workshopPanel:not([hidden])) {
+  inset: 24px 3%; width: auto; max-width: 1460px; margin-inline: auto;
+  background: #172c26; border: 1px solid #aa9469; border-radius: 7px;
+  box-shadow: 0 20px 80px #101f2688; backdrop-filter: none;
+}
+.panel:has(#workshopPanel:not([hidden])) .panel-header {
+  min-height: 76px; padding: 12px 26px; background: #253b30; border: 0;
+}
+.panel:has(#workshopPanel:not([hidden])) .panel-header h2 { margin-top: 3px; }
+#workshopPanel .workshop-scroll {
+  display: grid; grid-template-columns: minmax(275px, .37fr) minmax(0, 1fr);
+  gap: 0; padding: 0; overflow: hidden; min-height: 0;
+}
+.workbench-column { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #8e9975 transparent; }
+.workbench-task { overflow-wrap: anywhere; padding: 22px 26px; background: #e8dcbf; color: #354738; --ink: #354738; --muted: #6a614b; --gold: #406044; }
+.workbench-writing { display: grid; grid-template-rows: minmax(275px, 1fr) minmax(130px, .42fr); min-width: 0; min-height: 0; }
+.workbench-code { padding: 20px 26px 10px; display: flex; flex-direction: column; }
+.workbench-result { padding: 17px 26px 22px; border-top: 1px solid #73806355; background: #20342a; }
+#workshopPanel .lesson-meta { font-size: 13px; letter-spacing: 0; gap: 8px; color: #5d6748; }
+#workshopPanel .lesson-meta span:last-child { color: #74684e; }
+#workshopPanel .lesson-intro > p { font-size: 17px; line-height: 1.8; margin: 16px 0 22px; color: #364538; }
+#workshopPanel .quest-route { background: none; border: 0; border-block: 1px solid #a99a7466; padding: 12px 0; gap: 8px; margin-bottom: 19px; border-radius: 0; }
+#workshopPanel .quest-route strong { font-size: 15px; white-space: normal; }
+#workshopPanel .quest-route small { font-size: 12px; color: #73694e; }
+#workshopPanel .quest-route .icon, #workshopPanel .help-disclosures > details > summary > .icon { filter: brightness(.45) sepia(.4); }
+#workshopPanel .learning-status, #workshopPanel .scope-note { font-size: 14px; line-height: 1.7; color: #695b43; background: none; }
+#workshopPanel .learning-history-disclosure { font-size: 13px; color: #6b6149; margin-block: 12px; }
+#workshopPanel .help-disclosures { grid-template-columns: minmax(0, 1fr); min-width: 0; gap: 0; margin: 14px 0; }
+#workshopPanel .help-disclosures details { min-width: 0; background: none; border: 0; border-bottom: 1px solid #a4936d60; border-radius: 0; }
+#workshopPanel .help-disclosures summary { font-size: 16px; min-height: 48px; padding: 10px 0; line-height: 1.55; }
+#workshopPanel .help-content { min-width: 0; overflow-wrap: anywhere; padding: 4px 0 18px; color: #3e4938; font-size: 16px; line-height: 1.8; }
+#workshopPanel .help-content h3 { font-size: 17px; }
+#workshopPanel .help-content p { color: #3e4938; margin-block: 10px; }
+#workshopPanel .help-content pre { max-width: 100%; box-sizing: border-box; overflow: auto; white-space: pre; overflow-wrap: normal; font: 15px/1.75 var(--code); padding: 12px; background: #d9ccaa; color: #304b38; border-radius: 3px; }
+#workshopPanel .help-content .text-button { white-space: normal; text-align: left; }
+#workshopPanel .help-content .knowledge-reader code { color: #31543d; background: #d5c69f66; }
+#workshopPanel .help-content .knowledge-example figcaption { color: #716148; }
+#workshopPanel .help-content .secondary-button { background: #405c43; color: #fff0d2; font-size: 14px; }
+#workshopPanel .help-content details > summary { font-size: 14px; }
+#workshopPanel .example-environment { font-size: 13px; color: #73654a; margin-top: 18px; }
+#workshopPanel .code-area { display: flex; flex-direction: column; flex: 1 0 200px; min-height: 200px; border: 0; background: #132720; border-radius: 3px; }
+#workshopPanel .code-toolbar { flex: none; height: 54px; padding: 0 4px 0 14px; background: #1b3027; border: 0; font-size: 14px; }
+#workshopPanel .code-toolbar > div { gap: 4px; }
+#workshopPanel .code-toolbar .icon-button { min-width: 36px; min-height: 40px; }
+#workshopPanel .editor-body, #workshopPanel .editor-body.large-text { flex: 1; height: auto; min-height: 135px; }
+#workshopPanel .editor-body textarea { min-height: 135px; resize: none; padding-top: 16px; }
+#workshopPanel .editor-body pre { width: 48px; padding: 16px 10px 14px 0; color: #95aa96; }
+#workshopPanel .editor-shortcuts { font-size: 12px; color: #b0bfa3; padding: 3px 14px; }
+#workshopPanel .editor-shortcuts summary { cursor: pointer; width: max-content; padding: 3px 0; }
+#workshopPanel .editor-help { font-size: 12px; line-height: 1.65; padding: 6px 0; border: 0; }
+#workshopPanel .editor-recovery { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 3px 16px; flex: none; margin: 8px 0 0; padding: 0; border: 0; background: none; }
+#workshopPanel .editor-recovery p { font-size: 13px; margin: 4px 0; line-height: 1.65; }
+#workshopPanel #editorTools { font-size: 13px; color: #c6c8ac; }
+#workshopPanel #editorTools summary { cursor: pointer; padding: 5px 0; }
+#workshopPanel .editor-tools-actions { display: flex; flex-wrap: wrap; gap: 4px 16px; justify-content: flex-end; }
+#workshopPanel .editor-recovery button { min-height: 32px; padding: 4px 0; font-size: 13px; }
+#workshopPanel .reference-preview { flex: none; margin-top: 14px; font-size: 16px; }
+#workshopPanel .console { border: 0; padding: 0; }
+#workshopPanel .console-title { flex-wrap: wrap; gap: 4px 12px; padding-bottom: 0; }
+#workshopPanel .console-title h3 { font-size: 18px; }
+#workshopPanel .console-title > span { font-size: 13px; }
+#workshopPanel .console pre { color: #e5e4c7; margin-block: 12px; font-size: 16px; }
+#workshopPanel .checks, #workshopPanel .checks li small, #workshopPanel .first-failure-feedback p, #workshopPanel .first-failure-feedback summary, #workshopPanel .first-failure-feedback h4, #workshopPanel .first-failure-feedback span { font-size: 15px; line-height: 1.75; }
+#workshopPanel .run-checks > summary { cursor: pointer; color: #c6cfb4; font-size: 14px; padding-block: 6px; }
+#workshopPanel .failure-next { color: #dfc6a1; font-size: 15px; line-height: 1.75; margin: 12px 0; }
+#workshopPanel .checks .icon { width: 18px; height: 18px; margin-top: 4px; }
+#workshopPanel .success-actions { justify-content: flex-end; gap: 16px; }
+#workshopPanel .success-actions button { flex: none; font-size: 14px; min-height: 38px; padding: 6px 14px; }
+#workshopPanel .workshop-footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex: none; padding: 8px 26px; min-height: 43px; background: #2a3e30; box-shadow: none; border: 0; }
+#workshopPanel .runtime-row { flex: 1; margin: 0; justify-content: flex-start; font-size: 13px; line-height: 1.55; }
+#workshopPanel .runtime-row .text-button { font-size: 13px; }
+#workshopPanel .run-row { flex: none; }
+#workshopPanel .run-row > span { max-width: none; font-size: 12px; color: #c9ceb2; }
+#workshopPanel .run-button, #workshopPanel .stop-button { min-width: 128px; min-height: 39px; padding: 7px 14px; font-size: 15px; margin-left: 9px; }
+
+/* A real two-page DOM sits on the supplied, unmodified blank book plate. */
+.panel:has(#journalPanel:not([hidden])) {
+  inset: 0; width: 100%; border: 0; border-radius: 0; max-width: none;
+  background: #40291d; box-shadow: none; backdrop-filter: none;
+  color: #3e3427; --ink: #3e3427; --muted: #6c5940; --gold: #5a472c;
+}
+.panel:has(#journalPanel:not([hidden])) .panel-header {
+  position: absolute; z-index: 2; inset: 0 0 auto; min-height: 64px;
+  padding: 12px 24px; border: 0; background: linear-gradient(#2c201ee8, #2c201e00);
+  color: #ffedc7; pointer-events: none;
+}
+.panel:has(#journalPanel:not([hidden])) .panel-header > div { display: flex; align-items: baseline; gap: 16px; }
+.panel:has(#journalPanel:not([hidden])) .panel-header h2 { margin: 0; font-size: 24px; text-shadow: 0 2px 3px #231b17; }
+.panel:has(#journalPanel:not([hidden])) .panel-header .eyebrow { color: #f6dab0; }
+.panel:has(#journalPanel:not([hidden])) .panel-header button { pointer-events: auto; background: #293c30ed; border: 1px solid #c4ad76; }
+.panel:has(#journalPanel:not([hidden])) .panel-notice { position: absolute; z-index: 3; top: 70px; left: 20%; right: 20%; border: 1px solid #d5b974; border-radius: 5px; }
+#journalPanel { display: grid; place-items: center; position: relative; min-height: 0; }
+.journal-spread {
+  position: relative; width: min(100vw, calc(100vh * 1586 / 992));
+  height: min(100vh, calc(100vw * 992 / 1586)); flex: none;
+  background: none;
+  isolation: isolate;
+}
+#journalTabs {
+  position: absolute; top: 11.4%; left: 21%; right: 21%; z-index: 1;
+  justify-content: center; flex-wrap: nowrap; gap: 8px; margin: 0; padding: 0; border: 0;
+}
+#journalTabs button {
+  min-width: 78px; min-height: 44px; padding: 7px 16px; border-radius: 5px 5px 0 0;
+  background: #3f5b42; color: #ffefce; border: 1px solid #c1ab72;
+  font-size: var(--text-control); font-weight: 700; box-shadow: 0 3px 4px #2c23194d;
+}
+#journalTabs button[aria-selected="true"] { background: #e6bc70; color: #342b20; border-color: #ffe1a3; transform: translateY(-4px); }
+.journal-page-pair { position: absolute; inset: 22.5% 17.7% 16.6%; display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); column-gap: 6.3%; }
+.journal-leaf { min-width: 0; min-height: 0; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #9b8159 transparent; padding: 0 10px 16px 0; scroll-padding-block: 8px; }
+.journal-leaf-right { padding: 0 0 16px 10px; }
+#journalPanel .icon { filter: brightness(0) saturate(100%) invert(27%) sepia(21%) saturate(573%) hue-rotate(41deg) brightness(95%) contrast(90%); }
+#journalPanel :is(button,summary,input,select,[tabindex]):focus-visible { outline: 3px solid #365a42; outline-offset: 3px; }
+#journalPanel :is(p,small,label,summary,.scope-note,.text-button,.history-details) { font-size: var(--text-control); line-height: 1.65; letter-spacing: 0; }
+#journalPanel :is(p,.scope-note,.journal-current-copy small,.journal-learning-heading .eyebrow,.journal-learning-heading p,.journal-results-heading,.journal-selection-notice,.journal-unavailable) { color: #675439; }
+#journalPanel .journal-intro, #journalPanel .journal-page-heading { font-size: 23px; color: #3d432d; margin: 0 0 18px; line-height: 1.4; font-weight: 700; }
+#journalPanel .journal-page-note { margin: 18px 0 0; font-size: var(--text-small); }
+#journalPanel .cat-choice { background: transparent; border: 0; border-bottom: 2px solid #b7a074; border-radius: 0; padding: 12px 0; gap: 6px; box-shadow: none; }
+#journalPanel .cat-choice[aria-pressed="true"] { border-color: #476442; background: #90a36322; }
+#journalPanel .cat-choice strong { font-size: 23px; }
+#journalPanel .cat-choice > span:not(.portrait-art) { color: #5b5038; font-size: 15px; }
+#journalPanel .cat-choice > small { color: #6c5940; font-size: 13px; }
+#journalPanel .cat-choice b { color: #405436; font-size: 15px; border-color: #b8a073; }
+#journalPanel .journal-island-tools { display: grid; gap: 12px; }
+#journalPanel .journal-island-tools > button { width: 100%; max-width: none; text-align: left; justify-content: flex-start; }
+#journalPanel :is(.primary-button,.secondary-button,.quest-shortcut) { font-size: var(--text-control); border-radius: 4px; box-shadow: none; min-height: 44px; padding: 9px 12px; }
+#journalPanel .primary-button { color: #fff1d1; border: 1px solid #31543a; background: #466346; }
+#journalPanel :is(.secondary-button,.quest-shortcut) { color: #354c35; background: #e1ce9c99; border: 1px solid #a58d5a; }
+#journalPanel .primary-button .icon { filter: invert(93%) sepia(14%) saturate(357%); }
+#journalPanel button:disabled { cursor: not-allowed; opacity: .58; }
+#journalPanel .preview-label { padding: 0; background: none; text-shadow: none; color: #6b5c42; font-size: var(--text-small); letter-spacing: 0; }
+#journalPanel .journal-stats { border: 0; border-block: 1px solid #ae9564; border-radius: 0; background: none; padding: 16px 0; margin: 20px 0; gap: 14px; }
+#journalPanel .journal-stats > span + span { border-color: #ae9564; padding-left: 16px; }
+#journalPanel .journal-stats small { font-size: var(--text-small); color: #675439; }
+#journalPanel .journal-stats strong { font-size: 25px; color: #3d5035; }
+#journalPanel .journal-learning-heading { margin: 0 0 12px; }
+#journalPanel .journal-learning-heading h3 { font-size: 23px; line-height: 1.4; margin: 6px 0 10px; }
+#journalPanel .journal-learning-heading .eyebrow { font-size: 12px; }
+#journalPanel .journal-learning-heading p { font-size: var(--text-small); }
+#journalPanel #courseAccessSummary { margin: 10px 0; font-size: var(--text-small); }
+#journalPanel .journal-learning-summary { background: transparent; border: 0; border-block: 1px solid #ac9467; border-radius: 0; gap: 6px; margin: 12px 0; }
+#journalPanel .journal-learning-summary > div { background: none; padding: 12px 2px; }
+#journalPanel .journal-learning-summary strong { font-size: 23px; color: #3d5035; }
+#journalPanel .journal-learning-summary span { font-size: 12px; color: #675439; }
+#journalPanel .journal-current { display: flex; flex-wrap: wrap; background: #adbb7a29; border: 0; border-left: 3px solid #748650; border-radius: 0; box-shadow: none; padding: 10px 12px; margin: 14px 0; gap: 9px; }
+#journalPanel .journal-current-copy { width: 100%; }
+#journalPanel .journal-current-copy strong { color: #3e462e; font-size: var(--text-control); }
+#journalPanel .journal-current-copy small { font-size: var(--text-small); }
+#journalPanel .journal-current :is(button,p) { width: 100%; }
+#journalPanel .journal-current-notes { width: 100%; font-size: var(--text-small); }
+#journalPanel .journal-current-notes > summary { cursor: pointer; font-size: var(--text-small); color: #5b513b; }
+#journalPanel .journal-tools { gap: 12px 10px; }
+#journalPanel .journal-tools :is(label,input,select) { font-size: var(--text-small); color: #4c412c; }
+#journalPanel .journal-search input, #journalPanel .course-select select { min-height: 44px; padding: 8px 10px; border: 1px solid #9e885e; background: #fff0d080; color: #3c3928; border-radius: 3px; }
+#journalPanel .journal-search input::placeholder { color: #746245; }
+#journalPanel .journal-results-heading { min-height: 32px; margin-bottom: 8px; flex-wrap: wrap; font-size: var(--text-small); }
+#journalPanel .journal-results-heading button { color: #365237; font-size: var(--text-small); min-height: 32px; padding: 2px; }
+#journalPanel .journal-entries { display: block; }
+#journalPanel .course-entry { background: none; border: 0; border-bottom: 1px solid #b79c6b; border-radius: 0; padding: 0; box-shadow: none; }
+#journalPanel .course-entry[data-current="true"] { background: #76985b20; box-shadow: inset 3px 0 #67804a; }
+#journalPanel .course-row-main { display: grid; grid-template-columns: 27px minmax(0,1fr) auto; align-items: center; gap: 7px; min-height: 60px; padding: 5px 48px 5px 7px; }
+#journalPanel .course-row-main .course-ordinal { color: #6b5a3e; font-size: 16px; }
+#journalPanel .course-row-main h4 { font-size: 16px; font-weight: 500; line-height: 1.5; margin: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+#journalPanel .course-row-main .course-enter { margin: 0; min-height: 40px; max-width: 110px; padding: 6px 9px; font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+#journalPanel .course-row-details { margin: 0; padding: 0; }
+#journalPanel .course-row-details > summary { position: absolute; right: 0; top: 8px; width: 46px; min-height: 44px; padding: 10px 4px; list-style: none; font-size: 13px; color: #38553a; text-align: center; cursor: pointer; }
+#journalPanel .course-row-details > summary::-webkit-details-marker { display: none; }
+#journalPanel .course-row-details[open] > summary { color: #7b482a; text-decoration: underline; text-underline-offset: 4px; }
+#journalPanel .course-row-body { padding: 2px 12px 15px; }
+#journalPanel .course-row-body .course-full-title { color: #343b2c; font-size: var(--text-control); font-weight: 700; margin-bottom: 10px; }
+#journalPanel .course-row-body .course-entry-top { margin: 0; min-height: 0; }
+#journalPanel .course-markers { justify-content: flex-start; margin-bottom: 8px; }
+#journalPanel .course-markers span { color: #485b37; background: #bdc48b55; border-color: #a6a06a; font-size: 12px; }
+#journalPanel .course-row-body :is(p,.course-topic) { font-size: var(--text-small); color: #675439; }
+#journalPanel .course-row-body .learning-badge { display: inline-block; padding: 4px 7px; font-size: 13px; color: #465339; background: #b8c69a55; border: 1px solid #8c9b6b; border-radius: 3px; }
+#journalPanel .course-row-body .learning-badge.guided { color: #5d476c; background: #cec0d333; border-color: #a28aaa; }
+#journalPanel .course-row-body .learning-badge.recheck { color: #75522b; background: #deb66a44; border-color: #ae8a48; }
+#journalPanel .course-row-body .course-access { display: block; font-size: var(--text-small); color: #365237; margin-top: 8px; }
+#journalPanel .course-row-body .course-access[data-access="locked"] { color: #855124; }
+#journalPanel .learning-history, #journalPanel .lesson-access-details { border-color: #a9956d70; color: #655239; }
+#journalPanel :is(.learning-history,.lesson-access-details) > summary { color: #4b5937; font-size: var(--text-small); }
+#journalPanel .learning-history-body { background: #dbc79444; }
+#journalPanel .learning-history-body :is(p,span,strong,time), #journalPanel .learning-timeline li > span { color: #665237; font-size: 13px; }
+#journalPanel .learning-history-body .history-scope, #journalPanel .learning-timeline li { border-color: #8b9a68; }
+#journalPanel .history-compatibility { color: #79512e; font-size: var(--text-small); }
+#journalPanel .discovery-journal { background: none; border: 0; border-block: 1px solid #ae9564; border-radius: 0; padding: 14px 0; }
+#journalPanel .discovery-journal > div { flex-wrap: wrap; }
+#journalPanel .discovery-journal strong { font-size: 20px; color: #3f5438; }
+#journalPanel .discovery-journal .eyebrow { color: #695334; font-size: var(--text-small); }
+#journalPanel .history-details { margin: 0; color: #5e5239; }
+#journalPanel .history-details ol { font-size: var(--text-control); line-height: 1.75; padding-left: 24px; }
+.journey-slots { border: 0; margin: 0; padding: 0; display: grid; gap: 10px; min-width: 0; }
+.journey-slot { display: flex; align-items: center; gap: 12px; min-height: 78px; padding: 12px; border: 1px solid #ae976c; border-radius: 4px; cursor: pointer; background: #fff2cf4d; }
+.journey-slot:has(input:checked) { border-color: #507145; background: #9eb47c40; box-shadow: inset 3px 0 #507145; }
+.journey-slot:focus-within { outline: 3px solid #456742; outline-offset: 3px; }
+.journey-slot input { width: 19px; height: 19px; margin: 0; accent-color: #476442; flex: none; }
+.journey-slot-copy { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.journey-slot-copy strong { font-size: 18px; color: #3e4c32; }
+.journey-slot-summary { font-size: var(--text-small); color: #68573a; overflow-wrap: anywhere; }
+#journalPanel .journey-status { font-size: var(--text-small); margin: 12px 0; min-height: 23px; }
+.journey-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+#journalPanel .journey-actions button { font-size: var(--text-small); }
+#journalPanel .save-card { display: block; padding: 0; border: 0; border-radius: 0; }
+#journalPanel .save-card > .icon { float: left; margin: 3px 9px 0 0; }
+#journalPanel .save-card h3 { font-size: 22px; line-height: 1.5; margin: 0 0 14px; }
+#journalPanel .save-card p { font-size: var(--text-control); color: #675439; line-height: 1.7; margin: 10px 0; }
+#journalPanel .save-card button { margin: 8px 0 0; font-size: var(--text-control); }
+#journalPanel .journal-record-notes { margin: 18px 0; border-top: 1px solid #b79f72; }
+#journalPanel .journal-record-notes summary { cursor: pointer; padding: 12px 0; color: #615234; }
+
+@media (max-height: 760px) {
+  .panel:has(#workshopPanel:not([hidden])) { inset: 10px 2%; }
+  .panel:has(#workshopPanel:not([hidden])) .panel-header { min-height: 65px; padding: 8px 20px; }
+  .panel:has(#workshopPanel:not([hidden])) .panel-header h2 { font-size: 23px; }
+  .workbench-writing { grid-template-rows: minmax(235px, 1fr) minmax(115px, .40fr); }
+  .workbench-code { padding: 14px 20px 8px; }
+  .workbench-task { padding: 16px 22px; }
+  .workbench-result { padding: 13px 20px; }
+}
+@media (max-width: 1100px) {
+  #workshopPanel .workshop-scroll { grid-template-columns: 275px minmax(0, 1fr); }
+  .panel:has(#workshopPanel:not([hidden])) { inset-inline: 10px; }
+  .workbench-code, .workbench-result { padding-inline: 18px; }
+  #workshopPanel .run-button, #workshopPanel .stop-button { min-width: 114px; }
+}

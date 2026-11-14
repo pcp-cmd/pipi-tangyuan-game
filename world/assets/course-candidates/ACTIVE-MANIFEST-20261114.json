@@ -1,0 +1,917 @@
+{
+  "schema": "pipi-course-art/v2",
+  "sourcePreserved": true,
+  "browserLayoutVerified": false,
+  "reviewedArtwork": [
+    {
+      "number": 67,
+      "id": "basics-values",
+      "title": "看清文字和数字",
+      "topic": "表达式 · 类型转换",
+      "file": "images/067-basics-values-v2.png",
+      "sha256": "47c1bc81861be50624d35697bd7da28fa2d7f27edd21656ae6b4dfed4242a74e",
+      "size": [
+        1774,
+        887
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/067-basics-values-v2.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 68,
+      "id": "basics-branches",
+      "title": "按风力选行动",
+      "topic": "if · elif · else",
+      "file": "images/068-basics-branches-v2.png",
+      "sha256": "5de469d20c6ed4789138eb7b6817e8d632cc7ed967d3d42613e09dd2d7d5d70f",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/068-basics-branches-v2.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 69,
+      "id": "basics-while",
+      "title": "遇到停牌再停下",
+      "topic": "while · break · 终止",
+      "file": "images/069-basics-while-v1.png",
+      "sha256": "b15eb6fc5f34600159be9f87c5c39e80d30e33a229be6a7a3e4f2ab6b267ee95",
+      "size": [
+        1774,
+        887
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/069-basics-while-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 70,
+      "id": "basics-slices",
+      "title": "截取一段航行记录",
+      "topic": "切片 · 拆包 · enumerate",
+      "file": "images/070-basics-slices-v1.png",
+      "sha256": "c90d4f7023fe15e7f415634a8b9d97c68ef0ee597a3514c68766a2d397cd6fe2",
+      "size": [
+        1572,
+        1001
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/070-basics-slices-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 71,
+      "id": "basics-scope",
+      "title": "每次调用各有一张草稿",
+      "topic": "局部变量 · return · 作用域",
+      "file": "images/071-basics-scope-v1.png",
+      "sha256": "52f3ae13e0142ed3ded450b3a8ccac26401fe73e3b83ef917187c7119938ad9c",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/071-basics-scope-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 72,
+      "id": "basics-arguments",
+      "title": "把整份参数交给下一站",
+      "topic": "*args · **kwargs · 仅关键字参数",
+      "file": "images/072-basics-arguments-v3.png",
+      "sha256": "f547aa4c197a4acbe6b06982593ee7cdd550d3fc2392603f4dfdb3f9458de09b",
+      "size": [
+        1536,
+        1024
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/072-basics-arguments-v3.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 73,
+      "id": "basics-recursion",
+      "title": "数清嵌套的货箱",
+      "topic": "递归 · 基例 · 调用栈",
+      "file": "images/073-basics-recursion-v1.png",
+      "sha256": "723aa3fce553d6ff854656066e9fdafe952532163cc3bbfa565d4bd319b7cd8b",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/073-basics-recursion-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 74,
+      "id": "engineering-imports",
+      "title": "给工具取清楚的名字",
+      "topic": "模块 · import · 标准库",
+      "file": "images/074-engineering-imports-v1.png",
+      "sha256": "632e80854ee1fe580eb8749fe81c6a9d62f5bf5432f31bd952794433223a35cf",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/074-engineering-imports-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 75,
+      "id": "numeric-ratios",
+      "title": "把小数写成精确比值",
+      "topic": "Fraction · 数值边界 · 精确中点",
+      "file": "images/075-numeric-ratios-v3.png",
+      "sha256": "2ccda6e1bbf5a76a5d76d4ad3dcb90c888cc9ea0a8d12477bb9967c16a9903dc",
+      "size": [
+        1632,
+        963
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/075-numeric-ratios-v3.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 76,
+      "id": "engineering-annotations",
+      "title": "注解不会替你验货",
+      "topic": "类型标注 · 运行时验证",
+      "file": "images/076-engineering-annotations-v2.png",
+      "sha256": "a73d5600530163b01c1f21d8870d496c405c28f1fecb5d6d74a259acfba09ee2",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/076-engineering-annotations-v2.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 77,
+      "id": "engineering-dataclass",
+      "title": "制作不可变坐标卡",
+      "topic": "dataclass · frozen · post_init · hash",
+      "file": "images/077-engineering-dataclass-v2.png",
+      "sha256": "409f641ced5a12bb9167d1c18e76c607c697c3549a7eb71b5b68104ba465c9af",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/077-engineering-dataclass-v2.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 78,
+      "id": "engineering-files",
+      "title": "读完账本再写报告",
+      "topic": "文件I/O · with · UTF-8",
+      "file": "images/078-engineering-files-v1.png",
+      "sha256": "71a85f28782eba46b8ba39f8224d488809b5c2180e794a6c8df4a9852f6f63d5",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/078-engineering-files-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 79,
+      "id": "engineering-csv",
+      "title": "逗号也可能在名字里",
+      "topic": "CSV · 引号 · 数据校验",
+      "file": "images/079-engineering-csv-v1.png",
+      "sha256": "a9c1de98c4af9fc458a78df0945f721f18a638e3695c04beff8b768b9357c561",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/079-engineering-csv-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 80,
+      "id": "engineering-cli",
+      "title": "把命令参数变成配置",
+      "topic": "argparse · 命令行边界",
+      "file": "images/080-engineering-cli-v3.png",
+      "sha256": "d5bf725764dc10b181fb827c9ef017afdc2ccdf696deefa74117fc697ccd8e65",
+      "size": [
+        1536,
+        1024
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/080-engineering-cli-v3.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 81,
+      "id": "engineering-tests",
+      "title": "给工具写一组回归测试",
+      "topic": "测试组织 · 正反例 · 变异检验",
+      "file": "images/081-engineering-tests-v1.png",
+      "sha256": "a056485539c6cc7983ce5e6a561fa6fd15483745b642ab219d423c121e529c2a",
+      "size": [
+        1254,
+        1254
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/081-engineering-tests-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "number": 82,
+      "id": "engineering-report",
+      "title": "交付一份可复查的货运报告",
+      "topic": "文件 · CSV · JSON · 综合项目",
+      "file": "images/082-engineering-report-v1.png",
+      "sha256": "31bf1082a6b0f45b8806fa137f341b9222e6124d247fc7de963fc3a0a663eedb",
+      "size": [
+        1570,
+        1002
+      ],
+      "status": "independently-reviewed-static-candidate-not-integrated",
+      "src": "./assets/course-candidates/082-engineering-report-v1.png",
+      "review": "visually-reviewed-theme-compatible-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "ledger",
+      "src": "./assets/course-candidates/011-ledger-sticker-r3.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "2a06e2a13e4171579ad847311a4404acbb71f070c31496999c782d46d12b6245",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-11-ledger-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "68eb8fbd3eeff683a3becdc8093f6e51d51526f2f81644887975f0dcfb23f7d1"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "stock-class",
+      "src": "./assets/course-candidates/012-stock-class-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "d9f985ef372b9cd8233096dd20b45af70ee0ea22e25353c4589236648eed4fa9",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-12-stock-class-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "e713249a9df79b48944d67b5042e84a49b5a293e3fbfa7112ab0aca98986651a"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "generator",
+      "src": "./assets/course-candidates/013-generator-sticker-r3.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "900e5c0db89bdad6fe73a3fda32210e83c83b47ae43202c264e51b68adf2bc6e",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-13-generator-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "f2c94d26fea37ad8a430ccad04c2d0a37a745566004f20b08f5f660451e51173"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "test-case",
+      "src": "./assets/course-candidates/014-test-case-sticker-r3.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "ff97752e524565987a2ce4b3d9c2ac062df43fffda1be6977debd4e3f72803ac",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-14-test-case-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "1d6fde5c80ca158a11d67acfe7e66f579c0c439757cf17ed4fd2c1ac704a516a"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "tool-router",
+      "src": "./assets/course-candidates/015-tool-router-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "627694e8de018564f20866b82f8812bae4a2f74861b3f55623f3866bda47eb85",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-15-tool-router-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "bfa8d48280b988283c2785a476d7f509cf239ec27893fa89936b8633e6febd7a"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "permission",
+      "src": "./assets/course-candidates/016-permission-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "d7e3d24835bc1faf4a1828506cb06a9ce85da0ed82bffeacebadc756aa540142",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-16-permission-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "88eaa455163e84eec9889f130e08212e8e45ce39e8aa2b673a8318ecfec98b5e"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "dedupe",
+      "src": "./assets/course-candidates/017-dedupe-sticker-r2.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "e8a3fcc96ba48518b0cc0c71dfe3de1afef630d5b2930fc2c75898169dff033e",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-17-dedupe-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "5dfd4e53ebc5d22167bb8ba5ffd2dbe228d0a70db7d195c8634c3b65e4d25577"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "retrieval",
+      "src": "./assets/course-candidates/018-retrieval-sticker-r2.png",
+      "width": 1402,
+      "height": 1122,
+      "sha256": "d9e3acfae8835af55e21dc95bd3e06613417f040b1cebc0da72d81acb3ac2a4a",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-18-retrieval-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "bdddd5d8239a2f0f33fd25a41c06985d42faf1207a68db1919be567f7bde5129"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-rations",
+      "src": "./assets/course-candidates/019-harbor-rations-sticker-r2.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "0d3face17ab23b422fa994d97c09f7897cf6071b25128a66423a20c684be548a",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-19-harbor-rations-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "bec9320d44057dfd30ff78070a38a0ecb3b86d8daee7613f39f0bf872c4ed9d6"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-labels",
+      "src": "./assets/course-candidates/020-harbor-labels-sticker-r2.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "03150c0d7f14931e1195899cdbda7f82d81f1e3979cd22068b2675656ba385cc",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-20-harbor-labels-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "1a3a1a2ff14a6b3101654d6c0de520da858070616b4ff6b54f1645893f9a81e6"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-fare",
+      "src": "./assets/course-candidates/021-harbor-fare-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1a12778c56c57dbf0e15a2b99a58c67dfbdbd61093a3a73c7be5bbbb27258617",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-21-harbor-fare-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "fddcc27f98053e6918c8141dcd3e29589a720e103594539e94e584677351fc17"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-route",
+      "src": "./assets/course-candidates/022-harbor-route-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "6820e905f0b697c3b1e1cbb4b9922acdad3ce81fb5265e1fd9293af103128853",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-22-harbor-route-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "476a79c509233ad9d3e1f912025253f90a74084662f30f17d9098731589bf263"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-quantity",
+      "src": "./assets/course-candidates/023-harbor-quantity-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "c38d2dc928268b8309cac3d2171909602d5a0de93c4f8e1c2d4b3dcdbb0429b1",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-23-harbor-quantity-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "a442d9f95fe58628cbb2376d11f550abcda1663aea4148f108d6340c037afcc0"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "harbor-manifest",
+      "src": "./assets/course-candidates/024-harbor-manifest-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "a8b3d6d2b9da06edc602359259955863ed5c377069004590113748fbf56f4271",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-24-harbor-manifest-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "be7bdc0034332c4baa0b6d6accb78673f099d6d00e5a2d76664866f0716a55ec"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-stock",
+      "src": "./assets/course-candidates/025-market-stock-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "71f637822b63b93e9fd60c636e11a22f2bf992f3c17df3f1e2d42c85f1fbb3e8",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-25-market-stock-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "b0cdfb3afb104356874fdcf26548c19d26fa4bd7e1c747150707a8dcb5421c60"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-receipts",
+      "src": "./assets/course-candidates/026-market-receipts-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1ce06a97eb8e6ab76784b1d3d9031bc6e4f12e4cc3641a5cf7afaece40e02d19",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-26-market-receipts-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "6a142e6074261300c5859246ee1a836e6484a2081a5ccc936813a5cdeb5f2618"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-intersection",
+      "src": "./assets/course-candidates/027-market-intersection-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "16765e8aeba826e29ba4b60de703e28339e4c0f971020fcdabc91248380a22e1",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-27-market-intersection-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "cd2b30776f20143b7ba9de44385a4361966577319d15a93b18e7b5b8ab3f9378"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-ranking",
+      "src": "./assets/course-candidates/028-market-ranking-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "c4f9221a0245fa0b667fc881192d7c0fa9650b0d164bd00c2344697e2c50c815",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-28-market-ranking-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "5b1ac546a13aa3733f90dca328da9564b621f434d203a46a32c218403b74fafb"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-copy",
+      "src": "./assets/course-candidates/029-market-copy-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "6aca56fec063c16dd0be6253b5f1dd350a2bb31f39d1022cdf0810f20b96530d",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-29-market-copy-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "291dab5a5f4dcd0e015e1f7ac07e3f552a917173762794eeb189d71cce9e2337"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "market-checkout",
+      "src": "./assets/course-candidates/030-market-checkout-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "c3d8db246643fbb722e9afafc3ec42937dbaa95eb7ed2328038d232d9f34802d",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-30-market-checkout-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "adf8672c0009241361832561b26bad1966f3abba19d8204d4db0563c6607be0e"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-defaults",
+      "src": "./assets/course-candidates/031-workshop-defaults-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "a8696ccfb03c115bd3a7ecc04565a53b9c792a48d4327e13a2c116d506cb107a",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/031-workshop-defaults.png",
+        "width": 1633,
+        "height": 963,
+        "sha256": "f2f539f5c80140ed2cdfafe2588e8df64665f801f90b564f5c664edb8567a51b"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-closure",
+      "src": "./assets/course-candidates/032-workshop-closure-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "4784f42b2541761f57df3d46ca310039a4a7f1c2544d7208b2adb34aa428aaff",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/032-workshop-closure.png",
+        "width": 1632,
+        "height": 964,
+        "sha256": "c54993f0b809b47bf99c1ad421e38c64a63d1f47318fd9fec1821019cf577e00"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-composition",
+      "src": "./assets/course-candidates/033-workshop-composition-sticker-r2.png",
+      "width": 1536,
+      "height": 1024,
+      "sha256": "f2c7f0e224b3f8f41953688fc7a6c638897dfb8496fd53bf1bb5e74d72be21f8",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/033-workshop-composition.png",
+        "width": 1631,
+        "height": 964,
+        "sha256": "0a51f93d9493f828cd025ac07c5ca7e45cab134bf8aab194de6a7e1b609718fb"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-wallet",
+      "src": "./assets/course-candidates/034-workshop-wallet-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "a0307620fdb5ff6bbc4af899bd49131c845ece52e0e14db0aceba6c01d98e225",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/034-workshop-wallet-v2.png",
+        "width": 1633,
+        "height": 963,
+        "sha256": "c537bd18d046ce1741c8b0781817ea8228bbc537a7b9b6e0a6a5437d811ed0b3"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-iterable",
+      "src": "./assets/course-candidates/035-workshop-iterable-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "374cf03ca8503928a5f7940bd1e6f89de1d9eaf4ef69ac74c0cba5d7c984818a",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/035-workshop-iterable.png",
+        "width": 1632,
+        "height": 964,
+        "sha256": "32f1e9b34c06642210c8b7008115797308a84868e027bcf0b30b584719f9583b"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "workshop-result",
+      "src": "./assets/course-candidates/036-workshop-result-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "4e95152be5bbab42d7686397d4af65ee312add66cde3e4f47fcb49e6957dfed0",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/036-workshop-result.png",
+        "width": 1632,
+        "height": 963,
+        "sha256": "5cbb272079e6b9d9c94cad5e4143e88db20c30249ff038ae1c6031ec43a45d84"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-json",
+      "src": "./assets/course-candidates/037-archive-json-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "16df00a4df67497e8d131517451dc50ebbad3437e8656e21a827793a73bb5a1c",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/037-archive-json.png",
+        "width": 1633,
+        "height": 963,
+        "sha256": "cba53a7146f60952fb0c78572de2400122a9fa22d954e4ebdf5f5a2fdb0b1ad8"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-regex",
+      "src": "./assets/course-candidates/038-archive-regex-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "b440cb732e03192da3b80353e15a1df4d5c964bcfd420551bd034411cc39e8e9",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/038-archive-regex.png",
+        "width": 1633,
+        "height": 963,
+        "sha256": "a417020a37a0ff42cbe51deba58018d9b4232260254a79b82a35cc4d8359f2a9"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-counter",
+      "src": "./assets/course-candidates/039-archive-counter-sticker-r2.png",
+      "width": 1448,
+      "height": 1086,
+      "sha256": "15a68c5cd8110f2c6b5f0a1895eefb8cfaa9e2dcd04bd7418ff5b7d756fc9be0",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/039-archive-counter-v2.png",
+        "width": 1632,
+        "height": 964,
+        "sha256": "eb2c9780dad7287b17ee0fae51b242ec0f13fe555100baeafa843ac6afa4059e"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-queue",
+      "src": "./assets/course-candidates/040-archive-queue-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "1e5d465b2357168df03b1ead8e9edcf032ff9abcc6e48b4b8567ccbf235e2a9b",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/040-archive-queue.png",
+        "width": 1632,
+        "height": 963,
+        "sha256": "9d6e07f91ab110483a972b8132620c58c1c8ba2133910a8eb835b22f1586bb20"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-median",
+      "src": "./assets/course-candidates/041-archive-median-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "cd831860b6cd68c60ecd730e0a8a0045c69d4cc134581d4eda17159a66f7af91",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-41-archive-median-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "9bf5a5f8d7adf22cbcec7296686153cedaa4d3f1f283e0cf40a5f8fa494297f4"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "archive-distance",
+      "src": "./assets/course-candidates/042-archive-distance-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "8becb4ecbd54251e97fb15c68d94e7c8f702bf4457e2a0b08df0ae294395cfa2",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-42-archive-distance-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "bd9dc01cff46f70a738fd7333a8f81b92fb3dd049515938abfc087c1b3dc4121"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-test-cases",
+      "src": "./assets/course-candidates/043-observatory-test-cases-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "f8e35848fedfb2234b59b04b03ecbdf3e38d2d5217f344cdcda9b2033f47f27b",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-43-observatory-test-cases-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "6cd4a074a314afdeb5c35e35ea3da6b442292ac2991f14f27c02f3ed8f0599c9"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-binary",
+      "src": "./assets/course-candidates/044-observatory-binary-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "bf5e6d00949220d085b25a47291f400c8fd52e0c4f8131b9ad29c5c31558de9f",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-44-observatory-binary-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "c6743e8ffe8630f9028a237ad998673321aa83b39f7a03c0b9b2f0ccc0d95854"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-prefix",
+      "src": "./assets/course-candidates/045-observatory-prefix-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "cc68cada793acbc5eac28eca53f0a9f085b63f4d98f986ddfd690ed122596e8d",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-45-observatory-prefix-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "7f26faed567c74f5d5bdb38590fd1a8f7cc3cb61c4d03dc91b50f9091d903326"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-cache",
+      "src": "./assets/course-candidates/046-observatory-cache-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "5cb0dd522a24ddd19cf6bfea683d975c0609b43f2dc0f6aa39d0ac5cb0093b7a",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-46-observatory-cache-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "aa3fc887457a8c7889e86c0972c8d8c10bd5dfa9db85ff6ac6cbf9654958b434"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-replay",
+      "src": "./assets/course-candidates/047-observatory-replay-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "8b3d013844a94e98913c207886da81944648e9504a6c4905ec1da01477ae6e1c",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-47-observatory-replay-pixel-journal-v2.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "f4090b42e695c8a415c94c8dfdcc18858f136cb3a60563afe22a99678758ee6c"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "observatory-diagnose",
+      "src": "./assets/course-candidates/048-observatory-diagnose-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "216ba762abdefd9d2b06d29c5a5565c550abdc0fa6e1a8dccfaa0e6fb4697c1b",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-48-observatory-diagnose-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "0efb9aa2f10d46f85b34dd913096e42d889f8822e9fbd2f5920f723249170fb3"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "beacon-schema",
+      "src": "./assets/course-candidates/049-beacon-schema-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "ad2361a443ff9b826289df4682549ef221c3a8048e20a4a2be4f249613f70713",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-49-beacon-schema-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "e0b023bae31fca469c327cf2b991270f1459389eb37ba7237a3bb2e0bbe81ffb"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    },
+    {
+      "id": "beacon-permission",
+      "src": "./assets/course-candidates/050-beacon-permission-sticker-r2.png",
+      "width": 1254,
+      "height": 1254,
+      "sha256": "4994666acd349bcc3ecb115d56690c01e532c8fd1ad63eb5a0b89fe3b672a817",
+      "source": "imagegen-20261114-original-art-restyle",
+      "original": {
+        "src": "./assets/course-candidates/course-50-beacon-permission-pixel-journal-v1.png",
+        "width": 1254,
+        "height": 1254,
+        "sha256": "34086311645a776ea18ca7611cb11dd85e18474693335beea2c126ca0ab2ef7e"
+      },
+      "review": "visually-reviewed-recomposed-transparent-sticker",
+      "executionEvidence": false
+    }
+  ],
+  "deliberateThemeReuse": {
+    "debugging-index": "basics-slices",
+    "debugging-return": "basics-scope",
+    "transfer-travel-plan": "harbor-fare",
+    "transfer-repeat-alerts": "dedupe",
+    "transfer-resupply": "market-stock",
+    "transfer-stable-priority": "market-ranking",
+    "debugging-aliases": "market-copy",
+    "engineering-cleanup": "protocol-lifecycle",
+    "basics-decorators": "workshop-closure",
+    "transfer-log-report": "archive-json",
+    "testing-regression": "test-case",
+    "project-stock-ledger": "engineering-report"
+  }
+}

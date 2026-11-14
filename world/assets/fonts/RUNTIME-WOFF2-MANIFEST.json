@@ -1,0 +1,643 @@
+{
+  "schema": "pipi-complete-font-woff2/v1",
+  "recordedAtUtc": "2026-11-14T11:07:52.424958+00:00",
+  "fontToolsVersion": "4.61.1",
+  "pythonBrotliBindingOriginallyAvailable": false,
+  "brotliBackend": {
+    "node": "v24.22.1",
+    "brotli": "1.2.0"
+  },
+  "compression": "FontTools WOFF2 container; real Brotli font mode, quality11; transform_tables empty, no subset; recalcBBoxes=False, recalcTimestamp=False, reorderTables=False",
+  "operation": "verify-existing",
+  "requiredHeaderDifferenceSource": {
+    "url": "https://www.w3.org/TR/2024/REC-WOFF2-20240808/",
+    "section": "5 Font Data",
+    "note": "WOFF2 requires setting head.flags bit11; reconstructed SFNT checksum adjustment may change. These are reported explicitly; all other table bytes must match."
+  },
+  "sourceFilesUnchanged": true,
+  "sourceAndLicenseHashes": {
+    "world/assets/fonts/noto-sans-cjk-sc-regular.otf": "f9880389080888be146381c73ffc748c345121b6303875f38931c48d731b6712",
+    "world/assets/fonts/noto-sans-cjk-sc-bold.otf": "a017d10aa47901ea797cf0c63f9d88f92f46103be64021910bc9f196efbf0a7c",
+    "world/assets/fonts/noto-sans-mono-cjk-sc-regular.otf": "8458c82dae661fda8fe4f7690141e056ee7994cb41daf045fb0dcc40d02ebc79",
+    "world/assets/fonts/SOURCE.json": "82146cd2f7afc95d95055635509cab0e66a827cf62b1987da39a865f6f7cc027",
+    "world/assets/fonts/NOTO-LICENSE.txt": "849f4ea9c214fa4ac3593b770c699f387534b11ce671264c1b10d85bdcb5997b"
+  },
+  "runtimeSelection": {
+    "cjk": [
+      "world/assets/fonts/noto-sans-cjk-sc-regular.woff2",
+      "world/assets/fonts/noto-sans-cjk-sc-bold.woff2",
+      "world/assets/fonts/noto-sans-mono-cjk-sc-regular.woff2"
+    ],
+    "numericFallback": [
+      "world/assets/fonts/noto-sans-arabic-regular.ttf",
+      "world/assets/fonts/noto-sans-devanagari-regular.ttf"
+    ],
+    "requiredProvenance": [
+      "world/assets/fonts/NOTO-LICENSE.txt",
+      "world/assets/fonts/NOTO-CORE-COPYRIGHT.txt",
+      "world/assets/fonts/SOURCE.json",
+      "world/assets/fonts/UNICODE-DIGIT-SOURCE.json",
+      "world/assets/fonts/RUNTIME-WOFF2-MANIFEST.json"
+    ]
+  },
+  "rows": [
+    {
+      "familyName": "Noto Sans CJK SC",
+      "style": "Regular",
+      "source": "world/assets/fonts/noto-sans-cjk-sc-regular.otf",
+      "runtime": "world/assets/fonts/noto-sans-cjk-sc-regular.woff2",
+      "sourceSha256": "f9880389080888be146381c73ffc748c345121b6303875f38931c48d731b6712",
+      "runtimeSha256": "1e6ca4c24fc3e483bcd74e13c555681abe723669621f5e395fa0b5cf7a1838fa",
+      "sourceBytes": 16437296,
+      "runtimeBytes": 11427576,
+      "glyphCount": 65535,
+      "glyphOrderEqual": true,
+      "glyphOrderSha256": "3fdad59efdb0ecb5742bf3c176d0cb3c9141b3e86719f3c24d583fca36050327",
+      "unicodeMappings": 44810,
+      "cmapEqual": true,
+      "cmapSha256": "34f05c68698ffdb72e211c7b3eec07945aadfb543130ece3322f15c3b854c154",
+      "unitsPerEm": 1000,
+      "fsType": 0,
+      "tableSetEqual": true,
+      "tables": [
+        {
+          "tag": "BASE",
+          "sourceBytes": 240,
+          "decodedBytes": 240,
+          "sourceSha256": "1f772c08ba87c232da9955d2eab55dfc4fb8bcf6bf065e278c88abcd193daa1b",
+          "decodedSha256": "1f772c08ba87c232da9955d2eab55dfc4fb8bcf6bf065e278c88abcd193daa1b",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "CFF ",
+          "sourceBytes": 15458543,
+          "decodedBytes": 15458543,
+          "sourceSha256": "b4f50cf87c811db582822770e4b78cf68bac557d04a55a4a27b4a4521a4df197",
+          "decodedSha256": "b4f50cf87c811db582822770e4b78cf68bac557d04a55a4a27b4a4521a4df197",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GDEF",
+          "sourceBytes": 28,
+          "decodedBytes": 28,
+          "sourceSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "decodedSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GPOS",
+          "sourceBytes": 47386,
+          "decodedBytes": 47386,
+          "sourceSha256": "c24e97f96f3eabdc56fc7d1ff5d47555665f4ac0739b64a61bc59ae8c1de9e1d",
+          "decodedSha256": "c24e97f96f3eabdc56fc7d1ff5d47555665f4ac0739b64a61bc59ae8c1de9e1d",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GSUB",
+          "sourceBytes": 167140,
+          "decodedBytes": 167140,
+          "sourceSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "decodedSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "OS/2",
+          "sourceBytes": 96,
+          "decodedBytes": 96,
+          "sourceSha256": "8b5139cb129a86e423a4dc5703fd8260261aa6c3ce908cf1156ed89a3e1b49f8",
+          "decodedSha256": "8b5139cb129a86e423a4dc5703fd8260261aa6c3ce908cf1156ed89a3e1b49f8",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "VORG",
+          "sourceBytes": 920,
+          "decodedBytes": 920,
+          "sourceSha256": "b3cfbb1aca4054a0e9c9c0d8ab1cc6c2e0f09302d02f8ff36d4fc7cca22941f0",
+          "decodedSha256": "b3cfbb1aca4054a0e9c9c0d8ab1cc6c2e0f09302d02f8ff36d4fc7cca22941f0",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "cmap",
+          "sourceBytes": 236831,
+          "decodedBytes": 236831,
+          "sourceSha256": "108d90162a64e2b3ef1dd4bbcd5cee0ee2768da63eb1ec7a9559169e96f26bc9",
+          "decodedSha256": "108d90162a64e2b3ef1dd4bbcd5cee0ee2768da63eb1ec7a9559169e96f26bc9",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "head",
+          "sourceBytes": 54,
+          "decodedBytes": 54,
+          "sourceSha256": "bafa4c97e2b4cc56953b58e79a683ac780e0c001c6c868c20cd0032dd7d72a61",
+          "decodedSha256": "ade35badd97b327d187d31e7c83993b4185da2a6b19fbbb70d7f79c83c333c09",
+          "rawEqual": false,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": [
+            "head.checkSumAdjustment bytes 8..11",
+            "head.flags bit11 mandated by W3C WOFF2 section5"
+          ]
+        },
+        {
+          "tag": "hhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "e68123c2c9e378c30a571893db47c1cd7398c42fc961bca4b29b24f94837fa02",
+          "decodedSha256": "e68123c2c9e378c30a571893db47c1cd7398c42fc961bca4b29b24f94837fa02",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "hmtx",
+          "sourceBytes": 262134,
+          "decodedBytes": 262134,
+          "sourceSha256": "29e87becaac23bbd8d8a8b9ad3fdbce5dd6a659c28c02a17a05782f87cb5dc11",
+          "decodedSha256": "29e87becaac23bbd8d8a8b9ad3fdbce5dd6a659c28c02a17a05782f87cb5dc11",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "maxp",
+          "sourceBytes": 6,
+          "decodedBytes": 6,
+          "sourceSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "decodedSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "name",
+          "sourceBytes": 2146,
+          "decodedBytes": 2146,
+          "sourceSha256": "77d2e496e60610c85f4aa038e24f734f6eaa408a0e377d55dce40ea04bdda3c9",
+          "decodedSha256": "77d2e496e60610c85f4aa038e24f734f6eaa408a0e377d55dce40ea04bdda3c9",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "post",
+          "sourceBytes": 32,
+          "decodedBytes": 32,
+          "sourceSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "decodedSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "80376f0753bc3daa96341c9a4ed5fbebeca7213d269e1003944d474a58f7d181",
+          "decodedSha256": "80376f0753bc3daa96341c9a4ed5fbebeca7213d269e1003944d474a58f7d181",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vmtx",
+          "sourceBytes": 261386,
+          "decodedBytes": 261386,
+          "sourceSha256": "28e0344d075ee0cb4d564c2dd5223697d12409ddc61aeb79747328b9acc28a6c",
+          "decodedSha256": "28e0344d075ee0cb4d564c2dd5223697d12409ddc61aeb79747328b9acc28a6c",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        }
+      ],
+      "essentialTablesRawEqual": {
+        "CFF ": true,
+        "cmap": true,
+        "GSUB": true,
+        "GPOS": true,
+        "hmtx": true,
+        "vmtx": true,
+        "name": true,
+        "OS/2": true
+      },
+      "subset": false,
+      "glyphOutlineProof": "The complete CFF table including charstrings, subroutines, charset and private data is decoded byte-for-byte identical.",
+      "layoutProof": "Complete GSUB/GPOS/cmap/metrics/name/OS2 tables are decoded byte-for-byte identical."
+    },
+    {
+      "familyName": "Noto Sans CJK SC",
+      "style": "Bold",
+      "source": "world/assets/fonts/noto-sans-cjk-sc-bold.otf",
+      "runtime": "world/assets/fonts/noto-sans-cjk-sc-bold.woff2",
+      "sourceSha256": "a017d10aa47901ea797cf0c63f9d88f92f46103be64021910bc9f196efbf0a7c",
+      "runtimeSha256": "9390bb09a00bc38eb25dbdfaa64668b3466b28fc74793122b31158af88de5c57",
+      "sourceBytes": 17002180,
+      "runtimeBytes": 12128640,
+      "glyphCount": 65535,
+      "glyphOrderEqual": true,
+      "glyphOrderSha256": "3fdad59efdb0ecb5742bf3c176d0cb3c9141b3e86719f3c24d583fca36050327",
+      "unicodeMappings": 44810,
+      "cmapEqual": true,
+      "cmapSha256": "34f05c68698ffdb72e211c7b3eec07945aadfb543130ece3322f15c3b854c154",
+      "unitsPerEm": 1000,
+      "fsType": 0,
+      "tableSetEqual": true,
+      "tables": [
+        {
+          "tag": "BASE",
+          "sourceBytes": 240,
+          "decodedBytes": 240,
+          "sourceSha256": "b1ff258fa68fbc1509c962809676148fc1b1292326aefa8e9ebdecedf1608a20",
+          "decodedSha256": "b1ff258fa68fbc1509c962809676148fc1b1292326aefa8e9ebdecedf1608a20",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "CFF ",
+          "sourceBytes": 16023180,
+          "decodedBytes": 16023180,
+          "sourceSha256": "f4aa595d7b4e8e1675ad5920497072432ec112dfb38a5f65d9f6e92328d0d499",
+          "decodedSha256": "f4aa595d7b4e8e1675ad5920497072432ec112dfb38a5f65d9f6e92328d0d499",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GDEF",
+          "sourceBytes": 28,
+          "decodedBytes": 28,
+          "sourceSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "decodedSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GPOS",
+          "sourceBytes": 47590,
+          "decodedBytes": 47590,
+          "sourceSha256": "0e294ea976ab8d5753cc6063da6dd04411b435db090dd79b5fcfbf2aa60fddb0",
+          "decodedSha256": "0e294ea976ab8d5753cc6063da6dd04411b435db090dd79b5fcfbf2aa60fddb0",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GSUB",
+          "sourceBytes": 167140,
+          "decodedBytes": 167140,
+          "sourceSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "decodedSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "OS/2",
+          "sourceBytes": 96,
+          "decodedBytes": 96,
+          "sourceSha256": "a49177bb1f6deea142357041e9b243bbfd1e7fa73f95ec58db00976302e3e6d9",
+          "decodedSha256": "a49177bb1f6deea142357041e9b243bbfd1e7fa73f95ec58db00976302e3e6d9",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "VORG",
+          "sourceBytes": 940,
+          "decodedBytes": 940,
+          "sourceSha256": "61be072f574e4ae157298a7d7cbe13a7b4279b612d7c60e34bf22052dad79ed2",
+          "decodedSha256": "61be072f574e4ae157298a7d7cbe13a7b4279b612d7c60e34bf22052dad79ed2",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "cmap",
+          "sourceBytes": 236831,
+          "decodedBytes": 236831,
+          "sourceSha256": "108d90162a64e2b3ef1dd4bbcd5cee0ee2768da63eb1ec7a9559169e96f26bc9",
+          "decodedSha256": "108d90162a64e2b3ef1dd4bbcd5cee0ee2768da63eb1ec7a9559169e96f26bc9",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "head",
+          "sourceBytes": 54,
+          "decodedBytes": 54,
+          "sourceSha256": "009a0e5646e6301a611d5950108b680a8fc73dc8bd79e4765ee385401ea4212c",
+          "decodedSha256": "a404c4f29c0bc732459621f2f68afbc5766a9310dea12bba5ad307d65251f600",
+          "rawEqual": false,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": [
+            "head.checkSumAdjustment bytes 8..11",
+            "head.flags bit11 mandated by W3C WOFF2 section5"
+          ]
+        },
+        {
+          "tag": "hhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "e58a0641f9a63116a86f42341be1ded6eed3ef97e8b8e8501a5f390a1ad7b7ec",
+          "decodedSha256": "e58a0641f9a63116a86f42341be1ded6eed3ef97e8b8e8501a5f390a1ad7b7ec",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "hmtx",
+          "sourceBytes": 262134,
+          "decodedBytes": 262134,
+          "sourceSha256": "147d7c9df7bd2db3b4741dac4e5d17a29667ce5b3e54ea1d3b3d2e2bee051e6a",
+          "decodedSha256": "147d7c9df7bd2db3b4741dac4e5d17a29667ce5b3e54ea1d3b3d2e2bee051e6a",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "maxp",
+          "sourceBytes": 6,
+          "decodedBytes": 6,
+          "sourceSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "decodedSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "name",
+          "sourceBytes": 2170,
+          "decodedBytes": 2170,
+          "sourceSha256": "2f6b73a671550be2802bc5daaae380ee8e14444a441f80aea5febf14da3c7244",
+          "decodedSha256": "2f6b73a671550be2802bc5daaae380ee8e14444a441f80aea5febf14da3c7244",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "post",
+          "sourceBytes": 32,
+          "decodedBytes": 32,
+          "sourceSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "decodedSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "c71c3e309b5f6f4db1056cea5f10cb482ed3ea6b1e654d0f11596503afbe90cc",
+          "decodedSha256": "c71c3e309b5f6f4db1056cea5f10cb482ed3ea6b1e654d0f11596503afbe90cc",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vmtx",
+          "sourceBytes": 261386,
+          "decodedBytes": 261386,
+          "sourceSha256": "ee8aafcbdcd6f41b8c8d688374664535bd7059d10d90862627bd7e368372a1ff",
+          "decodedSha256": "ee8aafcbdcd6f41b8c8d688374664535bd7059d10d90862627bd7e368372a1ff",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        }
+      ],
+      "essentialTablesRawEqual": {
+        "CFF ": true,
+        "cmap": true,
+        "GSUB": true,
+        "GPOS": true,
+        "hmtx": true,
+        "vmtx": true,
+        "name": true,
+        "OS/2": true
+      },
+      "subset": false,
+      "glyphOutlineProof": "The complete CFF table including charstrings, subroutines, charset and private data is decoded byte-for-byte identical.",
+      "layoutProof": "Complete GSUB/GPOS/cmap/metrics/name/OS2 tables are decoded byte-for-byte identical."
+    },
+    {
+      "familyName": "Noto Sans Mono CJK SC",
+      "style": "Regular",
+      "source": "world/assets/fonts/noto-sans-mono-cjk-sc-regular.otf",
+      "runtime": "world/assets/fonts/noto-sans-mono-cjk-sc-regular.woff2",
+      "sourceSha256": "8458c82dae661fda8fe4f7690141e056ee7994cb41daf045fb0dcc40d02ebc79",
+      "runtimeSha256": "972ebd1eb8901afc276c558aa38e7969c88bfba18c70fff8ed658f58b1d85871",
+      "sourceBytes": 16393632,
+      "runtimeBytes": 11417252,
+      "glyphCount": 65535,
+      "glyphOrderEqual": true,
+      "glyphOrderSha256": "3fdad59efdb0ecb5742bf3c176d0cb3c9141b3e86719f3c24d583fca36050327",
+      "unicodeMappings": 44810,
+      "cmapEqual": true,
+      "cmapSha256": "a279a1e3207381d08241a5644847e5e598e442816ce60092c53efff460b87549",
+      "unitsPerEm": 1000,
+      "fsType": 0,
+      "tableSetEqual": true,
+      "tables": [
+        {
+          "tag": "BASE",
+          "sourceBytes": 240,
+          "decodedBytes": 240,
+          "sourceSha256": "1f772c08ba87c232da9955d2eab55dfc4fb8bcf6bf065e278c88abcd193daa1b",
+          "decodedSha256": "1f772c08ba87c232da9955d2eab55dfc4fb8bcf6bf065e278c88abcd193daa1b",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "CFF ",
+          "sourceBytes": 15458543,
+          "decodedBytes": 15458543,
+          "sourceSha256": "b4f50cf87c811db582822770e4b78cf68bac557d04a55a4a27b4a4521a4df197",
+          "decodedSha256": "b4f50cf87c811db582822770e4b78cf68bac557d04a55a4a27b4a4521a4df197",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GDEF",
+          "sourceBytes": 28,
+          "decodedBytes": 28,
+          "sourceSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "decodedSha256": "cc08d969b7987dface5fc1fcd4755279ffacbc1a27e24ae0077e6a41fc7d651f",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GPOS",
+          "sourceBytes": 3662,
+          "decodedBytes": 3662,
+          "sourceSha256": "fe6b7cf0fb807f72fe59140d4440936cafdd113194a2140d5f678cf6898ae856",
+          "decodedSha256": "fe6b7cf0fb807f72fe59140d4440936cafdd113194a2140d5f678cf6898ae856",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "GSUB",
+          "sourceBytes": 167140,
+          "decodedBytes": 167140,
+          "sourceSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "decodedSha256": "3d0d03a4c7781598ce0f157efc943acacb079f37c380efeee4fc64cafc4aeec6",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "OS/2",
+          "sourceBytes": 96,
+          "decodedBytes": 96,
+          "sourceSha256": "8b5139cb129a86e423a4dc5703fd8260261aa6c3ce908cf1156ed89a3e1b49f8",
+          "decodedSha256": "8b5139cb129a86e423a4dc5703fd8260261aa6c3ce908cf1156ed89a3e1b49f8",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "VORG",
+          "sourceBytes": 920,
+          "decodedBytes": 920,
+          "sourceSha256": "b3cfbb1aca4054a0e9c9c0d8ab1cc6c2e0f09302d02f8ff36d4fc7cca22941f0",
+          "decodedSha256": "b3cfbb1aca4054a0e9c9c0d8ab1cc6c2e0f09302d02f8ff36d4fc7cca22941f0",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "cmap",
+          "sourceBytes": 236867,
+          "decodedBytes": 236867,
+          "sourceSha256": "1fce8b01669fc47d2726859b214529ad729847898704232633e514ec31a367ed",
+          "decodedSha256": "1fce8b01669fc47d2726859b214529ad729847898704232633e514ec31a367ed",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "head",
+          "sourceBytes": 54,
+          "decodedBytes": 54,
+          "sourceSha256": "a37d7b33fcb593ba892b92bae14c15ef66a6eda4b136edf2f524ffb1fb17ab1d",
+          "decodedSha256": "7663325b117c543d0df4ff54f8c7ba77540782e49b99963af5d6e9f071e8c3f0",
+          "rawEqual": false,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": [
+            "head.checkSumAdjustment bytes 8..11",
+            "head.flags bit11 mandated by W3C WOFF2 section5"
+          ]
+        },
+        {
+          "tag": "hhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "e68123c2c9e378c30a571893db47c1cd7398c42fc961bca4b29b24f94837fa02",
+          "decodedSha256": "e68123c2c9e378c30a571893db47c1cd7398c42fc961bca4b29b24f94837fa02",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "hmtx",
+          "sourceBytes": 262134,
+          "decodedBytes": 262134,
+          "sourceSha256": "29e87becaac23bbd8d8a8b9ad3fdbce5dd6a659c28c02a17a05782f87cb5dc11",
+          "decodedSha256": "29e87becaac23bbd8d8a8b9ad3fdbce5dd6a659c28c02a17a05782f87cb5dc11",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "maxp",
+          "sourceBytes": 6,
+          "decodedBytes": 6,
+          "sourceSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "decodedSha256": "1c2dd1f6eeea4024f3d77499f4191f6fd724ad556187d54d241788ee83c979ad",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "name",
+          "sourceBytes": 2172,
+          "decodedBytes": 2172,
+          "sourceSha256": "ad8b518d99a4def2b69de0dd47086289643440a0969098a7ec8155b7f29f28b3",
+          "decodedSha256": "ad8b518d99a4def2b69de0dd47086289643440a0969098a7ec8155b7f29f28b3",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "post",
+          "sourceBytes": 32,
+          "decodedBytes": 32,
+          "sourceSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "decodedSha256": "22dd499f08932214bde96943f3882f3619324478217095c049b68a57c6c10693",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vhea",
+          "sourceBytes": 36,
+          "decodedBytes": 36,
+          "sourceSha256": "80376f0753bc3daa96341c9a4ed5fbebeca7213d269e1003944d474a58f7d181",
+          "decodedSha256": "80376f0753bc3daa96341c9a4ed5fbebeca7213d269e1003944d474a58f7d181",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        },
+        {
+          "tag": "vmtx",
+          "sourceBytes": 261386,
+          "decodedBytes": 261386,
+          "sourceSha256": "28e0344d075ee0cb4d564c2dd5223697d12409ddc61aeb79747328b9acc28a6c",
+          "decodedSha256": "28e0344d075ee0cb4d564c2dd5223697d12409ddc61aeb79747328b9acc28a6c",
+          "rawEqual": true,
+          "equalExceptWoff2HeaderFields": true,
+          "allowedDifference": []
+        }
+      ],
+      "essentialTablesRawEqual": {
+        "CFF ": true,
+        "cmap": true,
+        "GSUB": true,
+        "GPOS": true,
+        "hmtx": true,
+        "vmtx": true,
+        "name": true,
+        "OS/2": true
+      },
+      "subset": false,
+      "glyphOutlineProof": "The complete CFF table including charstrings, subroutines, charset and private data is decoded byte-for-byte identical.",
+      "layoutProof": "Complete GSUB/GPOS/cmap/metrics/name/OS2 tables are decoded byte-for-byte identical."
+    }
+  ],
+  "originalBytes": 49833108,
+  "woff2Bytes": 34973468,
+  "failures": [],
+  "browserFontLoadVerified": false,
+  "windowsVerified": false,
+  "license": "Original SIL OFL 1.1 retained; format-only encoding of the complete existing faces. No new naming, new glyphs, subset or license imposed.",
+  "boundary": "Reduced distribution bytes only. Does not prove runtime FPS, browser layout, memory, frame pacing or Windows display."
+}

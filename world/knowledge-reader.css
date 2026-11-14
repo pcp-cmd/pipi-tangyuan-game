@@ -1,0 +1,18 @@
+/* Read the guide as a page, while the existing disclosure still owns assistance tracking. */
+.knowledge-reader{--knowledge-code:ui-monospace,SFMono-Regular,Consolas,monospace;color:#d4ddc7;font:14px/1.9 var(--ui);overflow-wrap:anywhere}
+.knowledge-reader>p{margin:0 0 16px;color:inherit;white-space:pre-line}
+.knowledge-reader>.knowledge-heading{font-family:var(--display);font-weight:500;line-height:1.5;color:#f0d59e;overflow-wrap:anywhere}
+.knowledge-reader>h4{font-size:22px;margin:23px 0 14px}
+.knowledge-reader>h5{font-size:18px;margin:27px 0 12px;padding-top:17px;border-top:1px solid #7f916b55}
+.knowledge-reader>h6{font-size:16px;margin:21px 0 10px}
+.knowledge-reader .knowledge-list{margin:0 0 18px;padding-left:23px}
+.knowledge-reader .knowledge-list li{margin:0 0 10px;padding-left:3px}
+.knowledge-reader .knowledge-list li::marker{color:#dfc790;font-variant-numeric:tabular-nums}
+.knowledge-reader strong{font-weight:700;color:#ead8ae}
+.knowledge-reader :not(pre)>code{font:0.91em/1.65 var(--knowledge-code);color:#f1dfb2;background:#0b211a7a;border:1px solid #70856355;border-radius:3px;padding:1px 4px;overflow-wrap:anywhere;white-space:normal}
+.knowledge-reader>.knowledge-web-note{padding:13px 15px;border-left:3px solid #d1af72;border-radius:0 5px 5px 0;background:#30412c;color:#e1d6b2;font-size:12px;line-height:1.8}
+.knowledge-reader .knowledge-example{margin:17px 0 21px;min-width:0;border:1px solid #76876680;border-radius:5px;overflow:hidden;background:#0e241d}
+.knowledge-example>figcaption{padding:8px 12px;border-bottom:1px solid #76876655;color:#c3cdb5;font:11px/1.6 var(--ui)}
+.knowledge-reader .knowledge-example pre{margin:0;padding:13px 14px;border:0;border-radius:0;background:none;max-width:100%;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.8 var(--knowledge-code);color:#e4ddbf}
+.knowledge-example pre>code{font:inherit;color:inherit}
+@media(max-width:760px){.knowledge-reader{font-size:13px;line-height:1.9}.knowledge-reader>h4{font-size:21px}.knowledge-reader>h5{font-size:17px}.knowledge-reader>.knowledge-web-note{font-size:12px;padding:12px}.knowledge-reader .knowledge-list{padding-left:21px}.knowledge-reader .knowledge-example pre{font-size:12px}}

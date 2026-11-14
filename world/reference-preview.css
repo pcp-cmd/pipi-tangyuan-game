@@ -1,0 +1,8 @@
+.reference-preview{margin:16px 0;padding:16px;border:1px solid #b29b69;border-radius:8px;background:#102522;color:#f6ead0}
+.reference-preview[hidden]{display:none!important}
+.reference-preview h3{margin:0 0 10px;font-size:16px;line-height:1.5}
+.reference-preview p{font-size:13px;line-height:1.7;margin:8px 0 12px}
+.reference-preview pre{max-height:22rem;max-width:100%;overflow:auto;padding:12px;background:#071c1a;border-radius:5px;font:13px/1.7 ui-monospace,monospace;white-space:pre;tab-size:4}
+.reference-preview-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.reference-preview-actions button{min-height:44px}
+@media(max-width:400px){.reference-preview{padding:12px}.reference-preview-actions button{width:100%}}

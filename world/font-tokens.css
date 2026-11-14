@@ -1,0 +1,69 @@
+/* Complete offline faces; provenance and OFL are in assets/fonts/. */
+@font-face {
+  font-family: "Island Sans";
+  src: url("./assets/fonts/noto-sans-cjk-sc-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Island Sans";
+  src: url("./assets/fonts/noto-sans-cjk-sc-bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 600 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Island Mono";
+  src: url("./assets/fonts/noto-sans-mono-cjk-sc-regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+/* Unicode numeral exercises need these two offline fallback faces. These are
+   complete, unmodified OFL files; unicode-range only selects their use in CSS. */
+@font-face {
+  font-family: "Island Arabic Digits";
+  src: url("./assets/fonts/noto-sans-arabic-regular.ttf") format("truetype");
+  font-style: normal; font-weight: 400; font-display: swap;
+  unicode-range: U+0660-0669;
+}
+@font-face {
+  font-family: "Island Devanagari Digits";
+  src: url("./assets/fonts/noto-sans-devanagari-regular.ttf") format("truetype");
+  font-style: normal; font-weight: 400; font-display: swap;
+  unicode-range: U+0966-096F;
+}
+:root {
+  --ui: "Island Sans", "Island Arabic Digits", "Island Devanagari Digits", "Noto Sans CJK SC", "Microsoft YaHei", sans-serif;
+  --display: var(--ui);
+  --code: "Island Mono", "Island Arabic Digits", "Island Devanagari Digits", "Noto Sans Mono CJK SC", Consolas, monospace;
+  --text-body: 17px;
+  --text-control: 16px;
+  --text-small: 14px;
+  --text-title: 26px;
+  --text-code: 17px;
+  --text-code-large: 21px;
+  --leading-body: 1.65;
+  --leading-code: 1.65;
+}
+body { font-size: var(--text-body); line-height: var(--leading-body); }
+button, input, select, textarea { font-family: var(--ui); }
+button, input, select { font-size: var(--text-control); }
+.panel h2, .panel h3, .panel h4 { font-family: var(--display); font-weight: 700; letter-spacing: 0; }
+.panel-header h2 { font-size: var(--text-title); line-height: 1.4; }
+.panel .eyebrow { font-size: var(--text-small); letter-spacing: .03em; }
+.editor-body, .editor-body textarea, .editor-body pre,
+.console pre, .help-content pre, .reference-preview pre,
+.knowledge-reader pre, .knowledge-reader code {
+  font-family: var(--code);
+  font-variant-ligatures: none;
+  font-feature-settings: "liga" 0, "calt" 0;
+  letter-spacing: 0;
+  tab-size: 4;
+}
+.editor-body, .editor-body.large-text { line-height: var(--leading-code); }
+.editor-body { font-size: var(--text-code); }
+.editor-body.large-text { font-size: var(--text-code-large); }
+.editor-body textarea, .editor-body pre { font-size: inherit; line-height: inherit; }
+.console pre, .help-content pre, .reference-preview pre { font-size: var(--text-code); line-height: var(--leading-code); }

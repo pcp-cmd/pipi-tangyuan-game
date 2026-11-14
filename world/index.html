@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; connect-src 'self'; img-src 'self' data: blob:; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#152b29">
+  <meta name="description" content="与皮皮、汤圆一起，从启航岛写下第一行 Python。七座岛，真实 Python 挑战与统一进度手账。">
+  <title>皮皮与汤圆 · 群岛实践手账</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./scene.css">
+  <link rel="stylesheet" href="./journal.css">
+  <link rel="stylesheet" href="./access.css">
+  <link rel="stylesheet" href="./knowledge-reader.css">
+  <link rel="stylesheet" href="./pets-sprites.css">
+  <link rel="stylesheet" href="./workshop-interior.css">
+  <link rel="stylesheet" href="./reference-preview.css">
+  <link rel="stylesheet" href="./island-hud.css">
+  <link rel="stylesheet" href="./landmark-signs.css">
+  <link rel="modulepreload" href="./journal-explorer.mjs">
+  <link rel="modulepreload" href="./learning-history.mjs">
+<link rel="stylesheet" href="./font-tokens.css">
+<link rel="stylesheet" href="./desktop-ui.css">
+<link rel="stylesheet" href="./physical-ui.css">
+<link rel="stylesheet" href="./full-world-ui.css">
+<link rel="stylesheet" href="./travel-journal.css">
+<link rel="modulepreload" href="./journal-pages.mjs">
+</head>
+<body>
+  <a class="skip" href="#questSummary">跳到当前任务</a>
+  <section id="sceneBoot" class="scene-boot" role="status" aria-live="polite" aria-atomic="true" data-phase="loading">
+    <img class="icon" src="./assets/icons/compass.svg" alt=""><div>
+<strong>小岛正在展开</strong><p id="sceneBootMessage">手账和地图准备好后，就可以出发。</p>
+</div>
+<a id="sceneBootReload" href="./index.html">重新载入</a>
+  </section>
+  <noscript><p class="scene-noscript">这座小岛需要 JavaScript 才能探索。请启用 JavaScript 后重新载入。</p></noscript>
+  <main id="game" aria-label="皮皮与汤圆的启航岛" inert aria-busy="true" aria-describedby="sceneBootMessage">
+    <div id="viewport" class="viewport" tabindex="0" aria-label="启航岛场景。点击小径或可走空地出发，点击地点名字查看故事。拖动或方向键移动视角；Shift 加方向键移动准星，Home 重置准星，Enter 出发，Esc 停下。滚轮或双指缩放。漫游不计棋盘步数。">
+      <div id="world" class="world">
+        <img id="sceneBackground" class="scene-background" src="./assets/scene-background.webp" alt="日落下的启航岛：灯塔、代码工坊、营地和木码头由自然小径相连。" draggable="false">
+        <svg id="terrainOverlay" class="terrain-overlay" viewbox="0 0 1487 1058" aria-hidden="true" hidden></svg>
+        <span id="groundTarget" class="ground-target" aria-hidden="true" hidden></span>
+        <div id="placeHotspots" class="place-hotspots"></div>
+        <button id="destinationMarker" class="destination-marker" type="button"><img class="icon" src="./assets/icons/flag.svg" alt=""><span id="destinationName"></span></button>
+        <button id="pipiActor" class="cat-actor" data-actor="pipi" type="button" aria-label="皮皮"><span class="cat-art cat-sprite pipi"><img src="./assets/cat-pair.png" alt="灰白长毛、金眼、宽脸的皮皮" draggable="false"></span><span class="cat-name">皮皮<small>领队</small></span></button>
+        <button id="tangyuanActor" class="cat-actor" data-actor="tangyuan" type="button" aria-label="汤圆"><span class="cat-art cat-sprite tangyuan"><img src="./assets/cat-pair.png" alt="灰白长毛、绿眼、脸型较收的汤圆" draggable="false"></span><span class="cat-name">汤圆<small>同行</small></span></button>
+      </div>
+      <span id="groundAim" class="ground-aim" aria-hidden="true">＋</span>
+      <span class="ground-keyboard-help" aria-hidden="true">Shift＋方向键选点 · Enter 出发</span>
+    </div>
+
+    <div class="hud top-left">
+      <div class="island-plaque">
+<img class="icon compass" src="./assets/icons/compass.svg" alt=""><div>
+<h1>启航岛</h1>
+<span>皮皮与汤圆的 Python 远行</span>
+</div>
+</div>
+    </div>
+    <nav class="hud top-right" aria-label="冒险导航">
+      <div class="coin-plaque" aria-label="金币余额">
+<img class="icon" src="./assets/journal-v5/hud-coin-v1.webp" alt=""><strong id="coinCount">120</strong><span>金币</span>
+</div>
+      <button id="openMap" class="hud-button" type="button" aria-label="群岛地图" title="群岛地图" aria-pressed="false" aria-controls="mapPanel"><img class="icon" src="./assets/journal-v5/hud-map-v1.webp" alt=""><span>地图</span></button>
+      <button id="openJournal" class="hud-button" type="button" aria-label="伙伴与手账" title="伙伴与手账" aria-pressed="false" aria-controls="journalPanel"><img class="icon" src="./assets/journal-v5/hud-journal-v1.webp" alt=""><span>手账</span></button>
+    </nav>
+
+    <details name="island-hud" id="cameraDetails" class="hud camera-hud">
+      <summary id="cameraSummary" aria-label="场景视角控制"><img class="icon" src="./assets/icons/crosshair.svg" alt=""><span>视角</span></summary>
+      <div class="camera-controls">
+      <div class="zoom-group">
+<button id="zoomOut" class="icon-button" type="button" aria-label="缩小场景"><img class="icon" src="./assets/icons/minus.svg" alt=""></button><span id="zoomValue" aria-live="off">100%</span><button id="zoomIn" class="icon-button" type="button" aria-label="放大场景"><img class="icon" src="./assets/icons/plus.svg" alt=""></button>
+</div>
+      <button id="followCats" class="hud-button follow-button" type="button" title="回到伙伴"><img class="icon" src="./assets/icons/crosshair.svg" alt=""><span>回到伙伴</span></button>
+      <button id="showTerrain" class="hud-button terrain-toggle" type="button" aria-pressed="false" aria-controls="terrainOverlay">可走范围</button>
+      <button id="stopRoam" class="hud-button stop-roam" type="button" title="停下行走（Esc）" disabled>停下行走</button>
+      </div>
+    </details>
+    <details name="island-hud" id="questDetails" class="hud bottom-quest">
+      <summary id="questSummary" aria-label="当前任务" aria-controls="questContent"><img class="icon" src="./assets/icons/flag.svg" alt=""><span class="quest-expand-label">当前任务</span><strong id="questSummaryTitle">给冒险一个起点</strong><span class="quest-collapse-label">收起</span></summary>
+      <div id="questContent" class="quest-content">
+        <img class="icon terminal-icon" src="./assets/icons/terminal-window.svg" alt="">
+        <div class="quest-brief">
+<span id="questSmall">正在读取当前挑战</span><strong id="questBrief">用变量，让伙伴前进 3 格</strong>
+</div>
+        <button id="openWorkshop" class="primary-button" type="button"><img class="icon" src="./assets/icons/play.svg" alt=""><span>开始写代码</span></button>
+      </div>
+    </details>
+    <div id="assetNotice" class="asset-notice" hidden></div>
+    <div id="sceneHint" class="scene-hint">点击地面走路 · 双击建筑进入 · WASD / E</div>
+    <div id="roamControls" class="hud roam-controls" hidden>
+<span id="roamStatus" role="status" aria-live="polite"></span>
+</div>
+
+    <aside id="panel" class="panel" aria-labelledby="panelTitle" hidden>
+      <header class="panel-header"><div>
+<span id="panelEyebrow" class="eyebrow">启航岛 · 代码工坊</span><h2 id="panelTitle">给冒险一个起点</h2>
+</div>
+<button id="closePanel" class="icon-button" type="button" aria-label="关闭面板，回到小岛"><img class="icon" src="./assets/icons/x.svg" alt=""></button></header>
+      <div id="panelNotice" class="panel-notice" role="status" aria-live="polite" hidden></div>
+
+      <section id="workshopPanel" class="panel-page" aria-label="代码工坊" hidden>
+        <div class="panel-scroll workshop-scroll">
+<div class="workbench-column workbench-task" id="workbenchTask" role="region" aria-label="当前任务与帮助">
+<div class="workbench-companions" aria-label="一起写代码的伙伴"><button type="button" class="companion-greeting" data-wave-cat="pipi" aria-label="向皮皮打招呼"><span id="workbenchPipiSlot" class="workbench-pet cat-sprite pipi"><img src="./assets/cat-pair.png" alt="金眼的皮皮"></span><span>皮皮</span></button><button type="button" class="companion-greeting" data-wave-cat="tangyuan" aria-label="向汤圆打招呼"><span id="workbenchTangyuanSlot" class="workbench-pet cat-sprite tangyuan"><img src="./assets/cat-pair.png" alt="绿眼的汤圆"></span><span>汤圆</span></button></div>
+<div class="workbench-wayfinding"><label for="workshopCourse">课程</label><select id="workshopCourse" aria-label="切换课程"></select><button id="returnReview" class="text-button" type="button" hidden>回验证记录</button></div>
+<div class="lesson-intro">
+<h2 id="lessonTaskTitle" class="lesson-task-title">给冒险一个起点</h2>
+<figure class="lesson-context"><img id="lessonContextArt" class="course-context-art" alt=""><figcaption><strong id="lessonLocation"></strong><span id="lessonScenario"></span><small id="lessonArtStatus"></small></figcaption></figure>
+<div class="lesson-meta">
+<span id="lessonTopic">变量 · 输出</span><span id="lessonNumber">— / —</span>
+</div>
+<p id="lessonDescription"></p>
+<div id="questRoute" class="quest-route">
+<span><small>从这里</small><strong id="routeOrigin"></strong></span><div>
+<img class="icon" src="./assets/icons/arrow-right.svg" alt=""><small id="routeSteps"></small>
+</div>
+<span><small>去这里</small><strong id="routeTarget"></strong></span>
+</div>
+</div>
+<section id="marketStockTask" class="scope-note" aria-label="货栈任务说明" hidden></section><details class="learning-history-disclosure"><summary id="learningSummary">历史：正在读取 · 不代表当前稿</summary><p id="learningStatus" class="learning-status" role="status"></p></details><p id="lessonAccessStatus" class="learning-status" role="status"></p>
+<p id="unmeasuredKnowledge" class="scope-note" hidden></p>
+<label id="protocolSceneRow" class="course-select" hidden>观察场景<select id="protocolScene"><option value="normal">正常流程</option>
+<option value="failure">失败流程</option>
+<option value="edge">边界流程</option></select></label><p id="sceneNote" class="scope-note" hidden></p>
+<div class="help-disclosures">
+<details id="conceptDetails"><summary><img class="icon" src="./assets/icons/book-open.svg" alt="">讲解与示例<img class="icon small" src="./assets/icons/caret-down.svg" alt=""></summary><div class="help-content">
+<h3 id="conceptTitle"></h3><div id="lessonExplanation"></div>
+<div id="conceptText" class="knowledge-reader" hidden></div>
+<pre id="conceptCode" hidden></pre><section id="lessonExample" aria-label="概念示例"></section><details class="transfer-exercise"><summary id="lessonTransferTitle">继续练一练</summary><div id="lessonTransfer"></div></details>
+<section id="lessonNativeProject" hidden></section>
+<section id="marketStockSupplement" class="knowledge-reader" aria-label="货栈预测与阅读指引" hidden></section>
+</div></details><details id="hintDetails"><summary><img class="icon" src="./assets/icons/compass.svg" alt="">给我一点提示<img class="icon small" src="./assets/icons/caret-down.svg" alt=""></summary><div class="help-content">
+<p id="hintText"></p><div id="lessonHintLevels" class="hint-levels"></div><div id="lessonMistakes" class="typical-mistakes"></div>
+<button id="referenceCode" class="secondary-button" type="button" aria-controls="referencePreview" aria-expanded="false">查看参考解（记为跟做）</button>
+</div></details>
+</div>
+<p id="worldScope" class="scope-note" hidden></p>
+</div>
+<div class="workbench-writing">
+<div class="workbench-column workbench-code" id="workbenchCode" role="region" aria-label="编写 Python">
+<section class="code-area" aria-label="Python 代码编辑器"><div class="code-toolbar">
+<span><img class="icon" src="./assets/icons/code.svg" alt="">adventure.py</span><div>
+<button id="fontSize" class="icon-button compact" type="button" aria-label="增大代码文字" aria-pressed="false"><img class="icon" src="./assets/icons/text-aa.svg" alt=""></button><button id="resetDraft" class="icon-button compact" type="button" aria-label="恢复本关初始代码" title="恢复初始代码"><img class="icon" src="./assets/icons/arrows-clockwise.svg" alt=""></button>
+<button id="runCode" class="primary-button run-button" type="button" disabled><img class="icon" src="./assets/icons/play.svg" alt=""><span>运行代码</span></button><button id="stopCode" class="secondary-button stop-button" type="button" hidden><img class="icon" src="./assets/icons/stop.svg" alt=""><span>停止运行</span></button>
+</div>
+</div>
+<div class="editor-body">
+<pre id="lineNumbers" aria-hidden="true">1</pre>
+<textarea id="codeEditor" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" aria-label="Python 代码" aria-describedby="editorHelp"></textarea>
+</div>
+<details class="editor-shortcuts"><summary>键盘操作</summary><span id="editorHelp" class="editor-help">Enter 延续缩进 · Tab / Shift+Tab 调整缩进 · Esc 后按 Tab 离开编辑器 · Ctrl/⌘ Enter 运行</span></details></section>
+<div class="editor-recovery">
+<p id="editorSaveStatus" role="status" aria-live="polite">正在读取进度…</p>
+<details id="editorTools"><summary>草稿与备份</summary><div class="editor-tools-actions">
+<button id="exportDraft" class="text-button" type="button">导出代码</button><button id="exportEditorSave" class="text-button" type="button">导出进度</button><button id="retryEditorSave" class="text-button" type="button">重试保存</button><button id="reloadEditorSaved" class="text-button" type="button">重载已保存版本</button>
+</div></details></div>
+<section id="referencePreview" class="reference-preview" aria-labelledby="referenceTitle" aria-describedby="referenceNotice" hidden>
+            <h3 id="referenceTitle" tabindex="-1"></h3>
+            <p id="referenceNotice">这里只预览，不会替换编辑器中的代码。查看参考解会把当前稿记为跟做；关闭预览不会撤销此记录。</p>
+            <pre id="referenceText" tabindex="0" aria-label="参考 Python 代码，只读"></pre>
+            <div class="reference-preview-actions">
+<button id="adoptReference" class="secondary-button" type="button" disabled>采用参考解，替换当前代码</button><button id="closeReference" class="text-button" type="button">关闭预览，保留当前代码</button>
+</div>
+          </section>
+</div>
+<div class="workbench-column workbench-result" id="workbenchResult" role="region" aria-label="真实运行反馈"><section id="console" class="console" aria-label="运行结果" aria-live="polite"><div class="console-title">
+<h3 id="resultTitle">等待你的第一行代码</h3>
+<span id="runDuration"></span>
+</div>
+<pre id="output">运行后，Python 的输出会出现在这里。</pre>
+<div id="firstFailureFeedback" class="first-failure-feedback" hidden></div>
+<p id="failureNext" class="failure-next" hidden></p><details id="runChecks" class="run-checks" hidden><summary id="runChecksSummary">检查明细</summary><ul id="checks" class="checks"></ul></details>
+<div id="successActions" class="success-actions" hidden>
+<button id="viewMovement" class="secondary-button" type="button">回到小岛</button><button id="nextLesson" class="primary-button" type="button">下一个挑战<img class="icon" src="./assets/icons/arrow-right.svg" alt=""></button>
+</div></section></div>
+</div></div>
+        <footer class="workshop-footer"><div class="runtime-row">
+<span id="runtimeStatus" role="status">打开工坊后准备 Python</span><button id="retryRuntime" class="text-button" type="button" hidden>重新准备</button>
+</div>
+<div class="run-row">
+<span id="questReward">首次完成 +35 金币</span></div></footer>
+      </section>
+
+      <section id="lighthousePanel" class="panel-page" aria-label="测试灯塔验证与回顾" hidden>
+        <div class="lighthouse-layout"><div class="review-index">
+          <p class="eyebrow">查阅 · 验证 · 再试一次</p>
+          <label>查找课程<input id="reviewSearch" type="search" maxlength="100" placeholder="课程名或知识点" autocomplete="off"></label>
+          <label>查看记录<select id="reviewFilter"><option value="all">全部课程</option><option value="ready">现在可验证</option><option value="failed">最近未通过</option><option value="guided">跟做后再独立试</option><option value="recheck">待本版复验</option></select></label>
+          <p id="reviewCount" role="status"></p><ol id="reviewCourses" aria-label="验证课程列表"></ol>
+        </div><div id="reviewDetail" class="review-detail" aria-label="所选课程的检查与提交记录"></div></div>
+      </section>
+      <section id="travelPanel" class="panel-page" aria-label="船埠航线" hidden><div class="panel-scroll travel-scroll">
+        <img class="travel-compass" src="./assets/icons/compass.svg" alt=""><p id="travelCurrent"></p><p id="travelPlan" class="scope-note" hidden></p><div id="travelRoutes" class="travel-routes"></div><p class="scope-note">上船前会保存草稿、课程和两位伙伴的位置。</p>
+      </div></section>
+      <section id="inspectionPanel" class="panel-page" aria-label="地点观察" hidden><div class="panel-scroll inspection-scroll"><p id="inspectionText"></p><div id="inspectionCourses" class="inspection-courses"></div><button id="inspectionJournal" class="secondary-button" type="button">查看学习手账</button></div></section>
+
+      <section id="mapPanel" class="panel-page atlas-page" aria-label="群岛地图" hidden>
+      <div id="atlasViewport" class="atlas-viewport" tabindex="0" role="region" aria-label="群岛地图画面。拖动或方向键移动视角，加减键缩放，零键查看全图。">
+        <div id="atlasStage" class="atlas-stage"><div id="atlasArt" class="atlas-art">
+          <img id="atlasBackground" data-src="./assets/world-map-background.png" decoding="async" width="1586" height="992" draggable="false" alt="群岛地形总图：启航岛、集市岛、工匠岛、档案岛、观测岛、灯塔岛，以及独立的远航营地。">
+          <div id="atlasPins" class="atlas-pins" aria-label="地图地区"></div>
+        </div></div>
+      </div>
+      <div class="atlas-tools">
+        <details id="regionMenu" class="region-menu"><summary id="regionMenuToggle">地区 <img class="icon small" src="./assets/icons/caret-down.svg" alt=""></summary><div id="regionList" class="region-list"></div></details>
+        <div class="atlas-zoom" role="group" aria-label="地图视角">
+          <button id="atlasZoomOut" type="button" aria-label="缩小地图">−</button><button id="atlasFit" type="button">全图</button><button id="atlasZoomIn" type="button" aria-label="放大地图">＋</button>
+        </div>
+      </div>
+      <div id="mapLoadNotice" class="map-load-notice" role="status" hidden>
+<span id="mapLoadMessage"></span><button id="retryMapImage" class="text-button" type="button" hidden>重试地图图片</button>
+</div>
+      <p class="atlas-hint">七座岛相连 · 选地点查看航线与课程</p>
+      <article id="regionDetail" class="region-detail" tabindex="-1" aria-labelledby="regionName" hidden>
+        <span id="regionStatus" class="eyebrow"></span><h3 id="regionName"></h3>
+<p id="regionDescription"></p>
+<button id="regionTravel" class="primary-button" type="button">到船埠出发</button><button id="enterRegion" class="secondary-button" type="button">查看这座岛的课程</button>
+        <button id="closeRegionDetail" class="icon-button" type="button" aria-label="收起地区详情">×</button>
+      </article>
+    </section>
+
+      <section id="explorePanel" class="panel-page" aria-label="小岛漫游" hidden><div class="panel-scroll">
+<div class="exploration-intro">
+<span class="exploration-kicker">ISLAND NOTES</span><h3>把风景，<br>收进今天的手账。</h3>
+<p>先去码头听海，再到灯塔看晚霞。<br>写代码之前，也可以慢慢认识这个世界。</p>
+</div>
+<div class="exploration-progress">
+<p id="explorationStatus"></p>
+<progress id="explorationProgress" max="4" value="0" aria-label="已认识的小岛地点"></progress>
+</div>
+<div id="explorationList" class="exploration-list"></div>
+<p class="scope-note">到达过的岛屿与房间会记入见闻。课程里的棋盘步数仍按原挑战结算。</p>
+</div></section>
+
+      <section id="journalPanel" class="panel-page" aria-label="伙伴与冒险手账" hidden><div class="journal-spread" id="journalSpread">
+<div class="journal-cover" aria-hidden="true"><span class="journal-brass corner-tl"></span><span class="journal-brass corner-tr"></span><span class="journal-brass corner-bl"></span><span class="journal-brass corner-br"></span></div><div class="journal-spine" aria-hidden="true"><img src="./assets/journal-v5/stitched-spine-v1.webp" alt=""></div><h2 class="journal-masthead"><img src="./assets/journal-v5/title-adventure-v1.webp" alt="冒险手账" draggable="false"></h2>
+<nav class="journal-wayfinding" aria-label="冒险手账分页" id="journalTabs" role="tablist"><button type="button" data-journal-jump="journalCompanions" id="journalTab-companions" role="tab" data-journal-page="companions" aria-controls="journalPage-companions" aria-selected="true" tabindex="0">伙伴</button><button type="button" data-journal-jump="journalCourses" id="journalTab-courses" role="tab" data-journal-page="courses" aria-controls="journalPage-courses" aria-selected="false" tabindex="-1">课程</button><button type="button" data-journal-jump="journalSightseeing" id="journalTab-discoveries" role="tab" data-journal-page="discoveries" aria-controls="journalPage-discoveries" aria-selected="false" tabindex="-1">见闻</button><button type="button" data-journal-jump="journalSaves" id="journalTab-saves" role="tab" data-journal-page="saves" aria-controls="journalPage-saves" aria-selected="false" tabindex="-1">存档</button></nav><section class="journal-page-pair" id="journalPage-companions" role="tabpanel" aria-labelledby="journalTab-companions" data-journal-panel="companions"><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
+<p id="journalCompanions" class="journal-intro" tabindex="-1">今天，让谁带路？</p>
+<div class="cat-choices">
+<button class="cat-choice" data-cat="pipi" type="button" aria-pressed="true"><span class="portrait-art cat-sprite pipi"><img id="pipiPortrait" src="./assets/cat-pair.png" alt="金眼、宽脸、蓬松毛发的皮皮"></span><strong>皮皮</strong><span>好奇 · 爱探路</span><b>当前领队</b></button><button class="cat-choice" data-cat="tangyuan" type="button" aria-pressed="false"><span class="portrait-art cat-sprite tangyuan"><img id="tangyuanPortrait" src="./assets/cat-pair.png" alt="绿眼、较收脸型的汤圆"></span><strong>汤圆</strong><span>安静 · 细心观察</span><b>让它带队</b></button>
+</div>
+<div class="journal-greetings" aria-label="和伙伴打招呼"><button type="button" class="text-button" data-wave-cat="pipi">向皮皮招手</button><button type="button" class="text-button" data-wave-cat="tangyuan">向汤圆招手</button></div>
+</div>
+</div><div class="journal-leaf journal-leaf-right">
+<h3 class="journal-page-heading">今天的旅程</h3>
+<section class="journal-island-tools" aria-label="小岛与当前实践">
+          <button id="questShortcut" class="quest-shortcut" type="button"><img class="icon" src="./assets/icons/flag.svg" alt=""><span id="hudQuestTitle">给冒险一个起点</span><img class="icon small" src="./assets/icons/caret-right.svg" alt=""></button>
+          <button id="openKnowledge" class="secondary-button" type="button"><img class="icon" src="./assets/icons/book-open.svg" alt=""><span>当前知识卡</span></button>
+          <button id="openExplore" class="secondary-button" type="button"><img class="icon" src="./assets/icons/compass.svg" alt=""><span>小岛漫游</span><small id="explorationCount">0 / 4</small></button>
+          <span id="previewLabel" class="preview-label">写代码 · 看世界</span>
+        </section><div class="journal-stats">
+<span><small>历史首奖</small><strong id="completedCount">未读取</strong></span><span><small>积累经验</small><strong id="xpCount">0 XP</strong></span>
+</div>
+<p class="journal-page-note">选择伙伴作为领队，继续当前实践；课程记录与首次奖励会保留在这份旅程里。</p>
+</div></section><section class="journal-page-pair" id="journalPage-courses" role="tabpanel" aria-labelledby="journalTab-courses" data-journal-panel="courses" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
+<header id="journalCourses" class="journal-learning-heading" tabindex="-1"><span class="eyebrow">实践手账</span><h3>下一项实践</h3></header>
+<div id="journalCurrent" class="journal-current"></div>
+<div class="journal-tools">
+<label class="journal-search">找一项实践<input id="journalSearch" type="search" maxlength="100" placeholder="按课程名或知识点查找" autocomplete="off" aria-controls="journalEntries"></label>
+<label class="course-select">选择路线<select id="journalFilter"><option id="journalAll" value="all">全部实践</option>
+<option value="legacy">伙伴旅途</option>
+<option value="harbor">启航岛</option>
+<option value="market">集市岛</option>
+<option value="workshop">工匠岛</option>
+<option value="archive">档案岛</option>
+<option value="observatory">观测岛</option>
+<option value="beacon">灯塔岛</option>
+<option value="protocol">雾港协议工坊</option>
+<option value="async-foundations">异步入门站</option>
+<option value="lifecycle-depths">生命周期深水区</option></select></label>
+<label class="course-select journal-status-filter">实践状态<select id="journalStatus"><option value="all">全部状态</option>
+<option value="ready">现在可练 · 待独立通过</option>
+<option value="to-practice">待练习</option>
+<option value="recheck">待本版复验</option>
+<option value="passed">已有通过记录（含兼容沿用）</option>
+<option value="guided">辅助通过 · 再独立试</option>
+<option value="recent-failure">最近提交未通过</option>
+<option value="independent">无辅助标记通过记录</option></select></label>
+</div>
+<details id="externalWorkPanel" class="external-work"><summary>在 VS Code 完成一项工程</summary><div id="externalWorkContent"></div></details>
+<details class="journal-record-notes"><summary>学习记录与复验说明</summary>
+<div id="journalLearningSummary" class="journal-learning-summary" role="group" aria-label="已有实践记录汇总（含兼容沿用）"></div>
+<p id="courseAccessSummary" class="scope-note"></p></details>
+</div>
+</div><div class="journal-leaf journal-leaf-right">
+<div class="journal-results-heading">
+<span id="journalResultCount" role="status" aria-live="polite"></span><button id="clearJournalFilters" type="button" hidden>清除搜索与状态</button>
+</div>
+<p id="journalSelectionNotice" class="journal-selection-notice" role="status" aria-live="polite"></p>
+<p id="journalEmpty" class="journal-empty" hidden>这条路线里暂时没有匹配的实践。试试别的名称，或清除搜索与状态条件。</p>
+<div id="journalEntries" class="journal-entries" aria-label="课程实践列表"></div>
+</div></section><section class="journal-page-pair" id="journalPage-discoveries" role="tabpanel" aria-labelledby="journalTab-discoveries" data-journal-panel="discoveries" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
+<h3 class="journal-page-heading">沿途见闻</h3>
+<figure class="discovery-photo" id="discoveryPhoto" hidden><img id="discoveryPhotoArt" alt="" decoding="async"><figcaption id="discoveryPhotoCaption"></figcaption></figure>
+<section id="journalSightseeing" class="discovery-journal" tabindex="-1" aria-label="小岛见闻"><div>
+<span class="eyebrow">小岛见闻</span><strong id="journalExplorationCount">0 / 4 处风景</strong>
+</div>
+<p id="journalDiscoveries"></p>
+<button id="journalExplore" class="secondary-button" type="button">翻开小岛漫游<img class="icon" src="./assets/icons/compass.svg" alt=""></button></section><div id="worldDiscoveries" class="world-discoveries"></div><p class="journal-page-note">见闻记录与你实际认识的地点有关。打开群岛地图，可以查看各地的课程与当前可探索范围。</p>
+</div>
+</div><div class="journal-leaf journal-leaf-right">
+<h3 class="journal-page-heading">旅途记录</h3>
+<details class="history-details" open=""><summary>沿途发生的事</summary><ol id="historyEntries"></ol></details>
+</div></section><section class="journal-page-pair" id="journalPage-saves" role="tabpanel" aria-labelledby="journalTab-saves" data-journal-panel="saves" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
+<h3 class="journal-page-heading">选择一份旅程</h3>
+<fieldset class="journey-slots" id="journeySlots" aria-describedby="journeySlotStatus">
+<legend class="visually-hidden">三份旅程存档</legend>
+<label class="journey-slot" data-slot="slot-1"><input id="journeySlot-1" type="radio" name="journeySlot" value="slot-1"><span class="journey-slot-copy"><strong>旅程一</strong><span class="journey-slot-summary" data-slot-summary="slot-1">尚未读取旅程</span></span></label><label class="journey-slot" data-slot="slot-2"><input id="journeySlot-2" type="radio" name="journeySlot" value="slot-2"><span class="journey-slot-copy"><strong>旅程二</strong><span class="journey-slot-summary" data-slot-summary="slot-2">尚未读取旅程</span></span></label><label class="journey-slot" data-slot="slot-3"><input id="journeySlot-3" type="radio" name="journeySlot" value="slot-3"><span class="journey-slot-copy"><strong>旅程三</strong><span class="journey-slot-summary" data-slot-summary="slot-3">尚未读取旅程</span></span></label>
+</fieldset>
+<p class="journey-status" id="journeySlotStatus" role="status" aria-live="polite">正在读取可用旅程…</p>
+<div class="journey-actions">
+<button class="primary-button" id="journeyLoad" type="button" disabled>继续这份旅程</button><button class="secondary-button" id="journeyCreate" type="button" disabled>开始新旅程</button><button class="secondary-button" id="journeyExport" type="button" disabled>导出完整旅程</button><button class="secondary-button" id="journeyImport" type="button" disabled>导入到空旅程</button>
+</div>
+<p class="journal-page-note">读取与导入会先检查保存状态。已有进度和恢复原件会保留；仅选中旅程不会切换。</p>
+</div>
+</div><div class="journal-leaf journal-leaf-right">
+<div id="journalSaves" class="save-card" tabindex="-1" role="group" aria-label="存档与恢复">
+<img class="icon" src="./assets/icons/download-simple.svg" alt=""><div>
+<h3>把这段旅程装进口袋</h3>
+<p id="saveStatus">课程进度与草稿自动保存在这个浏览器。</p>
+</div>
+<button id="exportSave" class="secondary-button" type="button">备份当前旅程</button><p id="discoverySaveStatus" class="discovery-save-status"></p>
+<button id="exportDiscoveries" class="secondary-button" type="button">导出小岛见闻</button><button id="downloadOriginal" class="secondary-button" type="button" hidden>下载原始存档</button><button id="retrySave" class="secondary-button" type="button">重试保存</button><button id="reloadSaved" class="secondary-button" type="button">重载已保存版本</button>
+</div>
+<details class="journal-record-notes"><summary>关于学习记录</summary><p class="scope-note">草稿与进度保存在这个浏览器。导入旅程会保留原有记录与奖励；课程更新后，可重新运行确认本版结果。不同旅程不会自动合并金币。</p></details>
+</div></section>
+</div></section>
+
+      <section id="placePanel" class="panel-page" aria-label="小岛地点" hidden><div class="panel-scroll place-detail">
+<span id="placeDiscovery" class="place-discovery" hidden></span><img id="placeIcon" class="place-icon icon" src="./assets/icons/anchor.svg" alt=""><p id="placeDescription"></p>
+<div id="placeLocation" class="place-location"></div>
+<button id="placeAction" class="primary-button" type="button"></button><button id="placeFocus" class="secondary-button" type="button" hidden><img class="icon" src="./assets/icons/crosshair.svg" alt="">走到这里</button><button id="backToExplore" class="text-button" type="button" hidden>继续小岛漫游</button>
+</div></section>
+    </aside>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </main>
+  <script type="module" src="./scene-boot.js"></script>
+</body>
+</html>

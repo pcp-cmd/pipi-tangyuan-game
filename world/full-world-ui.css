@@ -1,0 +1,51 @@
+.lesson-context{display:flex;flex-direction:column;gap:10px;align-items:center;margin:0 0 18px}
+.course-context-art{width:92px;height:88px;object-fit:contain;flex:none}
+.lesson-context .course-context-art{width:100%;height:158px;object-fit:contain}
+.lesson-context figcaption{display:flex;flex-direction:column;gap:4px;min-width:0;width:100%}
+.lesson-context strong{font-size:14px;color:#5f6748;font-weight:500}.lesson-context span{display:none}.lesson-context small{display:none}
+.workbench-wayfinding{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:18px;font-size:13px}
+.workbench-wayfinding select{min-width:0;max-width:100%;flex:1;padding:7px 0;background:transparent;color:#3e513a;border:0;border-bottom:1px solid #9a8b65;border-radius:0;font-size:14px}
+.workbench-wayfinding button{font-size:13px;min-height:32px}
+#workshopPanel[data-mode="verify"] .workbench-task{background:#dbe0cd}
+#workshopPanel[data-mode="verify"] .workbench-result{background:#203a35}
+#workshopPanel[data-mode="verify"] .workshop-footer{background:#2b4140}
+.panel:has(#lighthousePanel:not([hidden])){inset:34px 4%;width:auto;max-width:1260px;margin-inline:auto;background:#e6d5ad;color:#364334;--ink:#364334;--muted:#6b654f;--gold:#4b674b;backdrop-filter:none;border:2px solid #9a865c}
+.panel:has(#lighthousePanel:not([hidden])) .panel-header{background:#304a40;color:#f0e2bb;border:0}
+.panel:has(#lighthousePanel:not([hidden])) .panel-header .eyebrow{color:#c2cdb2}
+.lighthouse-layout{display:grid;grid-template-columns:minmax(260px,.85fr) minmax(360px,1.5fr);min-height:0;height:100%}
+.review-index,.review-detail{min-height:0;overflow:auto;overscroll-behavior:contain;padding:25px 30px;scrollbar-width:thin}
+.review-index{border-right:1px solid #b4a075;background:#dac89f66}
+.review-index label{display:flex;flex-direction:column;gap:5px;margin-bottom:12px;font-size:14px}
+.review-index input,.review-index select,.review-actions select{border:1px solid #a39169;border-radius:3px;background:#f4e8cb;color:#374333;padding:9px;min-height:42px;font-size:15px;min-width:0}
+#reviewCount{font-size:13px;color:#6a6248;margin:16px 0 8px}
+#reviewCourses{padding:0;margin:0;list-style:none}
+.review-course{display:flex;align-items:center;gap:10px;width:100%;background:none;border:0;border-bottom:1px solid #b4a07570;border-radius:0;box-shadow:none;padding:11px 3px;color:#3b4735;text-align:left}
+.review-course .course-context-art{width:48px;height:46px}.review-course>span{display:flex;flex-direction:column;gap:5px;min-width:0}.review-course strong{font-size:15px;font-weight:500;line-height:1.5}.review-course small{font-size:12px;color:#6c684d}
+.review-course[aria-pressed="true"]{background:#92a47030;box-shadow:inset 3px 0 #657b50;padding-left:9px}
+.review-course-heading{display:flex;gap:18px;align-items:center;margin-bottom:18px}.review-course-heading h3{font-size:23px;margin:6px 0}.review-status{font-size:14px;color:#587048;margin:0}.review-detail .eyebrow{font-size:12px;color:#756649}
+.review-purpose{font-size:16px;line-height:1.8}.review-detail h4{font-size:18px;margin:24px 0 12px}.review-criteria ul{padding-left:22px;line-height:1.8;font-size:15px}
+.review-actions{display:flex;align-items:flex-end;gap:18px;margin-top:22px;flex-wrap:wrap}.review-actions label{display:flex;flex-direction:column;gap:7px;font-size:14px}.review-actions button{background:#48664b;color:#fff1ce;border:1px solid #36553a;min-height:45px}
+.review-detail .scope-note{color:#6d624a;font-size:13px;line-height:1.7}.review-current-result{border-block:1px solid #a89870;margin-top:25px}.review-current-result pre{background:#263e34;color:#ede6cb;font:15px/1.7 var(--code);padding:14px;white-space:pre-wrap;overflow-wrap:anywhere}.review-current-result ul{font-size:14px;line-height:1.8}.review-current-result .passed{color:#496943}.review-current-result .failed{color:#975c35}
+.review-timeline{list-style:none;padding:0}.review-timeline li{display:flex;flex-direction:column;gap:4px;border-left:2px solid #9ba06f;padding:3px 0 12px 15px;margin:0 0 14px}.review-timeline strong{font-size:15px}.review-timeline time,.review-timeline small,.review-timeline summary{font-size:13px;color:#76674d}.review-timeline details code{display:block;font:12px/1.6 var(--code);overflow-wrap:anywhere;padding:8px 0}.review-history-note summary{font-size:14px;color:#665b43;cursor:pointer}
+.panel:has(#travelPanel:not([hidden])),.panel:has(#inspectionPanel:not([hidden])){inset:18% 25%;width:auto;max-width:760px;margin-inline:auto;background:#e2d1a7;color:#364934;--ink:#364934;--muted:#6b6247;--gold:#486047;border:2px solid #9f8960;backdrop-filter:none}
+.panel:has(#travelPanel:not([hidden])) .panel-header,.panel:has(#inspectionPanel:not([hidden])) .panel-header{background:#344f42;color:#f3e1b3;border:0}
+.travel-scroll,.inspection-scroll{padding:28px 34px}.travel-compass{width:54px;height:54px;float:right;filter:brightness(.6)}.travel-routes{display:grid;gap:14px;margin:25px 0}.travel-routes button{display:flex;align-items:center;justify-content:space-between;gap:18px;min-height:65px;padding:12px 5px;color:#3b5038;background:none;border:0;border-radius:0;border-bottom:1px solid #b19b70;box-shadow:none;text-align:left}.travel-routes button strong{font-size:19px}.travel-routes button span{font-size:14px}.travel-routes button[data-recommended="true"]{border-color:#507044;box-shadow:0 2px #507044}.travel-scroll .scope-note{color:#6b6047;font-size:14px}
+.region-detail #regionTravel{display:block;width:100%;margin-bottom:10px}.region-detail #enterRegion{width:100%}
+.world-discoveries{margin-top:22px}.world-discoveries details{border-bottom:1px solid #b7a074;padding:10px 0}.world-discoveries summary{cursor:pointer;color:#3f5639}.world-discoveries ul{list-style:none;padding:0;font-size:14px;line-height:1.8;color:#6c593d}.world-discoveries li[data-visited="true"]{color:#3f613d}
+.inspection-courses{font-size:14px;color:#685c42;margin-block:20px}
+#inspectionPanel .secondary-button{color:#f4e4c1}
+#journalPanel .course-row-main{grid-template-columns:92px minmax(0,1fr);padding:18px 38px 18px 0;gap:15px;align-items:center;min-height:128px}
+#journalPanel .course-row-main .course-context-art{width:92px;height:102px;margin:0}
+#journalPanel .course-row-copy{min-width:0;display:flex;flex-direction:column;gap:4px}
+#journalPanel .course-row-main h4{white-space:normal;overflow:visible;line-height:1.6;font-size:17px;font-weight:500}
+#journalPanel .course-row-main .learning-badge{background:none;border:0;padding:0;font-size:12px;line-height:1.5;color:#62714c}
+#journalPanel .course-row-main .course-ordinal{font-size:11px;line-height:1.3}
+#journalPanel .course-row-main .course-enter{width:max-content;max-width:100%;min-height:32px;padding:4px 0;font-size:13px;margin-top:3px;border:0;border-bottom:1px solid #879164;background:none;border-radius:0}
+#journalPanel .course-row-details>summary{top:21px;width:36px;font-size:12px}
+#journalPanel .course-row-body .course-art-note{font-size:12px;color:#85724e}
+.asset-notice{max-width:420px;font:12px/1.5 var(--ui);padding:5px 10px;background:#253c32c9;color:#e4d7b5;border:0}
+.ground-target{pointer-events:none;z-index:3100}
+#lessonNumber{white-space:nowrap;flex:none}
+.review-timeline code{display:block;font:12px/1.6 var(--code);overflow-wrap:anywhere;padding:8px 0}
+.review-index .eyebrow{color:#756649}
+@media(max-height:760px){.panel:has(#lighthousePanel:not([hidden])){inset:12px 3%}.review-index,.review-detail{padding:18px 22px}.panel:has(#travelPanel:not([hidden])),.panel:has(#inspectionPanel:not([hidden])){inset:12% 22%}}
