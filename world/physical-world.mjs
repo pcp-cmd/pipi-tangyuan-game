@@ -1,3 +1,5 @@
+import {loadSceneAssets} from './generated/asset-loader.mjs';
+import {createPhysicalStartup} from './generated/startup-physical.mjs';
 import {createSaveStore} from '../integration/recovery-save-store.mjs';
 import {PHYSICAL_SCENES,DEFAULT_PHYSICAL_SCENE_ID,PHYSICAL_PORTS,PHYSICAL_ROUTES,PHYSICAL_REGISTRY_VERSION} from './physical-scenes.mjs';
 import {parsePhysicalState,upgradePhysicalState,freshPhysicalState,PHYSICAL_SAVE_KEY,LEGACY_PHYSICAL_STATE_SCHEMA,PHYSICAL_MIGRATION_PREFIX} from './physical-state.mjs';
@@ -10,23 +12,12 @@ const point=p=>({x:p.x,y:p.y});
 const followGap=scene=>Math.max(scene.navigation.followGap,companionClearance(scene));
 const messages={busy:'正在确认保存或切换，请稍候。','outside-walkable-floor':'那里不能走，请选择地面。','no-clear-route':'暂时没有安全的通路，请换一个落点。','companion-space':'伙伴需要更多让路空间，请换方向或换一只带队。','not-near':'请先走到门或工作台旁，再按 E 交互。','not-near-exit':'请先走到出口旁，再按 E 返回。','asset-unavailable':'场景图片未能载入，当前位置保持不变。','learning-save-blocked':'代码尚未确认保存，当前位置保持不变。','return-before-preview':'请先返回启航岛，再打开另一间候选房。','obstacle':'前方是墙壁或家具。','companion-route-unavailable':'伙伴暂时找不到安全通路。','no-return-anchor':'这里没有室内返回入口。','not-near-port':'请先走到码头旁，再选择航线。','invalid-route':'这条航线无法从当前码头出发。'};
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
-async function browserAsset(scene){
-  const assets=[{src:scene.background,sha256:scene.assetSha256,naturalWidth:scene.width,naturalHeight:scene.height},...scene.hotspots.flatMap(h=>h.asset?[h.asset]:[])];
-  await Promise.all(assets.map(async asset=>{
-    const url=new URL(asset.src,import.meta.url).href;
-    const response=await fetch(url);if(!response.ok)throw new Error('asset-unavailable');
-    const bytes=await response.arrayBuffer();
-    if(asset.sha256){const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))].map(n=>n.toString(16).padStart(2,'0')).join('');if(hash!==asset.sha256)throw new Error('asset-identity');}
-    const image=new Image();image.src=url;await image.decode();
-    if(image.naturalWidth!==asset.naturalWidth||image.naturalHeight!==asset.naturalHeight)throw new Error('asset-dimensions');
-  }));
-  return{width:scene.width,height:scene.height};
-}
+function browserAsset(scene,{signal}={}){return loadSceneAssets(scene,import.meta.url,signal);}
 
 export function createPhysicalWorld({storage,locks,beforeTransition=async()=>true,travelGuard=()=>true,loadAsset=browserAsset,onChange=()=>{},requestFrame=callback=>requestAnimationFrame(callback),cancelFrame=id=>cancelAnimationFrame(id),now=()=>performance.now()}={}){
   if(!storage||typeof beforeTransition!=='function'||typeof travelGuard!=='function')throw new TypeError('PhysicalWorld requires a scoped storage and transition guards');
-  let state=null,phase='loading',notice='',issue='',generation=0,disposed=false,frame=null,route=null,trail=null,lastTime=null,activeWrite=false,persistedState=null,migration=null,movementId=0,navigation=null,movingFlags={pipi:false,tangyuan:false};
-  const pauses=new Set(),assets=new Map();
+  let pendingState=null,state=null,phase='loading',notice='',issue='',generation=0,disposed=false,frame=null,route=null,trail=null,lastTime=null,activeWrite=false,persistedState=null,migration=null,movementId=0,navigation=null,movingFlags={pipi:false,tangyuan:false};
+  const pauses=new Set(),assets=new Map(),assetController=new AbortController();
   const retainedStorage={
     getItem:key=>storage.getItem(key),
     keys:()=>typeof storage.keys==='function'?storage.keys():Array.from({length:storage.length},(_,i)=>storage.key(i)),
@@ -43,7 +34,7 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   const store=createSaveStore({key:PHYSICAL_SAVE_KEY,parse:parsePhysicalState,storage:retainedStorage,locks,additionalRecoveryPrefixes:[PHYSICAL_MIGRATION_PREFIX]});
   function scene(){return PHYSICAL_SCENES[(state||freshPhysicalState()).physicalSceneId];}
   function view(){
-    const value=state||freshPhysicalState(),spec=PHYSICAL_SCENES[value.physicalSceneId],save=store.snapshot();
+    const value=state||pendingState||freshPhysicalState(),spec=PHYSICAL_SCENES[value.physicalSceneId],save=store.snapshot();
     const poses=Object.fromEntries(names.map(cat=>[cat,{...value.cats[cat],moving:!!movingFlags[cat]}]));
     const leader=value.cats[value.leader];
     const nearby=spec.hotspots.filter(h=>distance(leader,h.approach)<=h.radius)
@@ -57,7 +48,7 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   function available(){return !disposed&&state&&['ready','walking'].includes(phase)&&!pauses.size&&!activeWrite;}
   function epochCurrent(token){return !disposed&&token===generation&&!pauses.size;}
   async function preload(spec){
-    if(!assets.has(spec.id))assets.set(spec.id,Promise.resolve().then(()=>loadAsset(spec)).then(size=>{if(size?.width!==spec.width||size?.height!==spec.height)throw new Error('asset-dimensions');return true;}).catch(error=>{assets.delete(spec.id);throw error;}));
+    if(!assets.has(spec.id))assets.set(spec.id,Promise.resolve().then(()=>loadAsset(spec,{signal:assetController.signal})).then(size=>{if(size?.width!==spec.width||size?.height!==spec.height)throw new Error('asset-dimensions');return true;}).catch(error=>{assets.delete(spec.id);throw error;}));
     return assets.get(spec.id);
   }
   async function save(candidate,{initializing=false,token=null,publish=true,successNotice=''}={}){
@@ -71,21 +62,29 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     if(publish)state=copy(candidate);persistedState=JSON.stringify(candidate);
     issue='';phase=pauses.size?'suspended':'ready';notice=successNotice;emit();return{status:'done',revision:state.revision};
   }
-  const ready=(async()=>{
-    const loaded=store.readLatest();
-    if(!loaded.state&&loaded.status!=='idle')return recover(loaded.status);
-    const candidate=loaded.state?upgradePhysicalState(loaded.state):freshPhysicalState();
-    if(loaded.state&&(loaded.state.schema===LEGACY_PHYSICAL_STATE_SCHEMA||loaded.state.registryVersion!==PHYSICAL_REGISTRY_VERSION)){
-      const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(loaded.raw)))].map(n=>n.toString(16).padStart(2,'0')).join('');
-      migration={raw:loaded.raw,key:PHYSICAL_MIGRATION_PREFIX+hash};
-    }
-    try{await preload(PHYSICAL_SCENES[candidate.physicalSceneId]);}catch{return recover('asset-unavailable');}
-    if(disposed)return{status:'superseded'};
-    if(!loaded.state)return save(candidate,{initializing:true});
-    state=copy(candidate);persistedState=JSON.stringify(candidate);phase=pauses.size?'suspended':'ready';emit();return{status:'done',revision:state.revision};
-  })();
+  const startup=createPhysicalStartup({
+    read:()=>store.readLatest(),upgrade:upgradePhysicalState,fresh:freshPhysicalState,
+    async prepareMigration(loaded){
+      if(loaded.state&&(loaded.state.schema===LEGACY_PHYSICAL_STATE_SCHEMA||loaded.state.registryVersion!==PHYSICAL_REGISTRY_VERSION)){
+        const hash=[...new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(loaded.raw)))].map(n=>n.toString(16).padStart(2,'0')).join('');
+        migration={raw:loaded.raw,key:PHYSICAL_MIGRATION_PREFIX+hash};
+      }
+    },
+    pending(candidate){pendingState=copy(candidate);phase='loading';issue='';notice='';emit();},
+    loadAsset:candidate=>preload(PHYSICAL_SCENES[candidate.physicalSceneId]),
+    publish(candidate,initializing){
+      pendingState=null;
+      if(initializing)return save(candidate,{initializing:true});
+      state=copy(candidate);persistedState=JSON.stringify(candidate);phase=pauses.size?'suspended':'ready';issue='';notice='';emit();return{status:'done',revision:state.revision};
+    },
+    recover,
+    assetBlocked(reason){issue=reason;notice='当前场景图片未能载入。可以重试，原存档和位置保持不变。';phase='asset-blocked';stopMotion();emit();return{status:'asset-blocked',reason};},
+    disposed:()=>disposed,
+  });
+  const ready=startup.start();
   async function flush(){
     if(disposed)return{status:'blocked',reason:'disposed'};
+    if(phase==='asset-blocked')return{status:'asset-blocked',reason:issue};
     if(!state||phase==='loading')return{status:'blocked',reason:'loading'};
     if(phase==='recovery-required')return{status:'recovery-required',reason:issue};
     if(phase==='transitioning'||activeWrite)return{status:'blocked',reason:'busy'};
@@ -305,9 +304,9 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     return blocked('unknown-action');
   }
   function suspend(reason='paused'){
-    const token={reason};pauses.add(token);generation++;stopMotion();if(!disposed&&phase!=='recovery-required'&&phase!=='loading')phase='suspended';emit();
+    const token={reason};pauses.add(token);generation++;stopMotion();if(!disposed&&phase!=='recovery-required'&&phase!=='loading'&&phase!=='asset-blocked')phase='suspended';emit();
     let released=false;return()=>{if(released)return;released=true;pauses.delete(token);if(!pauses.size&&phase==='suspended')phase='ready';emit();};
   }
-  function dispose(){if(disposed)return;disposed=true;generation++;stopMotion();phase='disposed';emit();}
-  return Object.freeze({ready,view,act,flush,suspend,dispose});
+  function dispose(){if(disposed)return;disposed=true;generation++;assetController.abort();stopMotion();phase='disposed';emit();}
+  return Object.freeze({ready,retryAssets:startup.retry,view,act,flush,suspend,dispose});
 }

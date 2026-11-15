@@ -11,7 +11,7 @@
 .place-sign[data-sign="hanging"] .place-sign-title{top:39px;height:47px}
 .place-sign[data-sign="wall"] .place-sign-title{top:13px;height:37px}
 .world .place-hotspot.place-sign[data-place]:focus-visible{outline:2px dashed #ffe6ac;outline-offset:3px;background:none}
-.world .place-hotspot.place-sign[data-place]:focus-visible .place-sign-art{filter:drop-shadow(0 1px 1px #f0c777)}
+.world .place-hotspot.place-sign[data-place]:is(:hover,:focus-visible) .place-sign-art{filter:brightness(1.06)}
 /* The destination is a cloth pennant planted on the route. Its full changing
    name remains in the task and its accessible button name, not floating text. */
 .world .destination-marker{width:max(48px,var(--world-min-target,44px));height:max(76px,var(--world-min-target,44px));padding:0;border:0;background:radial-gradient(ellipse 13px 3px at 50% calc(100% - 1px),#26312666 25%,transparent 80%);box-shadow:none;z-index:3;transform:translate(-50%,-100%)}

@@ -7,7 +7,6 @@ import { firstFailureView, renderFirstFailureFeedback } from './first-failure-fe
 import { evidenceCompatibility } from './learning-history.mjs';
 import { createErrorLineAction } from './error-line-action.mjs';
 import { renderKnowledgeText } from './knowledge-reader.mjs';
-import { createJournalExplorer } from './journal-explorer.mjs';
 import { lessonSceneView } from './course-scenes.mjs';
 import { accessLabel, accessSummaryCopy, allowLessonIntent, successContinuation } from './lesson-access-view.mjs';
 import { LESSONS, LESSON_IDS, ASSESSMENT_VERSION, evidenceVersionFor } from '../integration/contracts.mjs';
@@ -26,7 +25,6 @@ import { routesFromPort, planVoyage } from './world-travel.mjs';
 import { islandAccess, lessonIslandAccess, voyageAccess } from './learning-milestones.mjs';
 import { buildingOffering, buildingLessonIds } from './building-offerings.mjs';
 import { mountPhysicalPresentation } from './physical-presentation.mjs';
-import { mountJournalPages } from './journal-pages.mjs';
 import { mountRecoveryPanel } from './recovery-panel.mjs';
 import { freshState, TILES } from '../dist/engine.js';
 import { SAVE_KEY, CAMERA_KEY, CAT_NAMES, SCENE, REGIONS, questContext } from './scene-model.js';
@@ -35,8 +33,6 @@ import { readDiscoveries, visitPlace, loadDiscoveryStorage, saveDiscoveryStorage
 import { planIndentation, planContinuedIndentation } from './editor-helpers.mjs';
 import { createCompanionSprites } from './pets-renderer.mjs';
 import { mountCompanionInput } from './companion-input.mjs';
-import { mountExternalWorkPanel } from './external-work-panel.mjs';
-import { mountClassroomGraduation } from './classroom-graduation.mjs';
 import { externalAssignment } from '../integration/external-work.mjs';
 import { createReferencePreview } from './reference-preview.mjs';
 import { createAtlasView } from './atlas-view.mjs';
@@ -46,6 +42,10 @@ import { mountLearningWorkbench } from './learning-workbench.mjs';
 import { createPresentationTransitions } from './presentation-transitions.mjs';
 import { mountJournalPreferences, mapMovementKey } from './journal-preferences.mjs';
 import { mountHarborCanopyWind } from './harbor-canopy-wind.mjs';
+import { reportStartupStage } from './generated/startup.mjs';
+import { coordinateSceneStartup } from './generated/scene-startup.mjs';
+import { loadJournalRuntime, loadPaperRuntime } from './generated/journal-runtime.mjs';
+import { mountStartupRecovery } from './generated/startup-recovery.mjs';
 
 const $ = id => document.getElementById(id);
 const lessons = LESSONS;
@@ -53,6 +53,7 @@ const lessonIds = lessons.map(item => item.id);
 const MAX_CODE = 20000;
 const EXPLORATION_KEY = `${SAVE_KEY}:exploration`;
 const journeys = createJourneys({ storage: localStorage, locks: navigator.locks, selectionStorage: sessionStorage });
+reportStartupStage('save');
 const openedJourney = await journeys.open();
 if (!openedJourney.ok) {
   const help = document.createElement('section'); help.className = 'journey-start-error';
@@ -95,6 +96,7 @@ let lastOpener = null;
 let editorEscape = false;
 let editorRevision = 0;
 let renderedEditorLessonId = null;
+let lessonContentReady = false;
 const readFirstEntrySource = createFirstEntrySourceReader();
 let toastTimer;
 let cameraTimer;
@@ -105,10 +107,21 @@ let sceneKeyboardFocus = null;
 let physicalWorld = null, physicalPresentation = null, panelSpaceRelease = null, canopyWind = null;
 let journeyBusy = false, renderedPhysicalScene = null;
 let workbenchMode = 'learn', lastAcceptedResult = null, plannedIsland = null;
+let cameraHolds = 0;
+let approachRequest = null;
+let journalExplorer = null, journalPages = null, journalReady = null;
+let mailboxNote = null, paperControls = null, pythonStatus = null, paperReady = null;
+let recoveryPanel = null, startupRecovery = null;
 const arrivalIntent = createArrivalIntent();
-const hotspotClickIntent = createHotspotClickIntent({ pause: () => {
-  arrivalIntent.cancel(); clearMovement(); $('viewport').focus({ preventScroll: true });
-  return physicalWorld.suspend('hotspot-click');
+const hotspotClickIntent = createHotspotClickIntent({ holdCamera: () => {
+  cameraHolds++;
+  let released = false;
+  return () => {
+    if (released) return;
+    released = true;
+    cameraHolds = Math.max(0, cameraHolds - 1);
+    if (!cameraHolds && camera.follow && physicalWorld && !panel.kind) focusCats(false, false);
+  };
 } });
 const drawnActorPositions = new Map();
 let previousViewport = { width: 0, height: 0 };
@@ -140,11 +153,29 @@ const session = createWorldSession({ ...persistence, runtime: () => runtime,
     const copy = view.notice || ({ saved: '进度与草稿已保存。', saving: '正在保存…', conflict: '另一页面已改动存档，请先导出。', 'backup-only': '浏览器不支持安全协调，当前仅保留恢复备份。', 'locks-required': '浏览器不支持安全协调。当前内容未保存，请先导出。', 'recovery-capacity': '恢复空间已满，旧备份未删除。请先导出当前完整草稿。', 'recovery-owner-conflict': '本页仍有不同的旧恢复分支，不能覆盖。请先保留两份内容。', 'recovery-invalid': '恢复记录无法校验，原件未覆盖。请先导出当前内容。', 'recovery-error': '恢复备份尚未确认写入。请保持页面打开并导出完整内容。', 'pending-local': '本地仍有未保存内容，请先导出或明确重载。', 'missing-authority': '已保存的主记录已不在原位置。本地内容仍保留，请先导出，不会新建空白进度覆盖。', error: '保存未完成，当前进度仍在页面，请导出后重试。' }[view.status] || '原存档受保护，请先导出再处理。');
     $('saveStatus').textContent = copy; $('editorSaveStatus').textContent = copy;
     $('downloadOriginal').hidden = !session?.original();
-    if (initialized) { if (!view.selecting) updateQuest(); syncControls(); externalWorkPanel?.render(); classroomGraduation?.render(); }
+    if (initialized) {
+      if (!view.selecting) updateQuest();
+      syncControls();
+      if (panel.kind === 'journal') { externalWorkPanel?.render(); classroomGraduation?.render(); }
+    }
   }
 });
 
-const journalExplorer = createJournalExplorer({
+function ensurePaperPanels() {
+  if (paperReady) return paperReady;
+  paperReady = loadPaperRuntime().then(({ mountMailboxNote, mountPythonStatus, mountPaperControls }) => {
+    mailboxNote = mountMailboxNote({ panel: $('panel'), content: $('inspectionCourses'), intro: $('inspectionText'), returnButton: $('inspectionJournal') });
+    paperControls = mountPaperControls($('panel'));
+    pythonStatus = mountPythonStatus({ row: $('runtimeStatus').parentElement, status: $('runtimeStatus'), editor: $('workshopPanel').querySelector('.code-area') });
+    syncControls();
+  }).catch(error => { paperReady = null; throw error; });
+  return paperReady;
+}
+
+function ensureJournalPanels() {
+  if (journalReady) return journalReady;
+  journalReady = Promise.all([loadJournalRuntime(), ensurePaperPanels()]).then(([modules]) => {
+    journalExplorer = modules.createJournalExplorer({
   lessons, assessmentVersion: ASSESSMENT_VERSION, evidenceVersionFor, session,
   groupOf: lessonGroup, selectedGroup: () => journalFilter, chooseLesson,
   isVisible: () => panel.kind === 'journal' && $('journalPanel').dataset.journalPage === 'courses',
@@ -153,13 +184,20 @@ const journalExplorer = createJournalExplorer({
   elements: { list: $('journalEntries'), search: $('journalSearch'), filter: $('journalStatus'),
     count: $('journalResultCount'), summary: $('journalLearningSummary'), current: $('journalCurrent'),
     clear: $('clearJournalFilters'), empty: $('journalEmpty'), notice: $('journalSelectionNotice') }
-});
-
-const journalPages = mountJournalPages({ root: $('journalPanel'), onPageChange: page => {
-  if (page === 'courses') { journalExplorer.render(); externalWorkPanel?.render(); }
-  if (page === 'saves') renderJourneys();
-  syncCompanionPresentation();
-} });
+    });
+    externalWorkPanel = modules.mountExternalWorkPanel({ root: $('externalWorkContent'), session, download: downloadText, browseCourse,
+      canWrite: () => !journeyBusy && !runBusy && session.snapshot().loadedValid && !session.snapshot().selecting });
+    classroomGraduation = modules.mountClassroomGraduation({ root: $('classroomGraduation'), session, browseCourse, download: downloadText });
+    journalPages = modules.mountJournalPages({ root: $('journalPanel'), onPageChange: page => {
+      if (page === 'courses') { journalExplorer.render(); externalWorkPanel.render(); }
+      if (page === 'saves') renderJourneys();
+      if (page === 'discoveries') renderWorldDiscoveries();
+      paperControls.refresh();
+      syncCompanionPresentation();
+    } });
+  }).catch(error => { journalReady = null; throw error; });
+  return journalReady;
+}
 
 function companionSlots() {
   if (document.hidden) return [];
@@ -217,7 +255,7 @@ function renderWorkbenchChoice() {
   $('workshopCourse').value = String(state.mission);
   $('workshopCourse').title = offering?.purpose || '在手账查看完整课程。';
   let purpose = $('buildingPurpose');
-  if (!purpose) { purpose = document.createElement('p'); purpose.id = 'buildingPurpose'; purpose.className = 'building-purpose'; $('workshopCourse').parentElement.after(purpose); }
+  if (!purpose) { purpose = document.createElement('p'); purpose.id = 'buildingPurpose'; purpose.className = 'building-purpose'; $('workshopCourse').closest('.workbench-wayfinding').after(purpose); }
   purpose.textContent = offering?.purpose || '';
   purpose.hidden = !purpose.textContent;
   $('workshopPanel').dataset.mode = workbenchMode;
@@ -238,8 +276,8 @@ function renderWorldDiscoveries() {
   $('discoveryPhoto').hidden = !visited.has(currentScene.id);
   if (visited.has(currentScene.id)) {
     $('discoveryPhotoArt').src = new URL(currentScene.background, import.meta.url).href;
-    $('discoveryPhotoArt').alt = `旅程已到访：${currentScene.title}`;
-    $('discoveryPhotoCaption').textContent = currentScene.title;
+    $('discoveryPhotoArt').alt = `旅程已到访：${currentScene.title.replace(/ · .*$/, '')}`;
+    $('discoveryPhotoCaption').textContent = currentScene.title.replace(/ · .*$/, '');
   }
   target.replaceChildren();
   for (const region of REGIONS) {
@@ -270,8 +308,9 @@ function renderTravel() {
       const current = voyageAccess({destination:step.destination,envelope:session.snapshot().envelope,physical:physicalWorld.view()});
       if (!current.available) {
         const next = current.nextSteps[0];
-        if (next) { await openPanel('journal', button); journalPages.show('courses'); $('journalSearch').value = next.title; journalExplorer.render(); }
-        else toast(current.reason);
+        if (next) {
+          if (await openPanel('journal', button)) { journalPages.show('courses'); $('journalSearch').value = next.title; journalExplorer.render(); }
+        } else toast(current.reason);
         return;
       }
       button.disabled = true;
@@ -409,6 +448,7 @@ function drawCamera(save = true) {
 
 function focusCats(announce = false, save = true) {
   camera.follow = true;
+  if (cameraHolds) return;
   const point = roaming ? drawnActorPositions.get(state.activeCat) : null;
   camera.x = point?.x ?? SCENE.points[state.positions[state.activeCat]][0];
   camera.y = (point?.y ?? SCENE.points[state.positions[state.activeCat]][1]) - (mobile() ? 145 : 110);
@@ -448,16 +488,18 @@ function buildScene() {
     const button = document.createElement('button');
     button.type = 'button'; button.className = 'place-hotspot'; button.dataset.place = place.id;
     mountLandmarkSign(button, place);
-    hotspotClickIntent.bind(button, { approach: () => walkToPlace(place.id), activate: () => {
+    hotspotClickIntent.bind(button, { approach: intent => walkToPlace(place.id, intent), activate: intent => {
       const ids = { workshop:'harbor.code-workshop.front-door', lighthouse:'harbor.test-lighthouse.front-door', harbor:'harbor.pier', camp:'harbor.camp' };
-      return activatePhysical(ids[place.id]);
+      return activatePhysical(ids[place.id], null, intent);
     } });
     $('placeHotspots').append(button);
   }
   physicalPresentation = mountPhysicalPresentation({ sprites: companionSprites, sceneSpec: physicalScene,
     clickIntent: hotspotClickIntent,
-    onApproach: approachPhysical, onInteract: interactPhysical, onActivate: activatePhysical, onReturn: returnPhysical,
+    onApproach: approachPhysical, onInteract: interactPhysical,
+    onActivate: (id, intent) => activatePhysical(id, null, intent), onReturn: returnPhysical,
     onSceneChange: view => {
+      mailboxNote?.reset(); paperControls?.close(); approachRequest = null;
       camera = { x: view.scene.width / 2, y: view.scene.height / 2, zoom: 1, follow: true };
       const sceneTitle = view.scene.title.replace(/ · .*$/, '');
       $('game').setAttribute('aria-label', `皮皮与汤圆 · ${sceneTitle}`);
@@ -522,11 +564,15 @@ function physicalNotice(outcome) {
   return outcome;
 }
 
-async function approachPhysical(hotspotId) {
+async function approachPhysical(hotspotId, intent = null) {
   arrivalIntent.cancel();
-  clearMovement();
-  if (journeyBusy || runBusy || panel.kind) return false;
-  const outcome = await physicalWorld.act({ kind: 'approach', hotspotId });
+  clearMovement({ cancelIntent: false });
+  if (journeyBusy || runBusy || panel.kind || intent && !intent.isCurrent()) return false;
+  const request = { sceneId: physicalWorld.view().physicalSceneId, hotspotId, intentId: intent?.intentId,
+    promise: physicalWorld.act({ kind: 'approach', hotspotId }) };
+  approachRequest = request;
+  const outcome = await request.promise;
+  if (intent && !intent.isCurrent()) return false;
   physicalNotice(outcome);
   if (outcome.status === 'started' || outcome.status === 'done') {
     camera.follow = true; $('viewport').focus({ preventScroll: true });
@@ -541,6 +587,7 @@ async function browseCourse(lessonId, opener) {
   journalFilter = 'all'; $('journalFilter').value = 'all';
   journalPages.show('courses'); journalExplorer.resetFilters();
   $('journalSearch').value = lesson.title; journalExplorer.render();
+  journalPages.show('courses');
   const previewButton = $('journalEntries').querySelector(`[data-preview-lesson="${lessonId}"]`);
   previewButton?.click();
   (previewButton || $('journalSearch')).focus({ preventScroll: true });
@@ -548,9 +595,31 @@ async function browseCourse(lessonId, opener) {
 }
 
 function renderAgentObject(item) {
+  mailboxNote?.reset();
+  if (item.ae26Purpose === 'messages') {
+    $('panelTitle').textContent = '消息信箱';
+    mailboxNote.render({
+      message: '',
+      courses: (item.lessonIds || []).map(id => {
+        const lesson = lessons.find(value => value.id === id), access = session.accessOf(id);
+        return lesson ? { id, title: lesson.title, available: access.canSelect, reason: access.reason } : null;
+      }).filter(Boolean),
+      projects: ['durable-dispatch'].map(id => ({ id, title: externalAssignment(id).title })),
+      onCourse: (id, opener) => session.accessOf(id).canSelect
+        ? chooseLesson(lessonIds.indexOf(id), opener) : browseCourse(id, opener),
+      onProject: async (id, opener) => {
+        if (!externalAssignment(id) || !await openPanel('journal', opener)) return false;
+        journalPages.show('courses'); $('externalWorkPanel').open = true;
+        externalWorkPanel.selectTask(id, { focus: true });
+        paperControls.refresh();
+        return true;
+      }
+    });
+    return;
+  }
   const explanations = {
     messages: '在这里整理消息与提案：分清用户目标、已知上下文和工具回执，再判断下一步是否有足够依据。',
-    tools: '在这里练习工具与循环：先验证参数和权限，再执行本地工具；工具失败时保留证据，达到停止条件就结束。',
+    tools: '',
     records: '这卷记录只展示当前旅程实际产生的提交。运行通过、保存成功和独立交付分别记录。',
   };
   $('inspectionText').textContent = explanations[item.ae26Purpose] || '';
@@ -560,8 +629,9 @@ function renderAgentObject(item) {
     if (!lesson) continue;
     const button = document.createElement('button'); button.type = 'button'; button.className = 'secondary-button';
     const canStart = session.accessOf(id).canSelect;
-    button.textContent = `${lesson.title} · ${canStart ? '开始实践' : '查看课程'}`;
-    button.addEventListener('click', () => canStart ? chooseLesson(lessonIds.indexOf(id), button) : browseCourse(id, button));
+    button.textContent = lesson.title;
+    button.setAttribute('aria-label', `${lesson.title} · ${canStart ? '开始实践' : '查看课程'}`);
+    button.addEventListener('click', () => session.accessOf(id).canSelect ? chooseLesson(lessonIds.indexOf(id), button) : browseCourse(id, button));
     root.append(button);
   }
   const projects = {
@@ -598,7 +668,7 @@ function renderAgentObject(item) {
   submissions.addEventListener('click', async () => {
     if (await openPanel('journal', submissions)) {
       journalPages.show('courses'); $('externalWorkPanel').open = true;
-      $('externalWorkPanel').querySelector('summary').focus({ preventScroll: true });
+      externalWorkPanel.selectTask(externalWorkPanel.selectedTaskId, { focus: true });
     }
   });
   root.append(submissions);
@@ -659,20 +729,34 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, 
   return outcome.status === 'done';
 }
 
-async function activatePhysical(hotspotId, continuation = null) {
+async function activatePhysical(hotspotId, continuation = null, intent = null) {
   const token = arrivalIntent.cancel();
-  clearMovement();
-  if (!hotspotId || journeyBusy || runBusy || panel.kind) return false;
+  clearMovement({ cancelIntent: false });
+  if (!hotspotId || journeyBusy || runBusy || panel.kind || intent && !intent.isCurrent()) return false;
   const view = physicalWorld.view();
-  if (view.nearby.some(item => item.id === hotspotId)) {
+  const shared = intent && approachRequest?.intentId === intent.intentId && approachRequest.hotspotId === hotspotId
+    && approachRequest.sceneId === view.physicalSceneId ? approachRequest.promise : null;
+  if (shared) {
+    const outcome = await shared;
+    if (!arrivalIntent.current(token) || !intent.isCurrent() || physicalWorld.view().physicalSceneId !== view.physicalSceneId) return false;
+    if (outcome.status === 'started') {
+      arrivalIntent.arm({ token, sceneId: view.physicalSceneId, hotspotId, movementId: outcome.movementId, continuation });
+      renderPhysical(physicalWorld.view());
+      camera.follow = true; $('viewport').focus({ preventScroll: true });
+      return true;
+    }
+    if (outcome.status !== 'done') { physicalNotice(outcome); return false; }
+  }
+  if (physicalWorld.view().nearby.some(item => item.id === hotspotId)) {
     const done = await interactPhysical(hotspotId);
     if (done && continuation === 'learn') return enterWorkshop();
     if (done && continuation?.island) return guideToIsland(continuation.island);
     return done;
   }
   const outcome = physicalNotice(await physicalWorld.act({ kind: 'approach', hotspotId }));
-  if (!arrivalIntent.current(token) || outcome.status !== 'started') return false;
+  if (!arrivalIntent.current(token) || intent && !intent.isCurrent() || outcome.status !== 'started') return false;
   arrivalIntent.arm({ token, sceneId: view.physicalSceneId, hotspotId, movementId: outcome.movementId, continuation });
+  renderPhysical(physicalWorld.view());
   camera.follow = true; $('viewport').focus({ preventScroll: true });
   return true;
 }
@@ -688,12 +772,12 @@ async function returnPhysical() {
   return false;
 }
 
-async function walkToPlace(id) {
+async function walkToPlace(id, intent = null) {
   if (journeyBusy || runBusy) return false;
-  if (!await closePanel()) return false;
+  if (panel.kind && !await closePanel()) return false;
   if (physicalWorld.view().physicalSceneId !== 'harbor.exterior') { toast('先从房间的门口回到启航岛。'); return false; }
   const ids = { workshop:'harbor.code-workshop.front-door', lighthouse:'harbor.test-lighthouse.front-door', harbor:'harbor.pier', camp:'harbor.camp' };
-  return approachPhysical(ids[id]);
+  return approachPhysical(ids[id], intent);
 }
 
 async function walkToGround(point) {
@@ -789,12 +873,14 @@ function renderLesson({ resetResult = true } = {}) {
     $('hintDetails').open = false;
   }
   renderedEditorLessonId = lesson.id;
+  lessonContentReady = true;
   renderWorkbenchChoice();
   const learningView = session.snapshot(), record = learningView.envelope?.records[lesson.id];
   learningWorkbench.showLesson({ journeyKey: journeyIO.namespace, lessonId: lesson.id,
     hasHistory: !learningView.loadedValid || state.completed.includes(lesson.id) || Boolean(record?.attempts?.length || record?.milestones?.guided || record?.milestones?.independent),
     canAutoExplain: !(lesson.judgeKind === 'lifecycle' && lesson.concept.includes('## 三级提示')) });
   if (resetResult) learningWorkbench.setRunState('idle');
+  paperControls?.refresh();
   syncCompanionPresentation();
 }
 
@@ -808,7 +894,7 @@ function updateProgress(animate = false, preserveWalking = false) {
     button.querySelector('b').textContent = active ? '当前领队' : '让它带队';
   });
   drawActors();
-  renderJournal();
+  if (panel.kind === 'journal') renderJournal();
   refreshFirstEntryCopy();
   syncCompanionPresentation();
 }
@@ -843,6 +929,15 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
     if (savedSpace.status !== 'done') { physicalNotice(savedSpace); return false; }
   }
   if (token !== navigation || journeyBusy) return false;
+  try {
+    if (kind === 'journal') await ensureJournalPanels();
+    else await ensurePaperPanels();
+  } catch {
+    toast('这一页暂时没有打开，请重试。当前旅程仍保留。');
+    return false;
+  }
+  if (token !== navigation || journeyBusy) return false;
+  mailboxNote?.reset(); paperControls?.close();
   if (!panelSpaceRelease) panelSpaceRelease = physicalWorld?.suspend('panel');
   if (panel.kind === null && opener instanceof HTMLElement) lastOpener = opener;
   const changed = panel.kind !== kind;
@@ -868,7 +963,11 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
   $('panel').setAttribute('role', modalPanel() ? 'dialog' : 'complementary');
   $('viewport').inert = modalPanel();
   document.body.dataset.panel = kind;
-  if (kind === 'workshop') { renderWorkbenchChoice(); void prepareRuntime(); }
+  if (kind === 'workshop') {
+    if (!lessonContentReady || renderedEditorLessonId !== lessons[state.mission].id) renderLesson();
+    else renderWorkbenchChoice();
+    void prepareRuntime();
+  }
   if (kind === 'lighthouse') lighthousePanel.render({ resetSelection: changed });
   if (kind === 'travel') renderTravel();
   if (kind === 'journal') { renderJournal(); renderJourneys(); }
@@ -888,6 +987,7 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
       ? [$('workbenchTask'), $('workbenchCode'), $('workbenchResult')] : [$(`${kind}Panel`)]);
   }
   syncCompanionPresentation();
+  paperControls?.refresh();
   return true;
 }
 
@@ -899,6 +999,7 @@ async function closePanel(options = {}) {
   if (panel.kind === 'workshop') cancelRun('已回到小岛，本次运行已取消。');
   if (!await flushForNavigation(token)) return false;
   if (typeof options.allowClose === 'function' && !options.allowClose()) return false;
+  mailboxNote?.reset(); paperControls?.close();
   presentationTransitions.cancel('panel');
   panel.kind = null;
   $('panel').hidden = true;
@@ -947,6 +1048,10 @@ function syncControls() {
   const saved = session.snapshot();
   $('runCode').disabled = journeyBusy || !saved.access.canRun || runtimePhase !== 'ready' || runBusy || saved.selecting || !saved.loadedValid || ['conflict','invalid','invalid-state','stale-state','invalid-legacy','backup-only','pending-local','missing-authority','recovery-invalid','locks-required'].includes(saved.status);
   $('runCode').hidden = runBusy;
+  pythonStatus?.render({ phase: runtimePhase, canRun: !$('runCode').disabled, running: runBusy,
+    blockedReason: !saved.loadedValid ? '存档尚未核对，暂不能运行'
+      : !saved.access.canRun ? saved.access.reason || '这节课暂不能运行 · 先查看课程要求'
+      : journeyBusy || saved.selecting ? '正在切换旅程或课程，请稍候' : '当前保存状态需要处理，暂不能运行' });
   $('stopCode').hidden = !runBusy;
   $('retryRuntime').hidden = !['failed', 'stopped'].includes(runtimePhase);
   $('codeEditor').readOnly = journeyBusy || saved.selecting || !saved.loadedValid;
@@ -1106,6 +1211,7 @@ function lessonGroup(lesson, index) { return index < 18 ? 'legacy' : lesson.judg
 
 
 function renderJournal() {
+  if (!journalExplorer) return;
   renderExploration();
   classroomGraduation?.render();
   $('courseAccessSummary').textContent = session.snapshot().loadedValid
@@ -1113,6 +1219,7 @@ function renderJournal() {
   journalExplorer.render();
   const events = state.history.length ? state.history.slice(-12) : ['在启程码头遇见皮皮与汤圆，今天的冒险从这里开始。'];
   $('historyEntries').replaceChildren(...events.map(event => { const li = document.createElement('li'); li.textContent = event; return li; }));
+  paperControls?.refresh();
 }
 
 // Visibility gates precede all new entry facts. Existing save controls keep their own reads.
@@ -1128,7 +1235,7 @@ function refreshFirstEntryCopy(view) {
 function refreshRegionEntryCopy(view) {
   if (panel.kind !== 'map') return;
   const region = REGIONS.find(item => item.id === panel.regionId) || REGIONS[0];
-  const showStart = region.id === 'departure' && firstEntryStart(view ?? session.snapshot(), journalExplorer.navigationPending());
+  const showStart = region.id === 'departure' && firstEntryStart(view ?? session.snapshot(), journalExplorer?.navigationPending() || false);
   const access = islandAccess({islandId:region.curriculumIslandId,envelope:(view ?? session.snapshot()).envelope,physical:physicalWorld?.view()});
   const copy = region.description + (access.available ? ' 可以沿航线前往探索。' : ` ${access.reason}`) +
     (showStart ? ' 从代码工坊开始第一课。' : '');
@@ -1267,7 +1374,7 @@ function renderExploration() {
 }
 
 async function focusPlace(place) {
-  return walkToPlace(place.id, document.querySelector(`[data-place="${place.id}"]`));
+  return walkToPlace(place.id);
 }
 
 async function enterWorkshop(opener = document.activeElement) {
@@ -1411,9 +1518,9 @@ $('viewport').addEventListener('keydown', event => {
 });
 const heldMovement = new Set();
 let steeringFrame = null, steeringTime = null, keyboardInteractionEpoch = 0;
-function clearMovement() {
+function clearMovement({ cancelIntent = true } = {}) {
   ++keyboardInteractionEpoch;
-  hotspotClickIntent.cancel();
+  if (cancelIntent) { hotspotClickIntent.cancel(); approachRequest = null; }
   heldMovement.clear(); steeringTime = null;
   if (steeringFrame !== null) cancelAnimationFrame(steeringFrame);
   steeringFrame = null;
@@ -1459,7 +1566,9 @@ window.addEventListener('keyup', event => {
 });
 window.addEventListener('blur', stopKeyboardMovement);
 document.addEventListener('visibilitychange', () => { if (document.hidden) stopKeyboardMovement(); });
-$('viewport').addEventListener('focusout', stopKeyboardMovement);
+$('viewport').addEventListener('focusout', event => {
+  if (!$('viewport').contains(event.relatedTarget)) stopKeyboardMovement();
+});
 $('zoomIn').addEventListener('click', () => zoomAt(camera.zoom + .15));
 $('zoomOut').addEventListener('click', () => zoomAt(camera.zoom - .15));
 $('followCats').addEventListener('click', () => focusCats(true));
@@ -1495,7 +1604,7 @@ $('enterRegion').addEventListener('click', async () => {
   const region = REGIONS.find(item => item.id === panel.regionId);
   journalFilter = region.curriculumIslandId || 'protocol';
   $('journalFilter').value = journalFilter;
-  journalExplorer.resetFilters();
+  journalExplorer?.resetFilters();
   if (await openPanel('journal')) {
     journalPages.show('courses');
     $('journalCourses').scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth', block: 'start' });
@@ -1570,7 +1679,7 @@ $('adoptReference').addEventListener('click', () => referencePreview.adopt());
 $('closeReference').addEventListener('click', () => { referencePreview.close({ focus: true }); syncCompanionPresentation(); });
 $('protocolScene').addEventListener('change', () => cancelRun('场景已改变，前一次运行已取消。'));
 $('journalFilter').addEventListener('change', () => { journalFilter = $('journalFilter').value; renderJournal(); });
-document.querySelectorAll('[data-journal-jump]').forEach(button => button.addEventListener('click', () => {
+document.querySelectorAll('[data-journal-jump]:not([role="tab"])').forEach(button => button.addEventListener('click', () => {
   const target = $(button.dataset.journalJump);
   if (!target) return;
   target.scrollIntoView({ behavior: reducedMotion.matches ? 'instant' : 'smooth', block: 'start' });
@@ -1584,7 +1693,7 @@ $('viewMovement').addEventListener('click', async () => { if (await closePanel()
 $('nextLesson').addEventListener('click', () => {
   if (runBusy) return;
   const continuation = successContinuation(session, lessons, state.mission);
-  if (continuation.index === null) { journalPages.show('courses'); void openPanel('journal'); return; }
+  if (continuation.index === null) { void openPanel('journal').then(opened => { if (opened) journalPages.show('courses'); }); return; }
   void chooseLesson(continuation.index);
 });
 
@@ -1693,7 +1802,7 @@ for (const id of ['reloadSaved','reloadEditorSaved']) $(id).addEventListener('cl
 document.addEventListener('keydown', event => {
   if (event.isComposing || event.keyCode === 229) return;
   if (event.key === 'Escape') ++keyboardInteractionEpoch;
-  if (event.key === 'Escape' && (physicalWorld.view().phase === 'walking' || heldMovement.size || hotspotClickIntent.pending())) { event.preventDefault(); clearMovement(); void stopWalking(true); return; }
+  if (event.key === 'Escape' && (physicalWorld?.view().phase === 'walking' || heldMovement.size || hotspotClickIntent.pending())) { event.preventDefault(); clearMovement(); void stopWalking(true); return; }
   if (!panel.kind && event.key === 'Escape' && $('cameraDetails').open) { event.preventDefault(); $('cameraDetails').open = false; $('cameraSummary').focus(); return; }
   if (!panel.kind) return;
   if (event.key === 'Escape') {
@@ -1735,7 +1844,7 @@ window.addEventListener('storage', event => {
   if (event.key !== journeyIO.nativeKey(SAVE_KEY)) return;
   session.observe(); toast('另一个页面更改了存档，本页不会覆盖它。');
 });
-window.addEventListener('beforeunload', event => { if (session.hasUnsaved() || physicalWorld.view().save.dirty) { event.preventDefault(); event.returnValue = ''; } });
+window.addEventListener('beforeunload', event => { if (session.hasUnsaved() || physicalWorld?.view().save.dirty) { event.preventDefault(); event.returnValue = ''; } });
 
 
 // A persisted page may return with this same JavaScript heap. Suspend work,
@@ -1744,34 +1853,71 @@ window.addEventListener('pagehide', event => {
   presentationTransitions.cancelAll();
   ++navigation; clearMovement(); void stopWalking();
   if (event.persisted) { cancelRun(); void session.flush(); }
-  else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages.dispose(); physicalWorld.dispose(); physicalPresentation?.dispose(); session.dispose(); }
+  else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages?.dispose(); mailboxNote?.dispose(); paperControls?.dispose(); recoveryPanel?.dispose(); startupRecovery?.dispose(); hotspotClickIntent.dispose(); physicalWorld?.dispose(); physicalPresentation?.dispose(); session.dispose(); }
   try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Optional camera state. */ }
 });
 window.addEventListener('pageshow', event => {
-  if (event.persisted) { session.observe(); void physicalWorld.flush(); syncControls(); syncCompanionPresentation(); }
+  if (event.persisted) { session.observe(); void physicalWorld?.flush(); syncControls(); syncCompanionPresentation(); }
 });
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) { companionSprites?.cancelRun(); companionRun = null; }
   syncCompanionPresentation();
 });
 
-await session.load(); state = session.snapshot().game;
-physicalWorld = createPhysicalWorld({ storage: journeyIO.storage, locks: journeyIO.locks,
-  beforeTransition: async () => !journeyBusy && !runBusy && !session.snapshot().selecting && await session.flush(),
-  travelGuard: ({to,physical}) => voyageAccess({destination:to,envelope:session.snapshot().envelope,physical}),
-  onChange: renderPhysical });
-await physicalWorld.ready;
-if (physicalWorld.view().leader !== state.activeCat) await physicalWorld.act({ kind: 'leader', cat: state.activeCat });
-buildScene(); renderExploration(); renderRegions(); renderLesson(); updateProgress();
-if (camera.follow) focusCats(false, false); else drawCamera(false);
-initialized = true; syncControls(); renderJourneys();
-externalWorkPanel = mountExternalWorkPanel({ root: $('externalWorkContent'), session, download: downloadText, browseCourse,
-  canWrite: () => !journeyBusy && !runBusy && session.snapshot().loadedValid && !session.snapshot().selecting });
-classroomGraduation = mountClassroomGraduation({ root: $('classroomGraduation'), session, browseCourse, download: downloadText });
-mountRecoveryPanel({session, scope: journeyIO.nativeKey(WORLD_SAVE_KEY), anchor: $('journalSaves'), editorAnchor: $('exportEditorSave').parentElement, download: downloadText,
-  onReloaded: () => { ++navigation; cancelRun(); state = session.snapshot().game; renderLesson(); updateProgress(); }});
+function exposeStartupRecovery(reason) {
+  startupRecovery = mountStartupRecovery({ document, reason,
+    onExport: () => {
+      const entries = Array.from({ length: localStorage.length }, (_, index) => localStorage.key(index))
+        .filter(key => key === JOURNEY_INDEX_KEY || key?.startsWith(JOURNEY_PREFIX) || key?.startsWith(WORLD_PREFIX))
+        .map(key => ({ key, value: localStorage.getItem(key) }));
+      downloadText(JSON.stringify({ format: 'pipi-browser-journeys/recovery-v1', entries }, null, 2), 'pipi-original-journeys-recovery.json');
+    },
+    onManage: () => $('openJournalRecovery').click()
+  });
+}
 
-previousViewport = { width: innerWidth, height: innerHeight };
-sceneKeyboardFocus = mountSceneKeyboardFocus({ world: $('world'), viewport: $('viewport'),
-  obstacles: () => [...document.querySelectorAll('#game > .hud, #game > .exploration-tools > .hud, #panel, #toast')] });
-setTimeout(() => $('sceneHint').classList.add('dismissed'), 11000);
+async function initializeScene() {
+  return coordinateSceneStartup({
+    loadSession: async () => {
+      await session.load(); state = session.snapshot().game;
+      return session.snapshot().loadedValid ? { valid: true } : { valid: false, reason: session.snapshot().status };
+    },
+    mountRecovery: () => {
+      recoveryPanel = mountRecoveryPanel({session, scope: journeyIO.nativeKey(WORLD_SAVE_KEY), anchor: $('journalSaves'), editorAnchor: $('exportEditorSave').parentElement, download: downloadText,
+        onReloaded: () => {
+          if (!initialized) { location.reload(); return; }
+          ++navigation; cancelRun(); state = session.snapshot().game; renderLesson(); updateProgress();
+        }});
+    },
+    preparePhysical: () => {
+      physicalWorld = createPhysicalWorld({ storage: journeyIO.storage, locks: journeyIO.locks,
+        beforeTransition: async () => !journeyBusy && !runBusy && !session.snapshot().selecting && await session.flush(),
+        travelGuard: ({to,physical}) => voyageAccess({destination:to,envelope:session.snapshot().envelope,physical}),
+        onChange: renderPhysical });
+      return physicalWorld.ready;
+    },
+    synchronizeLeader: () => physicalWorld.view().leader === state.activeCat
+      ? Promise.resolve({ status: 'done' }) : physicalWorld.act({ kind: 'leader', cat: state.activeCat }),
+    prepareControls: () => {
+      const lesson = lessons[state.mission];
+      $('codeEditor').value = state.drafts[lesson.id] ?? lesson.starter;
+      $('codeEditor').maxLength = MAX_CODE;
+      renderedEditorLessonId = lesson.id;
+      assisted = session.snapshot().envelope?.draftAssistance[lesson.id] === true;
+      buildScene(); updateProgress();
+      if (camera.follow) focusCats(false, false); else drawCamera(false);
+      initialized = true; syncControls();
+      previousViewport = { width: innerWidth, height: innerHeight };
+      sceneKeyboardFocus = mountSceneKeyboardFocus({ world: $('world'), viewport: $('viewport'),
+        obstacles: () => [...document.querySelectorAll('#game > .hud, #game > .exploration-tools > .hud, #panel, #toast')] });
+      setTimeout(() => $('sceneHint').classList.add('dismissed'), 11000);
+    },
+    exposeRecovery: ({ scope }) => exposeStartupRecovery({
+      session: '学习记录尚未通过安全检查。原件保留，可先导出或打开恢复面板。',
+      physical: '保存的位置尚未通过安全检查。原件保留，请先导出旅程数据。',
+      leader: '伙伴的领队记录尚未确认保存。原记录保留，请先导出旅程数据。'
+    }[scope])
+  });
+}
+
+export const startupResult = await initializeScene();

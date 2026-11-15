@@ -159,7 +159,7 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     const currentArt = coursePresentation(active.id);
     const postcard = element('figure', 'journal-course-postcard');
     const mates = element('img', 'journal-course-mates');
-    mates.src = './assets/cat-pair.png'; mates.alt = ''; mates.setAttribute('aria-hidden', 'true');
+    mates.src = './assets/pets/pipi-idle-v2.png'; mates.alt = ''; mates.setAttribute('aria-hidden', 'true');
     const illustration = element('img', 'journal-current-art');
     illustration.src = currentArt.contextArt.src; illustration.alt = currentArt.contextArt.alt;
     illustration.decoding = 'async';

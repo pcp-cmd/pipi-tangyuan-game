@@ -1,3 +1,4 @@
+import {placeWorkshopObjects,WORKSHOP_LAYOUT_VERSION,WORKSHOP_BENCH_APPROACH} from './generated/scene-layout.mjs';
 const entries = [
   {
     "id": "harbor.agent-mailbox",
@@ -614,19 +615,23 @@ const freeze = value => {
  if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}
  return value;
 };
-export const AGENT_WORLD_OBJECTS = freeze(entries);
-export const AGENT_OBJECT_GEOMETRY_VERSION = 'harbor-agent-objects-20261114-v1';
+export const AGENT_WORLD_OBJECTS = freeze(placeWorkshopObjects(entries));
+export const AGENT_OBJECT_GEOMETRY_VERSION = WORKSHOP_LAYOUT_VERSION;
 
 export function addAgentWorldObjects(scenes) {
  const result=structuredClone(scenes),room=result.find(scene=>scene.id==='harbor.code-workshop.interior');
  if(!room)throw new Error('Agent objects require the existing harbor workshop');
  room.geometryVersion=AGENT_OBJECT_GEOMETRY_VERSION;
+ const bench=room.hotspots.find(item=>item.id==='harbor.code-workshop.bench');
+ bench.approach={...WORKSHOP_BENCH_APPROACH};
+ room.navigation.waypoints=room.navigation.waypoints.filter(point=>point.x!==1040||point.y!==550);
+ room.navigation.waypoints.push({...WORKSHOP_BENCH_APPROACH});
  for(const entry of AGENT_WORLD_OBJECTS){
   const scale=entry.w/entry.iw;
   const outline=entry.outline.map(([x,y])=>[entry.x+x*scale,entry.y+y*scale]);
   const xs=outline.map(p=>p[0]),ys=outline.map(p=>p[1]);
   room.hotspots.push({id:entry.id,label:entry.label,kind:'inspect',uiAction:'ae26',ae26Purpose:entry.purpose,lessonIds:[...entry.lessons],fromSceneId:room.id,
-   x:entry.x+entry.w/2,y:entry.floorY-45,approach:{...entry.approach},radius:32,
+   x:(Math.min(...xs)+Math.max(...xs))/2,y:(Math.min(...ys)+Math.max(...ys))/2,approach:{...entry.approach},radius:32,
    asset:{src:`assets/ae26/${entry.file}`,sha256:entry.sha256,x:entry.x,y:entry.y,width:entry.w,height:entry.h,naturalWidth:entry.iw,naturalHeight:entry.ih,frontY:entry.floorY},
    highlightPolygon:outline,highlightOccluderIds:[],hitbox:{x:Math.min(...xs),y:Math.min(...ys),w:Math.max(...xs)-Math.min(...xs),h:Math.max(...ys)-Math.min(...ys)}});
   room.navigation.blocks.push([...entry.block]);room.navigation.waypoints.push({...entry.approach});

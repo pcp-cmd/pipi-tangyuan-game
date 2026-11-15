@@ -5,30 +5,26 @@
 .world[data-physical-scene] .cat-actor:hover .cat-name,.world[data-physical-scene] .cat-actor:focus-visible .cat-name{opacity:1}
 .world[data-physical-scene] .cat-actor:focus-visible{outline:0}.world[data-physical-scene] .cat-actor:focus-visible .cat-art{outline:2px dashed #f7d78f;outline-offset:3px}
 #physicalForeground{display:contents}.physical-occluder{position:absolute;inset:0;background-size:100% 100%;pointer-events:none;image-rendering:pixelated}
-#physicalHotspots{display:contents}.physical-hotspot{position:absolute;transform:translate(-50%,-50%);z-index:10000;width:48px;height:48px;border:1px solid transparent;border-radius:50%;background:transparent;box-shadow:none}
-.physical-hotspot::after{content:"";position:absolute;inset:18px;border:2px solid #f0cc7c;border-radius:50%;box-shadow:0 1px 4px #101f20;opacity:.72}
-.physical-hotspot[data-kind="door"]::after{inset:14px 17px;border-radius:9px 9px 2px 2px}
-.physical-hotspot:hover,.physical-hotspot:focus-visible,.physical-hotspot.within-reach{outline:0;border-color:#ffe4a599;background:#e7c87918}
-.physical-hotspot:focus-visible{outline:2px dashed #ffe4a5;outline-offset:3px}
-.physical-hotspot[data-hitbox="true"]{transform:none;border-radius:5px}
-.physical-hotspot[data-hitbox="true"]::after{inset:auto;left:var(--marker-x);top:var(--marker-y);width:10px;height:10px;transform:translate(-50%,-50%);opacity:.36}
-.physical-hotspot[data-hitbox="true"][data-kind="door"]::after{width:12px;height:18px}
-.physical-hotspot[data-hitbox="true"]:hover,.physical-hotspot[data-hitbox="true"].within-reach{background:transparent;border-color:transparent}
-.physical-hotspot:hover::after,.physical-hotspot:focus-visible::after,.physical-hotspot.within-reach::after{opacity:1;box-shadow:0 0 10px #ffe1a1}
+#physicalHotspots{display:contents}.physical-hotspot{position:absolute;transform:translate(-50%,-50%);z-index:10000;width:48px;height:48px;border:0;border-radius:0;background:transparent;box-shadow:none;padding:0;cursor:pointer}
+.physical-hotspot::after{display:none}
+.physical-hotspot:is(:hover,:focus-visible,.within-reach){outline:0;border:0;background:transparent;box-shadow:none}
+.physical-hotspot[data-hitbox="true"]{transform:none}
 .physical-object{display:contents}
-.physical-object-outline{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:9000;pointer-events:none;opacity:0;filter:none;transition:opacity .15s ease}
-.physical-object-outline polygon{fill:none;stroke:#ffe5a8;stroke-width:2.2;stroke-linejoin:round}
+.physical-object-cue{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;opacity:0;filter:none;transition:opacity 80ms ease}
+.physical-object-cue polygon{fill:#fff2cc22;stroke:#f4dbab;stroke-width:1.2;stroke-linejoin:round}
 .physical-hotspot[data-object-shape="true"]{transform:none;border:0;border-radius:0;background:transparent;cursor:pointer;padding:0}
 .physical-hotspot[data-object-shape="true"]::after{display:none}
 .physical-hotspot[data-object-shape="true"]:is(:hover,:focus-visible,.within-reach){background:transparent;border:0;outline:0;box-shadow:none}
-.physical-object:has(.physical-hotspot:hover) .physical-object-outline,.physical-object:has(.physical-hotspot:focus-visible) .physical-object-outline{opacity:.95}
-.physical-object[data-selected="true"] .physical-object-outline{opacity:.65}
-.physical-object:has(.physical-hotspot:focus-visible) .physical-object-outline polygon{stroke-dasharray:5 4;stroke-width:3}
-.physical-actions{position:absolute;z-index:12;left:50%;bottom:30px;transform:translateX(-50%);display:flex;gap:12px;max-width:65%;align-items:center}
-.physical-actions button{min-height:52px;padding:5px 12px;border:12px solid transparent;border-image:var(--journal-frame) 128 stretch;border-radius:0;background:var(--journal-grain) center/256px repeat var(--journal-paper);background-clip:padding-box;color:#493621;font:15px/1.45 var(--ui);box-shadow:0 3px 6px #142c3833}
-.physical-actions .physical-interact{background-color:#ecd3a2;color:#493621;font-weight:700}
-.physical-actions .physical-return::before{content:'↶';margin-right:8px;font-size:20px;line-height:1;color:#76512c}
-.physical-actions button:focus-visible{outline:3px solid #ffedba;outline-offset:4px}
+.physical-object[data-active="true"] .physical-object-cue{opacity:.92}
+.physical-object[data-active="true"]:has(.physical-hotspot:focus-visible) .physical-object-cue polygon{stroke-dasharray:3 2;stroke-width:1.8}
+.physical-actions{position:absolute;z-index:12;left:50%;bottom:26px;transform:translateX(-50%);display:flex;gap:12px;max-width:65%;align-items:center}
+.physical-actions button{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 15px;border:2px solid #704a2e;border-radius:3px 7px 6px 3px;background:var(--journal-grain) center/256px repeat #c6955b;color:#392719;font:15px/1.4 var(--ui);box-shadow:inset 0 1px #ebc58b,inset 0 -2px #a77944,0 3px 4px #17222335;text-shadow:0 1px #e9c38c;white-space:nowrap}
+.physical-actions .physical-interact{font-weight:700}
+.physical-actions kbd{align-self:stretch;display:grid;place-items:center;min-width:27px;padding-inline:2px 10px;border:0;border-right:1px solid #80563399;background:none;color:#4a2d17;font:700 17px/1 var(--ui);box-shadow:none}
+.physical-actions .physical-action-label{overflow:hidden;text-overflow:ellipsis}
+.physical-actions .physical-return::before{content:'↶';font-size:20px;line-height:1;color:#644022}
+.physical-actions button:focus-visible{outline:2px dashed #f0dcaf;outline-offset:3px}
+.physical-actions button:disabled{opacity:.55;cursor:wait}
 body.panel-open .physical-actions{visibility:hidden}
 .physical-save-status{position:absolute;top:92px;left:50%;transform:translateX(-50%);z-index:30;max-width:620px;padding:10px 16px;background:#493b27ed;color:#ffe8bf;border:1px solid #bd9865;font:14px/1.6 var(--ui)}
 .world[data-interior="true"] .destination-marker{display:none!important}
@@ -39,6 +35,6 @@ body.panel-open .physical-actions{visibility:hidden}
 .journey-start-error{position:fixed;inset:12% 10%;z-index:180;background:#ede1c0;color:#273a2d;padding:32px;overflow:auto;font:16px/1.8 var(--ui)}
 .journey-start-error button{margin:16px 12px 0 0;padding:12px 20px;background:#31513b;color:#fff1cd;border-radius:4px}
 .result-notes{font:13px/1.7 var(--ui);color:var(--muted);white-space:pre-line;margin-block:10px}
-@media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;border-image:none;background:ButtonFace;color:ButtonText;box-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions .physical-return::before{color:ButtonText}.physical-object-outline polygon{stroke:Highlight}}
-html[data-motion="reduced"] .physical-object-outline{transition:none}
-@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .physical-object-outline{transition:none}}
+@media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none;text-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions :is(kbd,.physical-return::before){color:ButtonText}.physical-object-cue polygon{fill:none;stroke:Highlight}}
+html[data-motion="reduced"] .physical-object-cue{transition:none}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .physical-object-cue{transition:none}}

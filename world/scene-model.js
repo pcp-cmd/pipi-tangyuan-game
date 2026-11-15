@@ -12,7 +12,7 @@ export const SCENE = {
   width: 1487, height: 1058,
   background: './assets/scene-background.webp',
   assetsReady: true,
-  cats: { pipi: './assets/cat-pair.png', tangyuan: './assets/cat-pair.png' },
+  cats: { pipi: './assets/pets/pipi-idle-v2.png', tangyuan: './assets/pets/tangyuan-idle-v2.png' },
   points: [
     [825, 800], [855, 740], [875, 675], [915, 610],
     [1015, 565], [1110, 530], [1205, 545], [1080, 515],

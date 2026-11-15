@@ -1,6 +1,8 @@
 import { externalAssignments, prepareExternalSubmission } from '../integration/external-work.mjs';
 import { LESSONS } from '../integration/contracts.mjs';
 import {inspectLocalCheckBundle, LOCAL_CHECK_TOOL} from '../integration/local-check.mjs';
+import { arrangeProjectSheet, revealJournalSection } from './generated/journal-interactions.mjs';
+import { refreshPaperSelect, focusPaperSelect } from './generated/paper-controls.mjs';
 
 export function mountExternalWorkPanel({ root, session, download, browseCourse, canWrite = () => true }) {
   const doc = root.ownerDocument, assignments = externalAssignments(), panes = new Map();
@@ -21,6 +23,7 @@ export function mountExternalWorkPanel({ root, session, download, browseCourse, 
     const assignment = assignments.find(task => task.id === id);
     if (!assignment) return false;
     selectedId = id; chooser.value = id;
+    refreshPaperSelect(chooser);
     preparation.textContent = assignment.preparation;
     if (!panes.has(id)) {
       const page = doc.createElement('section'); page.dataset.externalTaskId = id;
@@ -30,7 +33,7 @@ export function mountExternalWorkPanel({ root, session, download, browseCourse, 
     }
     for (const [taskId, pane] of panes) pane.page.hidden = taskId !== id;
     panes.get(id).controller.render();
-    if (focus) chooser.focus?.({ preventScroll: true });
+    if (focus) revealJournalSection(root, () => focusPaperSelect(chooser));
     return true;
   }
   const onChange = () => selectTask(chooser.value);
@@ -127,7 +130,7 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
   const retry = button('重试保存作品记录', async () => {
     await act(async () => { const saved = await session.retrySave(); return { ok: saved === true, saved: saved === true, message: session.externalWorkView().persistenceNotice }; });
   }, 'text-button');
-  root.replaceChildren(heading, summary, requirements, prerequisites, links, localHelp, readings, accept, status, materials, history, receiptSection, retry);
+  arrangeProjectSheet(root, { heading, summary, requirements, prerequisites, links, localHelp, readings, accept, status, materials, history, receipt: receiptSection, retry });
 
   function showLocalCheck(node, result) {
     node.replaceChildren(make('h4', result.title), make('p', result.detail));

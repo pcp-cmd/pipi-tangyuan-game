@@ -1,5 +1,7 @@
 // Conservative body navigation: whole segments must lie inside the union of
 // radius-inset convex floor areas and outside radius-expanded solid footprints.
+import {segmentSafe} from './generated/navigation-geometry.mjs';
+export {segmentSafe};
 const EPS = 1e-7;
 export const distance = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
 const point = p => ({ x: p.x, y: p.y });
@@ -22,36 +24,7 @@ export function remainingPath(path,travel){
   for(let i=1;i<path.length;i++){const length=distance(path[i-1],path[i]);if(travel<length-EPS){const t=length?travel/length:0;return[{x:path[i-1].x+(path[i].x-path[i-1].x)*t,y:path[i-1].y+(path[i].y-path[i-1].y)*t},...path.slice(i)];}travel-=length;}
   return[point(path.at(-1))];
 }
-function interval(a, b, polygon, inset = 0) {
-  const p = polygon.map(asPoint);
-  let area = 0;
-  for (let i = 0; i < p.length; i++) { const q = p[(i + 1) % p.length]; area += p[i].x * q.y - q.x * p[i].y; }
-  const sign = area >= 0 ? 1 : -1;
-  let lo = 0, hi = 1;
-  for (let i = 0; i < p.length; i++) {
-    const s = p[i], t = p[(i + 1) % p.length], ex = t.x - s.x, ey = t.y - s.y;
-    const at = sign * (ex * (a.y - s.y) - ey * (a.x - s.x)) - inset * Math.hypot(ex, ey);
-    const delta = sign * (ex * (b.y - a.y) - ey * (b.x - a.x));
-    if (Math.abs(delta) < EPS) { if (at < -EPS) return null; }
-    else { const v = -at / delta; if (delta > 0) lo = Math.max(lo, v); else hi = Math.min(hi, v); }
-    if (lo > hi + EPS) return null;
-  }
-  return [Math.max(0, lo), Math.min(1, hi)];
-}
 const rectangle = ([l, t, r, b], radius) => [[l - radius, t - radius], [r + radius, t - radius], [r + radius, b + radius], [l - radius, b + radius]];
-export function segmentSafe(scene, a, b, avoid = []) {
-  const { radius, zones, blocks } = scene.navigation;
-  if (![a, b].every(p => finite(p) && p.x >= radius && p.y >= radius && p.x <= scene.width - radius && p.y <= scene.height - radius)) return false;
-  if (blocks.some(r => interval(a, b, rectangle(r, radius)) !== null)) return false;
-  // Furniture is rectangular; a companion has the same circular footprint
-  // used by pairStepSafe. A bounding square can reject a legal diagonal start.
-  if (avoid.some(o => Array.isArray(o) ? interval(a,b,rectangle(o,radius))!==null :
-    !finite(o)||!Number.isFinite(o.radius)||o.radius<0||pointSegmentDistance(o,a,b)<radius+o.radius-EPS)) return false;
-  const spans = zones.map(p => interval(a, b, p, radius)).filter(Boolean).sort((a, b) => a[0] - b[0]);
-  let end = 0;
-  for (const [lo, hi] of spans) { if (lo > end + EPS) return false; end = Math.max(end, hi); if (end >= 1 - EPS) return true; }
-  return false;
-}
 export const pointSafe = (scene, p) => segmentSafe(scene, p, p);
 export function pairSafe(scene, cats) {
   return ['pipi', 'tangyuan'].every(cat => pointSafe(scene, cats?.[cat])) && distance(cats.pipi, cats.tangyuan) >= 2 * scene.navigation.radius + 6 - EPS;

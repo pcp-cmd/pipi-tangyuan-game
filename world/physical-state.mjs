@@ -1,5 +1,6 @@
-import { PHYSICAL_SCENES, PHYSICAL_REGISTRY_VERSION, DEFAULT_PHYSICAL_SCENE_ID, LEGACY_PHYSICAL_SCENES, LEGACY_PHYSICAL_REGISTRY_VERSION, PRE_ART_PHYSICAL_SCENES, PRE_ART_PHYSICAL_REGISTRY_VERSION, PRE_SERVICE_PHYSICAL_SCENES, PRE_SERVICE_PHYSICAL_REGISTRY_VERSION } from './physical-scenes.mjs';
+import { PHYSICAL_SCENES, PHYSICAL_REGISTRY_VERSION, DEFAULT_PHYSICAL_SCENE_ID, LEGACY_PHYSICAL_SCENES, LEGACY_PHYSICAL_REGISTRY_VERSION, PRE_ART_PHYSICAL_SCENES, PRE_ART_PHYSICAL_REGISTRY_VERSION, PRE_SERVICE_PHYSICAL_SCENES, PRE_SERVICE_PHYSICAL_REGISTRY_VERSION,PRE_LAYOUT_PHYSICAL_SCENES,PRE_LAYOUT_PHYSICAL_REGISTRY_VERSION } from './physical-scenes.mjs';
 import { pairSafe, distance } from './physical-navigation.mjs';
+import {migrateLayoutPoses} from './generated/scene-layout.mjs';
 export const PHYSICAL_SAVE_KEY = 'physical-v1';
 export const PHYSICAL_STATE_SCHEMA = 'pipi-space/v2';
 export const LEGACY_PHYSICAL_STATE_SCHEMA = 'pipi-space/v1';
@@ -24,9 +25,9 @@ function anchorValid(anchor,target,registry){
 export function parsePhysicalState(raw) {
   if(typeof raw!=='string'||new TextEncoder().encode(raw).length>256*1024)fail();
   let value;try{value=JSON.parse(raw);}catch{fail();}
-  const legacy=value?.schema===LEGACY_PHYSICAL_STATE_SCHEMA,preArt=!legacy&&value?.registryVersion===PRE_ART_PHYSICAL_REGISTRY_VERSION,preService=!legacy&&value?.registryVersion===PRE_SERVICE_PHYSICAL_REGISTRY_VERSION,registry=legacy?LEGACY_PHYSICAL_SCENES:preArt?PRE_ART_PHYSICAL_SCENES:preService?PRE_SERVICE_PHYSICAL_SCENES:PHYSICAL_SCENES;
+  const legacy=value?.schema===LEGACY_PHYSICAL_STATE_SCHEMA,preArt=!legacy&&value?.registryVersion===PRE_ART_PHYSICAL_REGISTRY_VERSION,preService=!legacy&&value?.registryVersion===PRE_SERVICE_PHYSICAL_REGISTRY_VERSION,preLayout=!legacy&&value?.registryVersion===PRE_LAYOUT_PHYSICAL_REGISTRY_VERSION,registry=legacy?LEGACY_PHYSICAL_SCENES:preArt?PRE_ART_PHYSICAL_SCENES:preService?PRE_SERVICE_PHYSICAL_SCENES:preLayout?PRE_LAYOUT_PHYSICAL_SCENES:PHYSICAL_SCENES;
   const fields=['schema','revision','registryVersion','physicalSceneId','leader','cats',legacy?'returnAnchor':'returnTrail','discovered'];
-  if(!exact(value,fields)||value.schema!==(legacy?LEGACY_PHYSICAL_STATE_SCHEMA:PHYSICAL_STATE_SCHEMA)||value.registryVersion!==(legacy?LEGACY_PHYSICAL_REGISTRY_VERSION:preArt?PRE_ART_PHYSICAL_REGISTRY_VERSION:preService?PRE_SERVICE_PHYSICAL_REGISTRY_VERSION:PHYSICAL_REGISTRY_VERSION)||!Number.isSafeInteger(value.revision)||value.revision<0||!cats.includes(value.leader))fail();
+  if(!exact(value,fields)||value.schema!==(legacy?LEGACY_PHYSICAL_STATE_SCHEMA:PHYSICAL_STATE_SCHEMA)||value.registryVersion!==(legacy?LEGACY_PHYSICAL_REGISTRY_VERSION:preArt?PRE_ART_PHYSICAL_REGISTRY_VERSION:preService?PRE_SERVICE_PHYSICAL_REGISTRY_VERSION:preLayout?PRE_LAYOUT_PHYSICAL_REGISTRY_VERSION:PHYSICAL_REGISTRY_VERSION)||!Number.isSafeInteger(value.revision)||value.revision<0||!cats.includes(value.leader))fail();
   const scene=registry[value.physicalSceneId];
   if(!scene||!posesValid(value.cats,scene))fail();
   if(!Array.isArray(value.discovered)||value.discovered.length>Object.keys(registry).length||new Set(value.discovered).size!==value.discovered.length||!value.discovered.includes(value.physicalSceneId)||value.discovered.some(id=>!Object.hasOwn(registry,id)))fail();
@@ -48,7 +49,8 @@ export function parsePhysicalState(raw) {
 export function upgradePhysicalState(value){
   if(value.schema===PHYSICAL_STATE_SCHEMA&&value.registryVersion===PHYSICAL_REGISTRY_VERSION)return clone(value);
   const upgraded=clone(value);
-  const previousRegistry=value.schema===LEGACY_PHYSICAL_STATE_SCHEMA?LEGACY_PHYSICAL_SCENES:value.registryVersion===PRE_ART_PHYSICAL_REGISTRY_VERSION?PRE_ART_PHYSICAL_SCENES:PRE_SERVICE_PHYSICAL_SCENES;
+  const preLayout=value.registryVersion===PRE_LAYOUT_PHYSICAL_REGISTRY_VERSION;
+  const previousRegistry=value.schema===LEGACY_PHYSICAL_STATE_SCHEMA?LEGACY_PHYSICAL_SCENES:value.registryVersion===PRE_ART_PHYSICAL_REGISTRY_VERSION?PRE_ART_PHYSICAL_SCENES:preLayout?PRE_LAYOUT_PHYSICAL_SCENES:PRE_SERVICE_PHYSICAL_SCENES;
   if(value.schema===LEGACY_PHYSICAL_STATE_SCHEMA){
     upgraded.returnTrail=value.returnAnchor?[clone(value.returnAnchor)]:[];
     delete upgraded.returnAnchor;
@@ -57,13 +59,16 @@ export function upgradePhysicalState(value){
   upgraded.schema=PHYSICAL_STATE_SCHEMA;
   upgraded.registryVersion=PHYSICAL_REGISTRY_VERSION;
   const scene=PHYSICAL_SCENES[upgraded.physicalSceneId];
-  if(scene.geometryVersion!==previousRegistry[scene.id]?.geometryVersion)upgraded.cats=clone(scene.spawn);
+  if(scene.geometryVersion!==previousRegistry[scene.id]?.geometryVersion){
+    const fallback=upgraded.leader==='tangyuan'?{pipi:scene.spawn.tangyuan,tangyuan:scene.spawn.pipi}:scene.spawn;
+    upgraded.cats=preLayout?migrateLayoutPoses(upgraded.cats,fallback,poses=>pairSafe(scene,poses)):clone(scene.spawn);
+  }
   for(const anchor of upgraded.returnTrail){
     const source=PHYSICAL_SCENES[anchor.fromSceneId];
     if(source.geometryVersion===previousRegistry[source.id]?.geometryVersion)continue;
     const door=source.doors.find(h=>h.id===anchor.doorId);
-    anchor.cats=clone(door.returnArrival);
-    if(anchor.leader==='tangyuan')anchor.cats={pipi:anchor.cats.tangyuan,tangyuan:anchor.cats.pipi};
+    const fallback=anchor.leader==='tangyuan'?{pipi:door.returnArrival.tangyuan,tangyuan:door.returnArrival.pipi}:door.returnArrival;
+    anchor.cats=preLayout?migrateLayoutPoses(anchor.cats,fallback,poses=>pairSafe(source,poses)&&distance(poses[anchor.leader],door.approach)<=door.radius+1e-7):clone(fallback);
   }
   parsePhysicalState(JSON.stringify(upgraded));
   return upgraded;
