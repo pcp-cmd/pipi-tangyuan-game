@@ -44,7 +44,9 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   function view(){
     const value=state||freshPhysicalState(),spec=PHYSICAL_SCENES[value.physicalSceneId],save=store.snapshot();
     const poses=Object.fromEntries(names.map(cat=>[cat,{...value.cats[cat],moving:!!movingFlags[cat]}]));
-    const nearby=spec.hotspots.filter(h=>distance(value.cats[value.leader],h.approach)<=h.radius).map(({id,label,kind})=>({id,label,kind}));
+    const leader=value.cats[value.leader];
+    const nearby=spec.hotspots.filter(h=>distance(leader,h.approach)<=h.radius)
+      .sort((a,b)=>distance(leader,a.approach)-distance(leader,b.approach)).map(({id,label,kind})=>({id,label,kind}));
     return freeze({phase:disposed?'disposed':phase,physicalSceneId:value.physicalSceneId,revision:value.revision,scene:spec,poses,leader:value.leader,discovered:[...value.discovered],hotspots:spec.hotspots,nearby,returnAvailable:value.returnTrail.length>0,navigation:navigation?copy(navigation):null,save:{status:save.status,dirty:!!state&&JSON.stringify(state)!==persistedState,issue,raw:save.raw,pendingRaw:(phase==='recovery-required'||save.dirty)?store.pendingExport()?.raw||null:null},notice});
   }
   function emit(){try{onChange(view());}catch{}}

@@ -1,5 +1,6 @@
 import { externalAssignments, prepareExternalSubmission } from '../integration/external-work.mjs';
 import { LESSONS } from '../integration/contracts.mjs';
+import {inspectLocalCheckBundle, LOCAL_CHECK_TOOL} from '../integration/local-check.mjs';
 
 export function mountExternalWorkPanel({ root, session, download, browseCourse, canWrite = () => true }) {
   const doc = root.ownerDocument, assignments = externalAssignments(), panes = new Map();
@@ -50,6 +51,8 @@ export function mountExternalWorkPanel({ root, session, download, browseCourse, 
 function mountAssignmentPanel({ root, session, download, browseCourse, canWrite, assignment }) {
   const doc = root.ownerDocument, cleanup = [], historyCleanup = [], selectionCleanup = [];
   let selected = [], preview = null, revision = 0, fileReadRevision = 0, busy = false, disposed = false, historySignature = '';
+  let historyRevision = 0;
+  const localChecks = new Map();
   const assistanceLabels = { none: '未使用外部帮助', hint: '提示', reference: '参考解答', ai: 'AI', peer: '协作', mixed: '多种帮助', guided: '带领完成', 'new-independent-task': '另题独立核验' };
   const make = (tag, copy = '', className = '') => {
     const node = doc.createElement(tag); node.textContent = copy; node.className = className; return node;
@@ -74,6 +77,13 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
   const starter = make('a', '下载独立起步工程'); starter.href = assignment.download.url; starter.download = assignment.download.filename;
   const readme = make('a', '阅读启动与交付说明'); readme.href = assignment.readme; readme.target = '_blank'; readme.rel = 'noopener';
   const links = make('p'); links.append(starter, doc.createTextNode(' · '), readme);
+  const localTools = make('a', '下载本地自测工具'); localTools.href = LOCAL_CHECK_TOOL.url; localTools.download = LOCAL_CHECK_TOOL.filename;
+  const localGuide = make('a', '自测与带回结果'); localGuide.href = LOCAL_CHECK_TOOL.readme; localGuide.target = '_blank'; localGuide.rel = 'noopener';
+  links.append(doc.createTextNode(' · '), localTools, doc.createTextNode(' · '), localGuide);
+  const localHelp = make('details'); localHelp.append(make('summary', '在 VS Code 做完后，带回哪份结果？'));
+  localHelp.append(make('p', '在自己的工程目录运行下载工具，生成 LOCAL-CHECK.json。将它和对应源码、测试一同选入材料；改稿后重跑。游戏只核对报告与材料，不执行上交代码。'));
+  localHelp.append(make('pre', `python -B "检查工具目录/local-check.py" --task ${assignment.id} --project .`));
+  localHelp.append(make('p', '本次测试无失败、无跳过、进程正常结束且运行期间未改稿，才显示本机自测通过；测试是否充分、可信审核与独立能力仍单独确认。'));
   const readings = make('details'); readings.hidden = !assignment.readingUrls?.length;
   readings.append(make('summary', '工程学习手册'));
   const chapters = make('ol'); readings.append(chapters);
@@ -93,6 +103,7 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
   const notes = make('textarea'); notes.rows = 3; notes.maxLength = 2000; notes.placeholder = '说明你独立完成的部分、仍未解决的问题和帮助范围';
   materials.append(label('本机运行情况', execution), label('实际解释器版本', pythonVersion), label('命令与结果', commandLog), label('帮助来源', assistance), label('交付说明', notes));
   const previewOutput = make('pre'); previewOutput.hidden = true; previewOutput.tabIndex = 0; previewOutput.setAttribute('aria-label', '最小提交清单与检查结果');
+  const localPreview = make('section'); localPreview.hidden = true; localPreview.setAttribute('aria-label', '本地自测报告与材料一致性');
   const confirmed = make('input'); confirmed.type = 'checkbox';
   const confirmation = label('我已核对清单，并如实填写运行情况与帮助来源。', confirmed); confirmation.className = 'submission-confirmation';
   const prepareButton = button('预览最小提交清单', prepare);
@@ -101,7 +112,7 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
     if (!preview?.readyToRecord || !confirmed.checked) return;
     await act(() => session.recordExternalSubmission(preview));
   }, 'primary-button');
-  materials.append(prepareButton, previewOutput, confirmation, exportPreview, record);
+  materials.append(prepareButton, previewOutput, localPreview, confirmation, exportPreview, record);
   const history = make('div'); history.setAttribute('aria-label', '本委托的历次作品与分项核验');
   const receiptSection = make('details'), receiptTitle = make('summary', '导入审核回执');
   const receipt = make('input'); receipt.type = 'file'; receipt.accept = '.json,application/json';
@@ -116,11 +127,26 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
   const retry = button('重试保存作品记录', async () => {
     await act(async () => { const saved = await session.retrySave(); return { ok: saved === true, saved: saved === true, message: session.externalWorkView().persistenceNotice }; });
   }, 'text-button');
-  root.replaceChildren(heading, summary, requirements, prerequisites, links, readings, accept, status, materials, history, receiptSection, retry);
+  root.replaceChildren(heading, summary, requirements, prerequisites, links, localHelp, readings, accept, status, materials, history, receiptSection, retry);
+
+  function showLocalCheck(node, result) {
+    node.replaceChildren(make('h4', result.title), make('p', result.detail));
+    if (result.report) {
+      const report = result.report;
+      node.append(make('p', `Python ${report.environment.python} · ${report.environment.platform} · 退出码 ${report.process.exitCode ?? '未记录'}${report.process.timedOut ? ' · 超时' : ''}`));
+      if (report.result?.tests.length) {
+        const details = make('details'); details.append(make('summary', `查看本次 ${report.result.tests.length} 项结果`));
+        const names = {passed:'通过', failed:'失败', error:'错误', skipped:'跳过', 'expected-failure':'预期失败', 'unexpected-success':'意外通过', incomplete:'未完成'};
+        for (const test of report.result.tests) details.append(make('pre', `${names[test.outcome]} · ${test.id}${test.message ? '\n' + test.message : ''}`));
+        node.append(details);
+      }
+    }
+    node.append(make('p', result.boundary));
+  }
 
   function invalidate() {
     if (disposed) return;
-    revision++; preview = null; confirmed.checked = false; previewOutput.hidden = true; render();
+    revision++; preview = null; confirmed.checked = false; previewOutput.hidden = true; localPreview.hidden = true; render();
   }
   for (const field of [execution, pythonVersion, commandLog, assistance, notes]) listen(field, 'input', invalidate);
   listen(confirmed, 'change', render);
@@ -164,6 +190,8 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
         declaration: { execution: execution.value, pythonVersion: pythonVersion.value, commandLog: commandLog.value, assistance: assistance.value, notes: notes.value } });
       if (disposed || token !== revision) return;
       if (!result.ok) { status.textContent = result.message; return; }
+      const localResult = result.readyToRecord ? await inspectLocalCheckBundle(result.bundleText) : null;
+      if (disposed || token !== revision) return;
       preview = result;
       previewOutput.textContent = [
         `将收录 ${result.manifest.length} 个文本文件，共 ${result.totalBytes} 字节。`,
@@ -174,6 +202,8 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
         result.warning,
       ].join('\n\n');
       previewOutput.hidden = false;
+      localPreview.hidden = !localResult;
+      if (localResult) showLocalCheck(localPreview, localResult);
       status.textContent = result.readyToRecord ? '材料可整理为提交包。请核对清单后保存；这一步不评判代码是否正确。' : '先补齐或排除清单中的问题，再重新预览。';
     } catch { if (!disposed) status.textContent = '整理没有完成。所选材料仍在本页，请重试。'; }
     finally { busy = false; if (!disposed) render(); }
@@ -199,6 +229,7 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
     importReceipt.disabled = blocked; retry.disabled = blocked || view.persisted;
     const nextHistory = JSON.stringify({ task, persisted: view.persisted, notice: view.persistenceNotice });
     if (historySignature === nextHistory) return;
+    const historyToken = ++historyRevision;
     const expanded = new Set([...history.children].filter(node => node.open).map(node => node.dataset.submissionDigest));
     historySignature = nextHistory;
     removeAll(historyCleanup);
@@ -212,6 +243,18 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
       item.append(make('p', `自报帮助：${assistanceLabels[submission.declaration.assistance]}`));
       const ratings = submission.capabilityRatings;
       item.append(make('p', `独立构建：${ratings.build ?? '未评估'} · 排错：${ratings.debug ?? '未评估'} · 迁移：${ratings.transfer ?? '未评估'}`));
+      const localRecord = make('section'); localRecord.setAttribute('aria-label', '这次作品的本地自测报告');
+      item.append(localRecord);
+      const savedBundle = session.externalSubmissionBundle(assignment.id, submission.submissionDigest);
+      if (savedBundle.ok) {
+        if (!localChecks.has(submission.submissionDigest)) localChecks.set(submission.submissionDigest, inspectLocalCheckBundle(savedBundle.text));
+        localRecord.textContent = '正在核对本地自测报告与这次提交材料…';
+        localChecks.get(submission.submissionDigest).then(result => {
+          if (!disposed && historyToken === historyRevision) showLocalCheck(localRecord, result);
+        }).catch(() => {
+          if (!disposed && historyToken === historyRevision) localRecord.textContent = '本地报告未能完成核对；作品仍待核验，可下载原提交包后重试。';
+        });
+      } else localRecord.textContent = '作品材料摘要尚未确认，本地报告暂未核对。';
       if (submission.review) {
         item.append(make('p', `审核记录的帮助：${submission.review.assistance.map(value => assistanceLabels[value]).join('、') || '未登记帮助'}`));
         item.append(make('p', submission.review.environment.summary));
@@ -225,5 +268,5 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
     }
   }
   render();
-  return Object.freeze({ render, dispose() { if (disposed) return; disposed = true; revision++; removeAll(cleanup); removeAll(historyCleanup); removeAll(selectionCleanup); } });
+  return Object.freeze({ render, dispose() { if (disposed) return; disposed = true; revision++; historyRevision++; localChecks.clear(); removeAll(cleanup); removeAll(historyCleanup); removeAll(selectionCleanup); } });
 }

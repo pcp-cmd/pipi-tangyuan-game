@@ -23,8 +23,8 @@ export function atlasCenter(layout, left, top) {
     y: clamp((top + layout.height / 2 - layout.top) / layout.artHeight, 0, 1) };
 }
 
-export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, detail, hostWindow = window }) {
-  let layout = null, zoom = 1, drag = null, mode = 'cover', pointerFocusPin = null;
+export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, detail, initialView = 'cover', topInset = () => 72, preparePinFocus = () => false, hostWindow = window }) {
+  let layout = null, zoom = 1, drag = null, mode = initialView === 'fit' ? 'fit' : 'cover', pointerFocusPin = null;
   const guard = new GestureClickGuard();
   const bottom = () => detail.hidden ? 0 : detail.getBoundingClientRect().height + 24;
   function draw(center = atlasCenter(layout, viewport.scrollLeft, viewport.scrollTop)) {
@@ -32,6 +32,9 @@ export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, de
     if (mode === 'cover') zoom = atlasGeometry(viewport.clientWidth, viewport.clientHeight).cover;
     if (mode === 'fit') zoom = 1;
     layout = atlasGeometry(viewport.clientWidth, viewport.clientHeight, zoom, bottom());
+    const topPadding = Math.max(0, topInset());
+    layout.top += topPadding;
+    layout.stageHeight += topPadding;
     zoom = layout.zoom;
     stage.style.width = `${layout.stageWidth}px`; stage.style.height = `${layout.stageHeight}px`;
     Object.assign(art.style, { width: `${layout.artWidth}px`, height: `${layout.artHeight}px`,
@@ -43,8 +46,9 @@ export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, de
   function reveal(pin) {
     if (!pin || !layout) return;
     const a = viewport.getBoundingClientRect(), p = pin.getBoundingClientRect();
-    const safe = { left: a.left + 12, right: a.right - 12, top: a.top + 72,
-      bottom: Math.max(a.top + 132, a.bottom - bottom() - 40) };
+    const safeBottom = Math.max(a.top + 132, a.bottom - bottom() - 40);
+    const safe = { left: a.left + 12, right: a.right - 12,
+      top: Math.min(a.top + topInset(), safeBottom - Math.min(p.height || p.bottom - p.top, 64)), bottom: safeBottom };
     const dx = p.left < safe.left ? p.left - safe.left : p.right > safe.right ? p.right - safe.right : 0;
     const dy = p.top < safe.top ? p.top - safe.top : p.bottom > safe.bottom ? p.bottom - safe.bottom : 0;
     viewport.scrollLeft += dx; viewport.scrollTop += dy;
@@ -52,7 +56,13 @@ export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, de
   function resize() {
     draw();
     const focused = viewport.ownerDocument.activeElement;
-    if (focused?.matches('.atlas-pin')) reveal(focused);
+    if (focused?.matches('.atlas-pin') && focused !== pointerFocusPin) revealFocused(focused);
+  }
+  function revealFocused(pin) {
+    const bounds = viewport.getBoundingClientRect(), target = pin.getBoundingClientRect();
+    const availableHeight = bounds.height - topInset() - bottom() - 40;
+    if (!detail.hidden && availableHeight < (target.height || target.bottom - target.top) + 16 && preparePinFocus(pin)) draw();
+    reveal(pin);
   }
   function changeZoom(factor) { mode = 'custom'; zoom *= factor; draw(); }
   zoomIn.addEventListener('click', () => changeZoom(1.35));
@@ -65,7 +75,7 @@ export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, de
   hostWindow.addEventListener('keydown', clearPointerFocus, true);
   hostWindow.addEventListener('click', clearPointerFocus, true);
   viewport.addEventListener('focusin', event => {
-    if (event.target.matches('.atlas-pin') && event.target !== pointerFocusPin) reveal(event.target);
+    if (event.target.matches('.atlas-pin') && event.target !== pointerFocusPin) revealFocused(event.target);
   });
   viewport.addEventListener('keydown', event => {
     // Candidate-selection keys belong to the input method, not the map camera.

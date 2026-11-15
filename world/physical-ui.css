@@ -18,7 +18,7 @@
 .physical-object{display:contents}
 .physical-object-foreground-light{position:absolute;inset:0;pointer-events:none}
 .physical-object-light{position:absolute;z-index:995;pointer-events:none;opacity:0;filter:brightness(1.5) saturate(1.12);transition:opacity .15s ease}
-.physical-object-outline{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:9000;pointer-events:none;opacity:0;filter:drop-shadow(0 0 5px #ffe4a4a0);transition:opacity .15s ease}
+.physical-object-outline{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:9000;pointer-events:none;opacity:0;filter:none;transition:opacity .15s ease}
 .physical-object-outline polygon{fill:none;stroke:#ffe5a8;stroke-width:2.2;stroke-linejoin:round}
 .physical-hotspot[data-object-shape="true"]{transform:none;border:0;border-radius:0;background:transparent;cursor:pointer;padding:0}
 .physical-hotspot[data-object-shape="true"]::after{display:none}
@@ -30,8 +30,10 @@
 .physical-object:has(.physical-hotspot:focus-visible) .physical-object-outline polygon{stroke-dasharray:5 4;stroke-width:3}
 @media(prefers-reduced-motion:reduce){.physical-object-light,.physical-object-outline{transition:none}}
 .physical-actions{position:absolute;z-index:12;left:50%;bottom:30px;transform:translateX(-50%);display:flex;gap:12px;max-width:65%;align-items:center}
-.physical-actions button{min-height:42px;padding:8px 17px;background:#213c30ed;color:#f1dfb8;border:1px solid #9f865a;border-radius:5px;font:15px/1.45 var(--ui);box-shadow:0 3px 12px #142c3866}
-.physical-actions .physical-interact{background:#e5c486;color:#253a2b;font-weight:700}
+.physical-actions button{min-height:52px;padding:5px 12px;border:12px solid transparent;border-image:var(--journal-frame) 128 stretch;border-radius:0;background:var(--journal-grain) center/256px repeat var(--journal-paper);background-clip:padding-box;color:#493621;font:15px/1.45 var(--ui);box-shadow:0 3px 6px #142c3833}
+.physical-actions .physical-interact{background-color:#ecd3a2;color:#493621;font-weight:700}
+.physical-actions .physical-return::before{content:'↶';margin-right:8px;font-size:20px;line-height:1;color:#76512c}
+.physical-actions button:focus-visible{outline:3px solid #ffedba;outline-offset:4px}
 body.panel-open .physical-actions{visibility:hidden}
 .physical-save-status{position:absolute;top:92px;left:50%;transform:translateX(-50%);z-index:30;max-width:620px;padding:10px 16px;background:#493b27ed;color:#ffe8bf;border:1px solid #bd9865;font:14px/1.6 var(--ui)}
 .world[data-interior="true"] .destination-marker{display:none!important}
@@ -42,3 +44,4 @@ body.panel-open .physical-actions{visibility:hidden}
 .journey-start-error{position:fixed;inset:12% 10%;z-index:180;background:#ede1c0;color:#273a2d;padding:32px;overflow:auto;font:16px/1.8 var(--ui)}
 .journey-start-error button{margin:16px 12px 0 0;padding:12px 20px;background:#31513b;color:#fff1cd;border-radius:4px}
 .result-notes{font:13px/1.7 var(--ui);color:var(--muted);white-space:pre-line;margin-block:10px}
+@media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;border-image:none;background:ButtonFace;color:ButtonText;box-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions .physical-return::before{color:ButtonText}.physical-object-outline polygon{stroke:Highlight}}

@@ -24,6 +24,8 @@
 <link rel="stylesheet" href="./physical-ui.css">
 <link rel="stylesheet" href="./full-world-ui.css">
 <link rel="stylesheet" href="./travel-journal.css">
+<link rel="stylesheet" href="./atlas-skin.css">
+<link rel="stylesheet" href="./learning-workbench.css">
 <link rel="modulepreload" href="./journal-pages.mjs">
 </head>
 <body>
@@ -96,6 +98,7 @@
     <aside id="panel" class="panel" aria-labelledby="panelTitle" hidden>
       <header class="panel-header"><div>
 <span id="panelEyebrow" class="eyebrow">启航岛 · 代码工坊</span><h2 id="panelTitle">给冒险一个起点</h2>
+<img class="atlas-wordmark" src="./assets/journal-v5/title-atlas-v1.svg" alt="" aria-hidden="true" draggable="false">
 </div>
 <button id="closePanel" class="icon-button" type="button" aria-label="关闭面板，回到小岛"><img class="icon" src="./assets/icons/x.svg" alt=""></button></header>
       <div id="panelNotice" class="panel-notice" role="status" aria-live="polite" hidden></div>
@@ -199,7 +202,7 @@
       <section id="mapPanel" class="panel-page atlas-page" aria-label="群岛地图" hidden>
       <div id="atlasViewport" class="atlas-viewport" tabindex="0" role="region" aria-label="群岛地图画面。拖动或方向键移动视角，加减键缩放，零键查看全图。">
         <div id="atlasStage" class="atlas-stage"><div id="atlasArt" class="atlas-art">
-          <img id="atlasBackground" data-src="./assets/world-map-background.png" decoding="async" width="1586" height="992" draggable="false" alt="群岛地形总图：启航岛、集市岛、工匠岛、档案岛、观测岛、灯塔岛，以及独立的远航营地。">
+          <img id="atlasBackground" data-src="./assets/world-map-background.png" decoding="async" width="1586" height="992" draggable="false" alt="群岛地形总图：启航岛、集市岛、工匠岛、档案岛、观测岛、灯塔岛与雾港协议工坊，六段航线相连。">
           <div id="atlasPins" class="atlas-pins" aria-label="地图地区"></div>
         </div></div>
       </div>
@@ -242,9 +245,11 @@
 <button class="cat-choice" data-cat="pipi" type="button" aria-pressed="true"><span class="portrait-art cat-sprite pipi"><img id="pipiPortrait" src="./assets/cat-pair.png" alt="金眼、宽脸、蓬松毛发的皮皮"></span><strong>皮皮</strong><span>好奇 · 爱探路</span><b>当前领队</b></button><button class="cat-choice" data-cat="tangyuan" type="button" aria-pressed="false"><span class="portrait-art cat-sprite tangyuan"><img id="tangyuanPortrait" src="./assets/cat-pair.png" alt="绿眼、较收脸型的汤圆"></span><strong>汤圆</strong><span>安静 · 细心观察</span><b>让它带队</b></button>
 </div>
 <div class="journal-greetings" aria-label="和伙伴打招呼"><button type="button" class="text-button" data-wave-cat="pipi">向皮皮招手</button><button type="button" class="text-button" data-wave-cat="tangyuan">向汤圆招手</button></div>
+<section id="classroomGraduation" class="classroom-graduation" aria-label="课堂结业"></section>
 </div>
 </div><div class="journal-leaf journal-leaf-right">
 <h3 class="journal-page-heading">今天的旅程</h3>
+<figure class="journal-postcard" id="journalJourneyPostcard" hidden><img id="journalJourneyPhoto" alt="" decoding="async"><figcaption id="journalJourneyCaption"></figcaption></figure>
 <section class="journal-island-tools" aria-label="小岛与当前实践">
           <button id="questShortcut" class="quest-shortcut" type="button"><img class="icon" src="./assets/icons/flag.svg" alt=""><span id="hudQuestTitle">给冒险一个起点</span><img class="icon small" src="./assets/icons/caret-right.svg" alt=""></button>
           <button id="openKnowledge" class="secondary-button" type="button"><img class="icon" src="./assets/icons/book-open.svg" alt=""><span>当前知识卡</span></button>

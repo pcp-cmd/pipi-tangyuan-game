@@ -1,5 +1,6 @@
 import {EXTERNAL_TASKS} from './external-task-data.mjs';
 import {TRUSTED_EXTERNAL_ASSESSORS} from './external-review-policy.mjs';
+import {isLocalCheckAttachment} from './local-check-contract.mjs';
 
 const WORK_SCHEMA = 'pipi-external-work/v1';
 const BUNDLE_SCHEMA = 'pipi-external-submission/v1';
@@ -35,7 +36,7 @@ function relativePathSyntax(path) {
     path.split('/').every(part=>part && part !== '.' && part !== '..');
 }
 function validPath(path) { return relativePathSyntax(path) && !path.split('/').some(part=>/^(?:\.git|\.venv|venv|node_modules|__pycache__)$/i.test(part)); }
-function allowedPath(path, assignment) { return assignment.allowedFiles.includes(path) || /^tests\/test_[A-Za-z0-9_-]{1,60}\.py$/.test(path); }
+function allowedPath(path, assignment) { return assignment.allowedFiles.includes(path) || /^tests\/test_[A-Za-z0-9_-]{1,60}\.py$/.test(path) || isLocalCheckAttachment(path, assignment); }
 function validateDeclaration(value) {
   if (!exact(value,['execution','pythonVersion','commandLog','assistance','notes']) ||
       !['not-run','self-reported-run','setup-blocked'].includes(value.execution) || !text(value.pythonVersion,200) ||

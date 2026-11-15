@@ -108,6 +108,16 @@ export const PRE_ART_PHYSICAL_SCENES = freeze(structuredClone(Object.fromEntries
 const artScenes = applyObjectOutlines(applySceneCandidates(preArtScenes));
 export const PRE_SERVICE_PHYSICAL_SCENES = freeze(Object.fromEntries(addOpenGround(addServiceBuildings(artScenes,{dedicated:false})).map(s=>[s.id,s])));
 const worldScenes = applyRuntimeSceneAssets(addAgentWorldObjects(addOpenGround(addServiceBuildings(artScenes))));
+const anvilRoom = worldScenes.find(scene => scene.id === 'harbor.code-workshop.interior');
+const anvilPolygon = anvilRoom.occluders.find(mask => mask.id === 'anvil').polygon.map(({x,y}) => [x,y]);
+const anvilXs = anvilPolygon.map(point => point[0]), anvilYs = anvilPolygon.map(point => point[1]);
+const anvilApproach = {x:1080,y:650};
+anvilRoom.hotspots.push({
+ id:'harbor.code-workshop.anvil',label:'铁砧修补台',kind:'inspect',uiAction:'external-task',externalTaskId:'repo-repair',
+ fromSceneId:anvilRoom.id,x:1208,y:746,approach:anvilApproach,radius:32,
+ highlightPolygon:anvilPolygon,highlightOccluderIds:['anvil'],
+ hitbox:{x:Math.min(...anvilXs),y:Math.min(...anvilYs),w:Math.max(...anvilXs)-Math.min(...anvilXs),h:Math.max(...anvilYs)-Math.min(...anvilYs)}
+});
 export const PHYSICAL_PORTS = freeze(Object.fromEntries(['harbor','market','workshop','archive','observatory','beacon','protocol'].map(islandId=>[
  `${islandId}.port`,{id:`${islandId}.port`,islandId,sceneId:`${islandId}.exterior`,hotspotId:islandId==='harbor'?'harbor.pier':`${islandId}.port`,arrival:islandId==='harbor'?{pipi:pose(550,825),tangyuan:pose(650,825)}:structuredClone(worldScenes.find(s=>s.id===`${islandId}.exterior`).spawn)}
 ])));

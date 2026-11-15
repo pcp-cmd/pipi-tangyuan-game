@@ -36,11 +36,14 @@ import { planIndentation, planContinuedIndentation } from './editor-helpers.mjs'
 import { createCompanionSprites } from './pets-renderer.mjs';
 import { mountCompanionInput } from './companion-input.mjs';
 import { mountExternalWorkPanel } from './external-work-panel.mjs';
+import { mountClassroomGraduation } from './classroom-graduation.mjs';
 import { externalAssignment } from '../integration/external-work.mjs';
 import { createReferencePreview } from './reference-preview.mjs';
 import { createAtlasView } from './atlas-view.mjs';
 import { moveTerrainAim } from './scene-terrain.mjs';
 import { mountSceneKeyboardFocus } from './scene-keyboard-focus.mjs';
+import { mountLearningWorkbench } from './learning-workbench.mjs';
+import { createPresentationTransitions } from './presentation-transitions.mjs';
 
 const $ = id => document.getElementById(id);
 const lessons = LESSONS;
@@ -95,7 +98,7 @@ let toastTimer;
 let cameraTimer;
 let moveTimer;
 let companionSprites = null;
-let companionInput = null, companionRun = null, externalWorkPanel = null;
+let companionInput = null, companionRun = null, externalWorkPanel = null, classroomGraduation = null;
 let sceneKeyboardFocus = null;
 let physicalWorld = null, physicalPresentation = null, panelSpaceRelease = null;
 let journeyBusy = false, renderedPhysicalScene = null;
@@ -108,13 +111,18 @@ const hotspotClickIntent = createHotspotClickIntent({ pause: () => {
 const drawnActorPositions = new Map();
 let previousViewport = { width: 0, height: 0 };
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const presentationTransitions = createPresentationTransitions({ motionPreference: reducedMotion });
+const learningWorkbench = mountLearningWorkbench({ root: $('workshopPanel'), document, reducedMotion: () => reducedMotion.matches });
 let roaming = true;
 let groundAim = { x:.5, y:.5 };
 const mobile = () => innerWidth <= 760;
 const icon = name => { const image = document.createElement('img'); image.src = `./assets/icons/${name}.svg`; image.alt = ''; image.className = 'icon'; return image; };
 
 const atlasView = createAtlasView({ viewport: $('atlasViewport'), stage: $('atlasStage'), art: $('atlasArt'),
-  zoomIn: $('atlasZoomIn'), zoomOut: $('atlasZoomOut'), fit: $('atlasFit'), detail: $('regionDetail') });
+  zoomIn: $('atlasZoomIn'), zoomOut: $('atlasZoomOut'), fit: $('atlasFit'), detail: $('regionDetail'), initialView: 'fit',
+  preparePinFocus: () => { const detail = $('regionDetail'); const changed = !detail.hidden; detail.hidden = true; return changed; },
+  topInset: () => Math.max(72, ...[$('panel').querySelector('.panel-header'), $('mapPanel').querySelector('.atlas-tools')]
+    .filter(Boolean).map(node => node.getBoundingClientRect().bottom - $('atlasViewport').getBoundingClientRect().top + 12)) });
 const modalPanel = () => !!panel.kind && (mobile() || ['map','journal','workshop','lighthouse','travel','inspection'].includes(panel.kind));
 
 const persistence = journeyIO.learning;
@@ -126,7 +134,7 @@ const session = createWorldSession({ ...persistence, runtime: () => runtime,
     const copy = view.notice || ({ saved: '进度与草稿已保存。', saving: '正在保存…', conflict: '另一页面已改动存档，请先导出。', 'backup-only': '浏览器不支持安全协调，当前仅保留恢复备份。', 'locks-required': '浏览器不支持安全协调。当前内容未保存，请先导出。', 'recovery-capacity': '恢复空间已满，旧备份未删除。请先导出当前完整草稿。', 'recovery-owner-conflict': '本页仍有不同的旧恢复分支，不能覆盖。请先保留两份内容。', 'recovery-invalid': '恢复记录无法校验，原件未覆盖。请先导出当前内容。', 'recovery-error': '恢复备份尚未确认写入。请保持页面打开并导出完整内容。', 'pending-local': '本地仍有未保存内容，请先导出或明确重载。', 'missing-authority': '已保存的主记录已不在原位置。本地内容仍保留，请先导出，不会新建空白进度覆盖。', error: '保存未完成，当前进度仍在页面，请导出后重试。' }[view.status] || '原存档受保护，请先导出再处理。');
     $('saveStatus').textContent = copy; $('editorSaveStatus').textContent = copy;
     $('downloadOriginal').hidden = !session?.original();
-    if (initialized) { if (!view.selecting) updateQuest(); syncControls(); externalWorkPanel?.render(); }
+    if (initialized) { if (!view.selecting) updateQuest(); syncControls(); externalWorkPanel?.render(); classroomGraduation?.render(); }
   }
 });
 
@@ -217,6 +225,10 @@ function renderWorldDiscoveries() {
   if (!target || !physicalWorld) return;
   const visited = new Set(physicalWorld.view().discovered || []);
   const currentScene = physicalWorld.view().scene;
+  $('journalJourneyPostcard').hidden = false;
+  $('journalJourneyPhoto').src = new URL(currentScene.background, import.meta.url).href;
+  $('journalJourneyPhoto').alt = `此刻停留的地方：${currentScene.title.replace(/ · .*$/, '')}`;
+  $('journalJourneyCaption').textContent = currentScene.title.replace(/ · .*$/, '');
   $('discoveryPhoto').hidden = !visited.has(currentScene.id);
   if (visited.has(currentScene.id)) {
     $('discoveryPhotoArt').src = new URL(currentScene.background, import.meta.url).href;
@@ -456,9 +468,11 @@ function renderPhysical(view) {
   physicalPresentation?.render(view);
   if (!physicalPresentation) return;
   if (renderedPhysicalScene !== view.physicalSceneId) {
+    const wasVisible = renderedPhysicalScene !== null;
     renderedPhysicalScene = view.physicalSceneId;
     updateQuest();
     syncCompanionPresentation();
+    if (wasVisible && !panel.kind) presentationTransitions.enter('scene', [$('world')]);
   }
   if (camera.follow) focusCats(false, false); else drawCamera(false);
   $('groundTarget').hidden = true;
@@ -577,7 +591,7 @@ function renderAgentObject(item) {
   root.append(submissions);
 }
 
-async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id) {
+async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, opener) {
   arrivalIntent.cancel();
   if (!hotspotId || journeyBusy || runBusy || panel.kind) return false;
   const outcome = await physicalWorld.act({ kind: 'interact', hotspotId });
@@ -588,7 +602,7 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id) 
   }
   if (outcome.status === 'workbench') {
     workbenchMode = isVerificationSite() ? 'verify' : 'learn';
-    return openPanel(workbenchMode === 'verify' ? 'lighthouse' : 'workshop');
+    return openPanel(workbenchMode === 'verify' ? 'lighthouse' : 'workshop', opener);
   }
   if (outcome.status === 'port') {
     if (hotspotId === 'harbor.pier') rememberPlace('harbor');
@@ -598,6 +612,14 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id) 
     if (hotspotId === 'harbor.pier') return showPlace('harbor');
     if (hotspotId === 'harbor.camp') return showPlace('camp');
     const item = physicalWorld.view().hotspots.find(h => h.id === hotspotId);
+    if (item?.uiAction === 'external-task' && externalAssignment(item.externalTaskId)) {
+      const opened = await openPanel('journal', opener);
+      if (opened) {
+        journalPages.show('courses'); $('externalWorkPanel').open = true;
+        externalWorkPanel.selectTask(item.externalTaskId, { focus: true });
+      }
+      return opened;
+    }
     const servicePage = item?.uiAction === 'journal' ? serviceJournalPage(item) : null;
     if (servicePage) {
       const opened = await openPanel('journal');
@@ -751,11 +773,15 @@ function renderLesson({ resetResult = true } = {}) {
     if ($('resultNotes')) { $('resultNotes').textContent = ''; $('resultNotes').hidden = true; }
     $('runDuration').textContent = '';
     $('successActions').hidden = true;
-    $('conceptDetails').open = false;
     $('hintDetails').open = false;
   }
   renderedEditorLessonId = lesson.id;
   renderWorkbenchChoice();
+  const learningView = session.snapshot(), record = learningView.envelope?.records[lesson.id];
+  learningWorkbench.showLesson({ journeyKey: journeyIO.namespace, lessonId: lesson.id,
+    hasHistory: !learningView.loadedValid || state.completed.includes(lesson.id) || Boolean(record?.attempts?.length || record?.milestones?.guided || record?.milestones?.independent),
+    canAutoExplain: !(lesson.judgeKind === 'lifecycle' && lesson.concept.includes('## 三级提示')) });
+  if (resetResult) learningWorkbench.setRunState('idle');
   syncCompanionPresentation();
 }
 
@@ -784,6 +810,7 @@ function cancelRun(message = '已停止，可以继续修改。') {
   $('output').textContent = '本次运行已取消。伙伴位置与金币没有改变，当前代码仍在编辑器。';
   if ($('resultNotes')) { $('resultNotes').textContent = ''; $('resultNotes').hidden = true; }
   $('checks').replaceChildren(); $('successActions').hidden = true;
+  learningWorkbench.setRunState('result');
 }
 
 async function openPanel(kind, opener = document.activeElement, suppliedToken = null) {
@@ -844,6 +871,8 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
     const scroll = $(`${kind}Panel`).querySelector('.panel-scroll');
     if (scroll) scroll.scrollTop = 0;
     $('closePanel').focus({ preventScroll: true });
+    presentationTransitions.enter('panel', kind === 'workshop'
+      ? [$('workbenchTask'), $('workbenchCode'), $('workbenchResult')] : [$(`${kind}Panel`)]);
   }
   syncCompanionPresentation();
   return true;
@@ -857,6 +886,7 @@ async function closePanel(options = {}) {
   if (panel.kind === 'workshop') cancelRun('已回到小岛，本次运行已取消。');
   if (!await flushForNavigation(token)) return false;
   if (typeof options.allowClose === 'function' && !options.allowClose()) return false;
+  presentationTransitions.cancel('panel');
   panel.kind = null;
   $('panel').hidden = true;
   document.body.classList.remove('panel-open', 'map-open');
@@ -929,6 +959,7 @@ function saveDraft() {
     $('console').dataset.result = 'previous';
     $('resultTitle').textContent = '以下是上次提交的结果。请重新运行当前稿。';
     $('successActions').hidden = true;
+    learningWorkbench.setRunState('previous');
   }
 }
 
@@ -963,6 +994,7 @@ async function runCode() {
     $('runChecks').hidden = true; $('failureNext').hidden = true;
     if ($('resultNotes')) { $('resultNotes').textContent = ''; $('resultNotes').hidden = true; }
     $('resultTitle').textContent = '正在检验你的想法…'; $('output').textContent = ''; $('runDuration').textContent = ''; $('console').dataset.result = 'running';
+    learningWorkbench.setRunState('running');
     const outcome = await session.run();
     state = session.snapshot().game;
     if (!session.isCurrent(outcome)) {
@@ -1043,6 +1075,7 @@ async function runCode() {
     if (!visualCompleted) companionSprites?.cancelRun(visualRun);
     if (companionRun === visualRun) companionRun = null;
     releaseSpace(); runBusy = false; syncControls(); renderWorkbenchChoice();
+    learningWorkbench.setRunState($('console').dataset.result === 'previous' ? 'previous' : $('console').hasAttribute('data-result') ? 'result' : 'idle');
   }
 }
 
@@ -1061,6 +1094,7 @@ function lessonGroup(lesson, index) { return index < 18 ? 'legacy' : lesson.judg
 
 function renderJournal() {
   renderExploration();
+  classroomGraduation?.render();
   $('courseAccessSummary').textContent = session.snapshot().loadedValid
     ? accessSummaryCopy(session.learningSummary()) : '原存档尚未读取，暂不计算课程开放与学习进度。';
   journalExplorer.render();
@@ -1125,10 +1159,14 @@ function renderRegions() {
     $('regionList').append(button);
     const pin = document.createElement('button'); pin.type = 'button'; pin.className = 'atlas-pin'; pin.dataset.mapRegion = region.id;
     pin.dataset.locked = String(!access.available);
+    const current = region.curriculumIslandId === physicalWorld.view().scene.islandId;
+    pin.dataset.current = String(current);
+    if (current) pin.setAttribute('aria-current', 'location');
     pin.style.left = `${region.x / 1600 * 100}%`; pin.style.top = `${region.y / 1000 * 100}%`;
     const pinName = document.createElement('strong'); pinName.textContent = region.name;
-    const pinState = document.createElement('span'); pinState.textContent = access.available ? '航线已开放' : '完成里程碑后启航';
+    const pinState = document.createElement('span'); pinState.id = `atlasPinState-${region.id}`; pinState.textContent = current ? '你在这里' : access.available ? '航线已开放' : '完成里程碑后启航';
     pin.append(pinName, pinState); pin.setAttribute('aria-label', `${region.name}，课程可查看，查看地区详情`);
+    pin.setAttribute('aria-describedby', pinState.id);
     pin.addEventListener('click', () => revealRegionDetails(region.id));
     $('atlasPins').append(pin);
   }
@@ -1220,7 +1258,7 @@ async function enterWorkshop(opener = document.activeElement) {
   const view = physicalWorld.view();
   const bench = view.hotspots.find(item => item.kind === 'workbench');
   if (bench) {
-    if (view.nearby.some(item => item.id === bench.id)) return openPanel('workshop', opener);
+    if (view.nearby.some(item => item.id === bench.id)) return interactPhysical(bench.id, opener);
     return activatePhysical(bench.id);
   }
   const door = view.hotspots.find(item => item.kind === 'door' && !item.return && physicalScene(item.to)?.hotspots.some(target => target.kind === 'workbench'));
@@ -1414,6 +1452,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) stopW
 reducedMotion.addEventListener('change', () => stopWalking());
 $('regionTravel').addEventListener('click', () => { const region = REGIONS.find(item => item.id === panel.regionId); void guideToIsland(region.curriculumIslandId); });
 $('closeRegionDetail').addEventListener('click', closeRegionDetails);
+$('atlasPins').addEventListener('focusin', () => { $('regionMenu').open = false; });
 $('regionMenu').addEventListener('toggle', () => {
   if ($('regionMenu').open) { $('regionDetail').hidden = true; atlasView.resize(); }
 });
@@ -1490,7 +1529,7 @@ $('codeEditor').addEventListener('keydown', event => {
   saveDraft();
 });
 $('fontSize').addEventListener('click', () => { const large = document.querySelector('.editor-body').classList.toggle('large-text'); $('fontSize').setAttribute('aria-pressed', String(large)); $('fontSize').setAttribute('aria-label', large ? '恢复代码文字大小' : '增大代码文字'); });
-$('resetDraft').addEventListener('click', () => referencePreview.restart(() => { $('conceptDetails').open = false; $('hintDetails').open = false; panel.help.concept = false; panel.help.hint = false; assisted = false; $('codeEditor').value = lessons[state.mission].starter; saveDraft(); toast('知识卡与提示已收起，已重开起始稿，可记录新的独立实践。'); }));
+$('resetDraft').addEventListener('click', () => referencePreview.restart(() => { $('conceptDetails').open = false; learningWorkbench.resetGuide(); $('hintDetails').open = false; panel.help.concept = false; panel.help.hint = false; assisted = false; $('codeEditor').value = lessons[state.mission].starter; saveDraft(); toast('知识卡与提示已收起，已重开起始稿，可记录新的独立实践。'); }));
 $('referenceCode').addEventListener('click', async () => { await referencePreview.open(); syncCompanionPresentation(); });
 $('adoptReference').addEventListener('click', () => referencePreview.adopt());
 $('closeReference').addEventListener('click', () => { referencePreview.close({ focus: true }); syncCompanionPresentation(); });
@@ -1515,7 +1554,7 @@ $('nextLesson').addEventListener('click', () => {
 });
 
 function downloadText(text, filename) {
-  const url = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+  const url = URL.createObjectURL(new Blob([text], { type: filename.endsWith('.txt') ? 'text/plain;charset=utf-8' : 'application/json' }));
   const anchor = document.createElement('a'); anchor.href = url; anchor.download = filename; anchor.click();
   setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
@@ -1666,9 +1705,10 @@ window.addEventListener('beforeunload', event => { if (session.hasUnsaved() || p
 // A persisted page may return with this same JavaScript heap. Suspend work,
 // but destroy reusable controllers only when the document is leaving for good.
 window.addEventListener('pagehide', event => {
+  presentationTransitions.cancelAll();
   ++navigation; clearMovement(); void stopWalking();
   if (event.persisted) { cancelRun(); void session.flush(); }
-  else { companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); journalPages.dispose(); physicalWorld.dispose(); physicalPresentation?.dispose(); session.dispose(); }
+  else { learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages.dispose(); physicalWorld.dispose(); physicalPresentation?.dispose(); session.dispose(); }
   try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Optional camera state. */ }
 });
 window.addEventListener('pageshow', event => {
@@ -1691,6 +1731,7 @@ if (camera.follow) focusCats(false, false); else drawCamera(false);
 initialized = true; syncControls(); renderJourneys();
 externalWorkPanel = mountExternalWorkPanel({ root: $('externalWorkContent'), session, download: downloadText, browseCourse,
   canWrite: () => !journeyBusy && !runBusy && session.snapshot().loadedValid && !session.snapshot().selecting });
+classroomGraduation = mountClassroomGraduation({ root: $('classroomGraduation'), session, browseCourse, download: downloadText });
 mountRecoveryPanel({session, scope: journeyIO.nativeKey(WORLD_SAVE_KEY), anchor: $('journalSaves'), editorAnchor: $('exportEditorSave').parentElement, download: downloadText,
   onReloaded: () => { ++navigation; cancelRun(); state = session.snapshot().game; renderLesson(); updateProgress(); }});
 

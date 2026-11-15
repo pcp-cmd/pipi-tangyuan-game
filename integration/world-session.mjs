@@ -4,6 +4,7 @@ import { createIntegrationStore } from './retained-store.mjs';
 import { createDraftBuffer } from './draft-buffer.mjs';
 import { createRequestIds } from './request-ids.mjs';
 import {accessOf as courseAccessOf, learningAccessSummary} from './lesson-access.mjs';
+import {classroomEvidence, classroomGraduationView} from './classroom-graduation.mjs';
 import {selectAccessibleContext, createAccessibleSubmission, acceptAccessibleResult} from './guarded-course.mjs';
 import {acceptExternalAssignment, recordExternalSubmission as recordWork, importExternalReceipt as importWorkReceipt,
   inspectExternalWork, externalWorkView as viewWork} from './external-work.mjs';
@@ -21,6 +22,7 @@ export function createWorldSession({ storage, locks, runtime, readCode, readScen
   const buffer = createDraftBuffer({ commit: commitDraft, setTimer, clearTimer });
   const frozenObjects = new WeakSet();
   let accessSource = null, accessSummary = null;
+  let graduationSource = null, graduationCurrent = null, confirmedGraduationRaw, confirmedGraduationEvidence = null;
   const accessViews = new Map();
   const recoveryControllers = new Set();
   let externalBusy = false, externalInspection = null;
@@ -53,6 +55,20 @@ export function createWorldSession({ storage, locks, runtime, readCode, readScen
     if (lessonGate === null || !source) return accessSummary;
     const rows = LESSON_IDS.map(accessView);
     return Object.freeze({...accessSummary, accessible: rows.filter(row => row.canRun).length, locked: rows.filter(row => row.state === 'locked').length});
+  }
+
+  function graduationView() {
+    const source = loadedValid ? envelope : null, confirmedSave = store.snapshot();
+    if (source !== graduationSource) { graduationSource = source; graduationCurrent = classroomEvidence(source); }
+    if (confirmedSave.raw !== confirmedGraduationRaw) {
+      confirmedGraduationRaw = confirmedSave.raw; confirmedGraduationEvidence = null;
+      if (typeof confirmedSave.raw === 'string') {
+        try { confirmedGraduationEvidence = classroomEvidence(parseEnvelope(confirmedSave.raw)); } catch {}
+      }
+    }
+    return classroomGraduationView({current: graduationCurrent, saved: confirmedGraduationEvidence, loadedValid, disposed,
+      authorityBlocked: hardBlocked(status) || hardBlocked(confirmedSave.status), status, storeStatus: confirmedSave.status,
+      pendingWrites, dirty: confirmedSave.dirty});
   }
 
   function snapshot() {
@@ -313,6 +329,7 @@ export function createWorldSession({ storage, locks, runtime, readCode, readScen
     learningStatus: id => envelope ? assessmentStatus(envelope, id) : 'unobserved',
     accessOf: accessView,
     learningSummary: summaryView,
+    graduationView,
     isCurrent: outcome => outcome?.epoch === epoch && (outcome.feedbackCode === undefined || outcome.feedbackCode === readCode() && outcome.feedbackScene === readScene() && outcome.lessonId === LESSON_IDS[envelope?.game.mission]),
     exportState: () => envelope ? JSON.stringify(envelope, null, 2) : null,
     original: () => lastReadRaw ?? envelope?.migration?.original ?? null,

@@ -226,7 +226,7 @@
 .corner-bl { bottom: -33px; left: -33px; transform: rotate(270deg); }
 .journal-spine { position: absolute; top: 48px; bottom: 25px; left: calc(50% - 15px); width: 30px; overflow: hidden; z-index: 3; pointer-events: none; }
 .journal-spine img { position: absolute; top: 0; left: 50%; height: 100%; width: auto; max-width: none; transform: translateX(-50%); image-rendering: pixelated; }
-.journal-masthead { position: absolute; top: 49px; left: 42px; z-index: 4; margin: 0; width: clamp(240px, 29vw, 380px); pointer-events: none; }
+.journal-masthead { position: absolute; top: 49px; left: 42px; z-index: 4; margin: 0; width: clamp(216px, 24vw, 320px); pointer-events: none; }
 .journal-masthead img { display: block; width: 100%; height: auto; object-fit: contain; }
 #journalTabs {
   position: absolute; top: 0; left: auto; right: 70px; bottom: auto; z-index: 5;
@@ -248,13 +248,30 @@
   column-gap: 0; padding: 0; z-index: 1;
 }
 .journal-leaf { padding: 24px 28px 30px; scroll-padding: 20px; filter: none; }
-.journal-leaf-left { display: flex; flex-direction: column; border-right-width: 14px; padding-top: 130px; overflow: hidden; }
+.journal-leaf-left { display: flex; flex-direction: column; border-right-width: 14px; padding-top: 112px; overflow: hidden; }
 .journal-leaf-body { min-height: 0; flex: 1; overflow: auto; overscroll-behavior: contain; scrollbar-width: thin; scroll-padding: 8px; padding: 3px 5px 8px; }
 .journal-leaf-right { border-left-width: 14px; }
 #journalPanel .journal-intro, #journalPanel .journal-page-heading,
 #journalPanel .journal-learning-heading h3 {
-  font-size: 24px; color: #493821; letter-spacing: .025em; margin: 0 0 24px;
+  font-size: 24px; color: #493821; letter-spacing: .025em; margin: 0 0 18px;
 }
+#journalPanel .journal-page-heading {
+  width: fit-content; max-width: 100%; padding: 4px 20px 5px;
+  border-block: 1px solid #be9a5c80; background: #dcc28c4d;
+  box-shadow: 0 2px 0 #b5945730; transform: rotate(-1deg);
+}
+.journal-postcard {
+  position: relative; margin: 6px 4px 20px; padding: 7px 7px 8px;
+  background: #fff6dc; border: 1px solid #c4aa7d;
+  box-shadow: 1px 3px 4px #6b4a2f3b; transform: rotate(-1deg);
+}
+.journal-postcard::before {
+  content: ''; position: absolute; top: -8px; left: 26px; width: 46px; height: 17px;
+  background: #d4b779ad; border-inline: 1px dashed #99834d80;
+  transform: rotate(-9deg); pointer-events: none;
+}
+.journal-postcard img { display: block; width: 100%; height: clamp(125px, 18vh, 185px); object-fit: cover; object-position: center; }
+#journalPanel .journal-postcard figcaption { color: #6c5234; font-size: 13px; line-height: 1.6; text-align: center; padding-top: 5px; }
 #journalPanel .journal-current { background: transparent; padding: 2px 0 2px 15px; border-left-color: #416549; }
 #journalPanel .journal-current-copy strong { font-size: 20px; margin-top: 4px; }
 #journalPanel .journal-tools { margin-block: 20px; }
@@ -262,18 +279,29 @@
   background: #fff6dc40; border: 0; border-bottom: 1px solid #8e7c53;
   border-radius: 0; padding-inline: 2px; font-size: 15px;
 }
-#journalPanel .course-entry { border-bottom-color: var(--journal-line); }
-#journalPanel .course-entry[data-current='true'] {
-  background: #b1ba7b20; box-shadow: inset 3px 0 #3c6548; padding-left: 10px;
+#journalPanel .course-entry {
+  position: relative; margin-bottom: 14px; border: 12px solid transparent;
+  border-image: var(--journal-frame) 128 stretch; border-radius: 0;
+  background: #fff3d038; background-clip: padding-box;
+  box-shadow: 0 3px 4px #76532d12;
 }
-#journalPanel .course-row-main { grid-template-columns: 100px minmax(0, 1fr); gap: 14px; padding-block: 14px; }
+#journalPanel .course-entry[data-current='true'] {
+  background: #b1ba7b30; background-clip: padding-box;
+  box-shadow: inset 3px 0 #3c6548; padding-left: 5px;
+}
+#journalPanel .course-row-main { grid-template-columns: 100px minmax(0, 1fr); gap: 14px; padding: 8px 40px 8px 2px; }
 #journalPanel .course-row-main .course-context-art { width: 100px; height: 110px; object-fit: contain; }
-#journalPanel .course-row-main h4 { font-size: 18px; color: #463b29; font-weight: 600; line-height: 1.55; }
+#journalPanel .course-row-copy { display: flex; min-width: 0; flex-direction: column; align-items: flex-start; gap: 5px; }
+#journalPanel .course-row-main .course-ordinal { padding: 2px 9px; color: #5c4228; background: #dbc18e66; border-radius: 3px; font-size: 14px; }
+#journalPanel .course-row-main h4 { font-size: 18px; color: #463b29; font-weight: 600; line-height: 1.55; white-space: normal; overflow: visible; overflow-wrap: anywhere; text-wrap: pretty; }
+#journalPanel .course-row-copy .learning-badge { padding: 0; color: #6e593b; background: none; border: 0; font-size: 13px; line-height: 1.6; }
+#journalPanel .course-row-copy .learning-badge.independent { color: #305d3c; }
+#journalPanel .course-row-copy .learning-badge.guided { color: #715071; }
 #journalPanel .course-row-main .course-enter {
   max-width: 100%; white-space: normal; overflow: visible; min-height: 38px;
   color: #2f593e; border-bottom-color: #557249; font-size: 14px;
 }
-#journalPanel .course-row-details > summary { min-height: 44px; }
+#journalPanel .course-row-details > summary { top: 8px; min-height: 44px; width: 40px; padding-inline: 2px; }
 #journalPanel .course-preview { margin: 16px 0; border-block: 1px solid var(--journal-line); }
 #journalPanel .course-preview > summary { color: #36563e; min-height: 44px; padding: 10px 0; cursor: pointer; }
 #journalPanel .course-preview-content h5 { font-size: 16px; color: #463721; margin: 18px 0 7px; }
@@ -283,10 +311,38 @@
   background: transparent; border-bottom: 3px solid #315f43;
   box-shadow: inset 0 -1px #315f43; transform: scale(1.025);
 }
+#journalPanel .cat-choice strong {
+  min-width: 90px; padding: 3px 18px; color: #4c3823;
+  background: #d8b87752; border-block: 1px solid #bd985e66;
+}
+#journalPanel .portrait-art.pets-ready { width: clamp(124px, 12vw, 176px); height: auto; aspect-ratio: 192 / 208; }
 #journalPanel .cat-choice[aria-pressed='true'] b { color: #244d34; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
 .journal-greetings { display: flex; justify-content: space-around; gap: 16px; margin-top: 16px; }
 .journal-greetings .text-button { color: #365b43; min-height: 44px; font-size: 15px; }
 #journalPanel .cat-choices { gap: 24px; }
+#journalPanel .classroom-graduation {
+  margin-top: 18px; padding: 8px 12px;
+  border: 12px solid transparent; border-image: var(--journal-frame) 128 stretch;
+  background: var(--journal-grain) center / 256px repeat #e7d3aa;
+  background-clip: padding-box; color: #6b583e;
+}
+#journalPanel .classroom-graduation:empty { display: none; }
+#journalPanel .classroom-graduation h3 { display: flex; align-items: center; gap: 9px; margin: 0 0 8px; color: #655139; font: 700 18px/1.5 var(--display); }
+#journalPanel .classroom-graduation h3::before {
+  content: '✧'; display: inline-grid; place-items: center; flex: none;
+  width: 28px; height: 28px; border: 3px double #ac9164; border-radius: 50%;
+  color: #94794f; font: 21px/1 var(--ui);
+}
+#journalPanel .classroom-graduation p { margin: 7px 0; font-size: 14px; line-height: 1.75; }
+#journalPanel .classroom-graduation button {
+  min-height: 44px; max-width: 100%; margin-top: 5px; padding: 6px 10px;
+  border: 0; border-bottom: 2px solid #9f7942; border-radius: 0;
+  background: transparent; box-shadow: none; color: #674522;
+  font: 600 15px/1.6 var(--ui); white-space: normal;
+}
+#journalPanel .classroom-graduation[data-state='earned'] { background-color: #efd8a7; color: #60472b; }
+#journalPanel .classroom-graduation[data-state='earned'] h3 { color: #6a411b; }
+#journalPanel .classroom-graduation[data-state='earned'] h3::before { content: '✦'; border-color: #98642d; color: #8a5422; box-shadow: inset 0 0 0 1px #e4bc6e; transform: rotate(-8deg); }
 #journalPanel .journal-island-tools .secondary-button { font-size: 15px; white-space: normal; background: transparent; color: #34523d; border-color: #96805b70; }
 #journalPanel .journal-island-tools .quest-shortcut { color: #fff0c9; background: #3c6048; border-color: #8b825c; }
 #journalPanel .journal-island-tools .preview-label { color: #746044; font-size: 14px; }
@@ -362,6 +418,23 @@
 .bottom-quest .quest-brief strong { color: #483823; }
 .bottom-quest > summary .icon { filter: brightness(.45) sepia(.4); }
 
+.camera-hud > summary, .camera-controls {
+  border: 12px solid transparent; border-image: var(--journal-frame) 128 stretch;
+  border-radius: 0; background: var(--journal-grain) center / 256px repeat var(--journal-paper);
+  background-clip: padding-box; color: #493923; box-shadow: 0 3px 8px #172b2830;
+}
+.camera-hud > summary { padding: 3px 7px; }
+.camera-controls { padding: 8px; bottom: 64px; }
+.camera-hud .icon { filter: brightness(.48) sepia(.45); }
+.camera-hud .zoom-group .icon-button { background: transparent; color: #493923; }
+.camera-hud .zoom-group span { color: #6b5536; }
+.camera-hud .follow-button, .camera-hud .terrain-toggle, .camera-hud .stop-roam {
+  background: transparent; border: 0; border-bottom: 1px solid #a88a5b80;
+  border-radius: 0; box-shadow: none; color: #493923; font-size: 13px;
+}
+.camera-hud .terrain-toggle[aria-pressed='true'] { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.camera-hud :is(button, summary):focus-visible { outline: 3px solid #305d60; outline-offset: 3px; }
+
 .top-right, body.panel-open .top-right { gap: 12px; align-items: center; top: 8px; right: 18px; }
 .top-right .hud-button, body.panel-open .top-right .hud-button {
   display: grid; place-items: center; position: relative; width: 96px; height: 86px; padding: 0; min-width: 44px;
@@ -403,6 +476,10 @@
   #workshopPanel .workbench-result { border-width: 16px 20px; padding-block: 0 5px; }
   .panel:has(#journalPanel:not([hidden])) { inset: 64px 3% 18px; }
   .journal-leaf { padding-inline: 22px; padding-bottom: 22px; }
+  .journal-postcard { margin-bottom: 14px; }
+  .journal-postcard img { height: 130px; }
+  #journalPanel .journal-island-tools { gap: 8px; }
+  #journalPanel .journal-stats { margin-block: 14px; padding-block: 12px; }
   .panel:has(#lighthousePanel:not([hidden])) { inset: 70px 4% 18px; }
 }
 @media (max-width: 1100px) {
@@ -435,10 +512,10 @@
   #workshopPanel .workshop-footer { padding-inline: 14px; flex-wrap: wrap; gap: 0 12px; }
   .journal-page-pair { display: block; overflow: auto; inset: 54px 12px 14px; }
   .journal-leaf { overflow: visible; padding: 16px 20px; border-width: 20px; }
-  .journal-leaf-left { display: block; padding-top: 126px; overflow: visible; }
+  .journal-leaf-left { display: block; padding-top: 114px; overflow: visible; }
   .journal-leaf-body { overflow: visible; }
   .journal-leaf-right { margin-top: 8px; }
-  .journal-masthead { top: 67px; left: 38px; width: min(330px, 70vw); }
+  .journal-masthead { top: 67px; left: 38px; width: min(294px, 65vw); }
   .journal-spine { display: none; }
   #journalTabs { right: 56px; left: 18px; justify-content: center; gap: 4px; }
   #journalTabs button { min-width: 0; flex: 1; padding-inline: 10px; }
@@ -452,6 +529,8 @@
   .top-right .coin-plaque .icon { width: 60px; height: 58px; }
   .top-right .coin-plaque strong { font-size: 17px; }
   .journal-greetings { flex-wrap: wrap; gap: 4px 12px; }
+  .journal-postcard { max-width: 520px; margin-inline: auto; }
+  .journal-postcard img { height: 180px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .panel button, #journalTabs button, .physical-object-light, .physical-object-outline, .top-right .hud-button { transition: none; animation: none; }
@@ -470,4 +549,19 @@
   #journalPanel .journey-slot:has(input:checked) { border: 3px solid Highlight; text-decoration: underline; }
   .panel button, .panel input, .panel textarea { forced-color-adjust: auto; }
   .journal-cover, .journal-spine, .journal-brass { display: none; }
+  .journal-postcard, #journalPanel .course-entry { border: 1px solid CanvasText; border-image: none; background: Canvas; box-shadow: none; }
+  .journal-postcard::before { display: none; }
+  #journalPanel .classroom-graduation,
+  #journalPanel .classroom-graduation[data-state='earned'],
+  #journalPanel .classroom-graduation button { border: 1px solid CanvasText; border-image: none; background: Canvas; color: CanvasText; }
+  #journalPanel .classroom-graduation h3,
+  #journalPanel .classroom-graduation[data-state='earned'] h3 { color: CanvasText; }
+  #journalPanel .classroom-graduation h3::before { color: CanvasText; border-color: CanvasText; }
+  #journalPanel .classroom-graduation[data-state='earned'] h3::before { color: Highlight; border-color: Highlight; box-shadow: none; }
+  .camera-hud > summary, .camera-controls, .camera-hud .zoom-group .icon-button,
+  .camera-hud .follow-button, .camera-hud .terrain-toggle, .camera-hud .stop-roam {
+    border: 1px solid CanvasText; border-image: none; background: Canvas; color: CanvasText; box-shadow: none;
+  }
+  .camera-hud .zoom-group span { color: CanvasText; }
+  .camera-hud :is(button, summary):focus-visible { outline-color: Highlight; }
 }
