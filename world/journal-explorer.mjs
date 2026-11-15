@@ -156,7 +156,16 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     resume.type = 'button'; resume.dataset.resumeLesson = active.id; resume.disabled = pendingSelection || !canOpen(active.id, view);
     resume.addEventListener('click', () => { void navigate(game.mission, resume); });
     startNodes = { lessonId: active.id, index: game.mission, copy: currentCopy, resume, list: null };
-    current.append(activeLabel);
+    const currentArt = coursePresentation(active.id);
+    const postcard = element('figure', 'journal-course-postcard');
+    const mates = element('img', 'journal-course-mates');
+    mates.src = './assets/cat-pair.png'; mates.alt = ''; mates.setAttribute('aria-hidden', 'true');
+    const illustration = element('img', 'journal-current-art');
+    illustration.src = currentArt.contextArt.src; illustration.alt = currentArt.contextArt.alt;
+    illustration.decoding = 'async';
+    const stamp = element('figcaption', 'journal-course-stamp', currentArt.locationLabel);
+    postcard.append(mates, illustration, stamp);
+    current.append(postcard, activeLabel);
     if (view.loadedValid) {
       current.append(resume);
       const activeInfo = describeLearningHistory({ lessonId: active.id, status: statusOf(active.id), assessmentVersion: evidenceVersionFor(active.id) });
@@ -192,6 +201,10 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     else current.append(element('p', 'journal-unavailable', '可到手账的存档区导出原件。没有把原来的进度当作零。'));
 
     const group = selectedGroup();
+    const routeTitle = list.ownerDocument?.getElementById?.('journalRouteTitle');
+    const routeSelect = list.ownerDocument?.getElementById?.('journalFilter');
+    if (routeTitle) routeTitle.textContent = group === 'all' ? '课程路线'
+      : `${routeSelect?.selectedOptions?.[0]?.textContent || '当前路线'} · 课程路线`;
     const groupIds = group === 'all' ? null : lessons.filter((lesson,index)=>groupOf(lesson,index)===group).map(lesson=>lesson.id);
     filter.disabled = !view.loadedValid;
     const visible = filterJournalLessons(orderedLearningLessons(lessons), { query: search.value, status: view.loadedValid ? filter.value : 'all', groupIds, statusOf, recordOf: id => view.envelope?.records[id], accessOf: id => session.accessOf(id) });
@@ -221,6 +234,7 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
       const topic = element('p', 'course-topic', lesson.topic);
       const badge = element('span', `learning-badge ${info.tone}`, info.label);
       badge.setAttribute('aria-label', `历史实践记录：${info.label}`);
+      badge.hidden = view.loadedValid && statusOf(lesson.id) === 'unobserved';
       const eligibility = element('span', 'course-access', accessLabel(access)); eligibility.dataset.access = access.state;
       const previewOnly = !view.loadedValid || (index !== game.mission && !access.canSelect);
       const action = !view.loadedValid ? '查看课程内容' : index === game.mission
@@ -241,7 +255,8 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
         preview.node.scrollIntoView?.({ block: 'nearest', behavior: 'auto' });
       });
       const presentation = coursePresentation(lesson.id);
-      const art = element('img', 'course-context-art'); art.src = presentation.contextArt.src; art.alt = presentation.contextArt.alt; art.loading = 'lazy';
+      const art = element('img', 'course-context-art'); art.loading = 'lazy'; art.decoding = 'async';
+      art.alt = presentation.contextArt.alt; art.src = presentation.contextArt.src;
       const context = element('p', 'course-context-copy', `${presentation.locationLabel} · ${presentation.scenario}`);
       article.append(top, title, topic, badge, eligibility, button, art, context, preview.node);
       if (info.compatibilityNote) article.append(element('p', 'history-compatibility', info.compatibilityNote));

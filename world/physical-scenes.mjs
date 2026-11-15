@@ -1,5 +1,6 @@
 import {addServiceBuildings} from './service-buildings.mjs';
 import {addAgentWorldObjects} from './physical-agent-objects.mjs';
+import {addHarborPierOcclusion} from './harbor-pier-occlusion.mjs';
 import {applyRuntimeSceneAssets} from './physical-runtime-assets.mjs';
 import {applyObjectOutlines} from './physical-object-outlines.mjs';
 import {applySceneCandidates} from './scene-candidate-geometry.mjs';
@@ -107,7 +108,7 @@ const preArtScenes = expandPhysicalScenes(scenes);
 export const PRE_ART_PHYSICAL_SCENES = freeze(structuredClone(Object.fromEntries(preArtScenes.map(s=>[s.id,s]))));
 const artScenes = applyObjectOutlines(applySceneCandidates(preArtScenes));
 export const PRE_SERVICE_PHYSICAL_SCENES = freeze(Object.fromEntries(addOpenGround(addServiceBuildings(artScenes,{dedicated:false})).map(s=>[s.id,s])));
-const worldScenes = applyRuntimeSceneAssets(addAgentWorldObjects(addOpenGround(addServiceBuildings(artScenes))));
+const worldScenes = addHarborPierOcclusion(applyRuntimeSceneAssets(addAgentWorldObjects(addOpenGround(addServiceBuildings(artScenes)))));
 const anvilRoom = worldScenes.find(scene => scene.id === 'harbor.code-workshop.interior');
 const anvilPolygon = anvilRoom.occluders.find(mask => mask.id === 'anvil').polygon.map(({x,y}) => [x,y]);
 const anvilXs = anvilPolygon.map(point => point[0]), anvilYs = anvilPolygon.map(point => point[1]);

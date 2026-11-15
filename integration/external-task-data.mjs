@@ -1,3 +1,4 @@
+import {FIELD_PRACTICE_TASK} from './field-practice-task.mjs';
 // Stable task contracts. New tasks are registered only with a real student package.
 const deepFreeze = value => { if (value && typeof value === 'object') { Object.values(value).forEach(deepFreeze); Object.freeze(value); } return value; };
 
@@ -667,4 +668,4 @@ const EVIDENCE_RESEARCH = deepFreeze({
   }
 });
 
-export const EXTERNAL_TASKS = deepFreeze([STOCKLEDGER, REPO_REPAIR, DURABLE_DISPATCH, TOOL_BRIDGE, EVIDENCE_RESEARCH]);
+export const EXTERNAL_TASKS = deepFreeze([STOCKLEDGER, REPO_REPAIR, DURABLE_DISPATCH, TOOL_BRIDGE, EVIDENCE_RESEARCH, FIELD_PRACTICE_TASK]);

@@ -45,7 +45,7 @@ export function mountJournalPages({ root, onPageChange = () => {} }) {
       const details = doc.createElement('details');
       details.className = 'course-row-details';
       const summary = doc.createElement('summary');
-      summary.textContent = '详情';
+      summary.textContent = '翻开';
       summary.setAttribute('aria-label', `${title.textContent}：展开课程内容、学习记录与学习顺序`);
       const body = doc.createElement('div');
       body.className = 'course-row-body';

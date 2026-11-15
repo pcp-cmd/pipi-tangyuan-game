@@ -7,4 +7,5 @@
 .cat-actor:has(>.cat-art.pets-ready){width:160px}
 .portrait-art.pets-ready,.portrait-art.tangyuan.pets-ready{width:124.6153846px;height:135px;position:relative;overflow:hidden}
 /* Animation is visual only; the existing scene controls actor coordinates. */
-@media(prefers-reduced-motion:reduce){.cat-actor{transition:none!important}.cat-actor .cat-art{animation:none!important}}
+html[data-motion="reduced"] .cat-actor{transition:none!important}html[data-motion="reduced"] .cat-actor .cat-art{animation:none!important}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .cat-actor{transition:none!important}html:not([data-motion="full"]) .cat-actor .cat-art{animation:none!important}}

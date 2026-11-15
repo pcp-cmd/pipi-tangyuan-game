@@ -9,7 +9,7 @@ export const LOCAL_CHECK_TOOL = Object.freeze({
 const command = top => Object.freeze(['unittest', 'discover', '-s', 'tests', '-p', 'test_*.py', ...(top ? ['-t', '.'] : [])]);
 export const LOCAL_CHECK_PROFILES = Object.freeze(Object.fromEntries([
   ['stockledger', false], ['repo-repair', false], ['durable-dispatch', true],
-  ['tool-bridge', false], ['evidence-research', false],
+  ['tool-bridge', false], ['evidence-research', false], ['field-practice', false],
 ].map(([id, top]) => [id, Object.freeze({
   taskId: id, contractRevision: 1, profileId: `${id}-public-unittest/v1`,
   command: command(top), topLevel: top ? '.' : null,

@@ -5,6 +5,8 @@ import { createHotspotClickIntent } from './hotspot-click-intent.mjs';
 import { physicalObjectShape } from './physical-object-shape.mjs';
 const names = { pipi: '皮皮', tangyuan: '汤圆' };
 const polygonPoints = polygon => polygon.map(point => Array.isArray(point) ? point : [point.x, point.y]);
+// Foot depth first; stable cat order and foreground paint never share a slot.
+export const physicalDepthZ = (footY, layer = 0) => 2000 + 5 * Math.round(footY) + layer;
 
 export function mountPhysicalPresentation({ document: doc = document, sprites, sceneSpec, onApproach, onInteract, onActivate = onInteract, onReturn, onSceneChange = () => {}, clickIntent = createHotspotClickIntent() }) {
   const world = doc.getElementById('world'), host = doc.getElementById('game');
@@ -59,7 +61,7 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
       button.style.left = `${item.x}px`; button.style.top = `${item.y}px`;
       if (item.asset) {
         const art = doc.createElement('img'); art.className = 'physical-object-art'; art.src = item.asset.src; art.alt = ''; art.setAttribute('aria-hidden','true'); art.draggable = false;
-        Object.assign(art.style,{position:'absolute',left:`${item.asset.x}px`,top:`${item.asset.y}px`,width:`${item.asset.width}px`,height:`${item.asset.height}px`,pointerEvents:'none',zIndex:String(2000+2*Math.round(item.asset.frontY))});
+        Object.assign(art.style,{position:'absolute',left:`${item.asset.x}px`,top:`${item.asset.y}px`,width:`${item.asset.width}px`,height:`${item.asset.height}px`,pointerEvents:'none',zIndex:String(physicalDepthZ(item.asset.frontY, 2))});
         object.append(art);
       }
       const shape = physicalObjectShape(item);
@@ -68,34 +70,24 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
         button.style.left = `${shape.x}px`; button.style.top = `${shape.y}px`;
         button.style.width = `${shape.width}px`; button.style.height = `${shape.height}px`;
         button.style.clipPath = shape.clip;
-        const createLight = () => {
-          const light = doc.createElement('div'); light.className = 'physical-object-light'; light.setAttribute('aria-hidden', 'true');
-          light.style.left = `${shape.x}px`; light.style.top = `${shape.y}px`;
-          light.style.width = `${shape.width}px`; light.style.height = `${shape.height}px`;
-          const source = item.asset;
-          light.style.backgroundImage = `url("${source?.src ?? view.scene.background}")`;
-          light.style.backgroundSize = `${source?.width ?? view.scene.width}px ${source?.height ?? view.scene.height}px`;
-          light.style.backgroundPosition = `${(source?.x ?? 0)-shape.x}px ${(source?.y ?? 0)-shape.y}px`;
-          if (source) light.style.zIndex = String(2001+2*Math.round(source.frontY));
-          light.style.clipPath = shape.clip;
-          return light;
+        const createOutline = zIndex => {
+          const ns = 'http://www.w3.org/2000/svg', outline = doc.createElementNS(ns, 'svg'), polygon = doc.createElementNS(ns, 'polygon');
+          outline.classList.add('physical-object-outline'); outline.setAttribute('aria-hidden', 'true');
+          outline.style.zIndex = String(zIndex); outline.setAttribute('viewBox', `0 0 ${view.scene.width} ${view.scene.height}`);
+          polygon.setAttribute('points', shape.points.map(point => point.join(',')).join(' '));
+          polygon.setAttribute('vector-effect', 'non-scaling-stroke'); outline.append(polygon);
+          return outline;
         };
-        const glow = createLight();
+        object.append(createOutline(item.asset ? physicalDepthZ(item.asset.frontY, 3) : 996));
+        // Carry only the contour over that object's own foreground fragment.
+        // The same depth rule still puts a cat walking in front above the line.
         for (const mask of spec?.occluders ?? []) {
           if (!item.highlightOccluderIds?.includes(mask.id)) continue;
-          const clipped = doc.createElement('div'); clipped.className = 'physical-object-foreground-light';
-          clipped.setAttribute('aria-hidden', 'true'); clipped.dataset.occluder = mask.id;
-          clipped.style.clipPath = `polygon(${polygonPoints(mask.polygon).map(([x,y]) => `${x / view.scene.width * 100}% ${y / view.scene.height * 100}%`).join(',')})`;
-          clipped.style.zIndex = String(2001 + 2 * Math.round(mask.frontY));
-          const light = createLight(); light.style.zIndex = '0'; clipped.append(light); object.append(clipped);
+          const outline = createOutline(physicalDepthZ(mask.frontY, 3));
+          outline.dataset.occluder = mask.id;
+          outline.style.clipPath = `polygon(${polygonPoints(mask.polygon).map(([x,y]) => `${x / view.scene.width * 100}% ${y / view.scene.height * 100}%`).join(',')})`;
+          object.append(outline);
         }
-        const ns = 'http://www.w3.org/2000/svg', outline = doc.createElementNS(ns, 'svg'), polygon = doc.createElementNS(ns, 'polygon');
-        outline.classList.add('physical-object-outline'); outline.setAttribute('aria-hidden', 'true');
-        outline.style.zIndex = String(item.asset ? 2002+2*Math.round(item.asset.frontY) : 996);
-        outline.setAttribute('viewBox', `0 0 ${view.scene.width} ${view.scene.height}`);
-        polygon.setAttribute('points', shape.points.map(point => point.join(',')).join(' '));
-        polygon.setAttribute('vector-effect', 'non-scaling-stroke');
-        outline.append(polygon); object.append(glow, outline);
       } else if (item.hitbox) {
         button.dataset.hitbox = 'true';
         button.style.left = `${item.hitbox.x}px`; button.style.top = `${item.hitbox.y}px`;
@@ -123,7 +115,7 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
       const layer = doc.createElement('div'); layer.className = 'physical-occluder'; layer.dataset.occluder = mask.id;
       layer.style.backgroundImage = `url("${view.scene.background}")`;
       layer.style.clipPath = `polygon(${polygonPoints(mask.polygon).map(([x,y]) => `${x / view.scene.width * 100}% ${y / view.scene.height * 100}%`).join(',')})`;
-      layer.style.zIndex = String(2000 + 2 * Math.round(mask.frontY)); foreground.append(layer);
+      layer.style.zIndex = String(physicalDepthZ(mask.frontY, 2)); foreground.append(layer);
     }
     const overlay = doc.getElementById('terrainOverlay');
     overlay.setAttribute('viewBox', `0 0 ${view.scene.width} ${view.scene.height}`);
@@ -144,7 +136,7 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
     const moving = view.phase === 'walking'; world.dataset.walking = String(moving);
     for (const cat of Object.keys(names)) {
       const pose = view.poses[cat], actor = actorNodes[cat];
-      actor.style.left = `${pose.x}px`; actor.style.top = `${pose.y}px`; actor.style.zIndex = String(2000 + 2 * Math.round(pose.y));
+      actor.style.left = `${pose.x}px`; actor.style.top = `${pose.y}px`; actor.style.zIndex = String(physicalDepthZ(pose.y, cat === 'pipi' ? 0 : 1));
       actor.classList.toggle('leader', view.leader === cat);
       actor.setAttribute('aria-label', `${names[cat]}，${view.leader === cat ? '当前领队，' : ''}在${view.scene.title.replace(/ · .*$/, '')}。打开伙伴手账`);
       actor.querySelector('small').textContent = view.leader === cat ? '领队' : '同行';

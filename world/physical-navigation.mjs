@@ -56,12 +56,12 @@ export const pointSafe = (scene, p) => segmentSafe(scene, p, p);
 export function pairSafe(scene, cats) {
   return ['pipi', 'tangyuan'].every(cat => pointSafe(scene, cats?.[cat])) && distance(cats.pipi, cats.tangyuan) >= 2 * scene.navigation.radius + 6 - EPS;
 }
-export function pairStepSafe(scene, before, after) {
+export function pairStepSafe(scene, before, after, clearance = 2 * scene.navigation.radius + 6) {
   if (!['pipi', 'tangyuan'].every(cat => segmentSafe(scene, before[cat], after[cat]))) return false;
   const x = before.pipi.x - before.tangyuan.x, y = before.pipi.y - before.tangyuan.y;
   const dx = after.pipi.x - after.tangyuan.x - x, dy = after.pipi.y - after.tangyuan.y - y;
   const t = Math.max(0, Math.min(1, -(x * dx + y * dy) / (dx * dx + dy * dy || 1)));
-  return Math.hypot(x + t * dx, y + t * dy) >= 2 * scene.navigation.radius + 6 - EPS;
+  return Math.hypot(x + t * dx, y + t * dy) >= clearance - EPS;
 }
 class Queue {
   values = [];
@@ -197,13 +197,20 @@ export function findReachablePath(scene,start,requested,avoid=[]){
   }
   return null;
 }
-export function findPassingPath(scene,start,leader,leaderPath,clearance){
-  const avoid=[{...point(leader),radius:clearance-scene.navigation.radius}],cached=graph(scene),base={points:[...cached.points],edges:cached.edges.map(links=>[...links])},cost=new Map(),parents=new Map(),queue=new Queue();
+const passingGraphs = new WeakMap();
+function passingGraph(scene) {
+  if(passingGraphs.has(scene))return passingGraphs.get(scene);
+  const cached=graph(scene),base={points:[...cached.points],edges:cached.edges.map(links=>[...links])};
   for(const position of scene.navigation.zones.flatMap(p=>insetPolygon(p,scene.navigation.radius,scene))){
     if(!pointSafe(scene,position))continue;
     const id=base.points.length;base.points.push(position);base.edges.push([]);
     for(let i=0;i<id;i++){const length=distance(position,base.points[i]);if(length<=190&&segmentSafe(scene,position,base.points[i])){base.edges[id].push([i,length]);base.edges[i].push([id,length]);}}
   }
+  passingGraphs.set(scene,base);
+  return base;
+}
+export function findPassingPath(scene,start,leader,leaderPath,clearance,{startClearance=clearance,strict=false}={}){
+  const avoid=[{...point(leader),radius:startClearance-scene.navigation.radius}],base=passingGraph(scene),cost=new Map(),parents=new Map(),queue=new Queue();
   const buildPath=id=>{
     const path=[];for(let at=id;at!==null;at=parents.get(at))path.unshift(point(base.points[at]));path.unshift(point(start));
     const smooth=[path[0]];for(let i=0;i<path.length-1;){let j=path.length-1;while(j>i+1&&!segmentSafe(scene,path[i],path[j],avoid))j--;smooth.push(path[j]);i=j;}return smooth;
@@ -224,7 +231,39 @@ export function findPassingPath(scene,start,leader,leaderPath,clearance){
       cost.set(id,value);parents.set(id,current.id);queue.push({id,cost:value,score:value});
     }
   }
-  for(const [id] of [...cost].sort((a,b)=>a[1]-b[1]))if(findPath(scene,leader,leaderPath.at(-1),[{...base.points[id],radius:clearance-scene.navigation.radius}]))return buildPath(id);
+  if(!strict)for(const [id] of [...cost].sort((a,b)=>a[1]-b[1]))if(findPath(scene,leader,leaderPath.at(-1),[{...base.points[id],radius:clearance-scene.navigation.radius}]))return buildPath(id);
+  return null;
+}
+
+const companionSourceClearance=240;
+export const companionClearance = scene => Math.max(2*scene.navigation.radius+6,Math.ceil(companionSourceClearance*(scene.catScale??.64)));
+
+export function findCompanionPassage(scene,leader,follower,target,clearance=companionClearance(scene)) {
+  const radius=scene.navigation.radius,initial=Math.min(clearance,distance(leader,follower));
+  const avoid=p=>[{...point(p),radius:clearance-radius}];
+  if(initial>=clearance-EPS){
+    const path=findPath(scene,leader,target,avoid(follower));
+    if(path)return {path,setup:[],clearance};
+  }else if(leader.x>follower.x){
+    const path=findPath(scene,leader,target,[{...point(follower),radius:initial-radius}]);
+    const next=path?.[1];
+    if(next&&next.x>=leader.x&&(leader.x-follower.x)*(next.x-leader.x)+(leader.y-follower.y)*(next.y-leader.y)>=0&&clearOfFuturePath(follower,follower,path.slice(1),clearance))return {path,setup:[],clearance};
+  }
+  const base=findPath(scene,leader,target);
+  if(!base)return null;
+  const yielding=findPassingPath(scene,follower,leader,base,clearance,{startClearance:initial,strict:true});
+  if(yielding)return {path:base,setup:[{role:'follower',path:yielding}],clearance};
+  const startAvoid=[{...point(follower),radius:initial-radius}];
+  const candidates=graph(scene).points.filter(p=>distance(leader,p)<=2*clearance&&distance(p,follower)>=clearance&&segmentSafe(scene,leader,p,startAvoid))
+    .sort((a,b)=>distance(leader,a)-distance(leader,b)).slice(0,32);
+  for(const position of candidates){
+    const path=findPath(scene,position,target);
+    if(!path)continue;
+    const escape=[point(leader),point(position)];
+    if(clearOfFuturePath(follower,follower,path,clearance))return {path,setup:[{role:'leader',path:escape}],clearance};
+    const passing=findPassingPath(scene,follower,position,path,clearance,{strict:true});
+    if(passing)return {path,setup:[{role:'leader',path:escape},{role:'follower',path:passing}],clearance};
+  }
   return null;
 }
 export function pathLength(path) { return path.slice(1).reduce((sum, p, i) => sum + distance(path[i], p), 0); }

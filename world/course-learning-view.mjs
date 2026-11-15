@@ -65,8 +65,9 @@ export function renderCourseLearning({ document: doc = document, lessonId, onTra
   }
   const transfer = doc.getElementById('lessonTransfer');
   const independentTransfer = guide.transferChallenge.relationship === 'independent-transfer';
+  const sharedTransfer = independentTransfer && (LESSONS.find(lesson => lesson.id === guide.transferChallenge.lessonId)?.transferFrom?.length || 0) > 1;
   const transferTitle = doc.getElementById('lessonTransferTitle');
-  if (transferTitle) transferTitle.textContent = independentTransfer ? '独立迁移练习' : '继续练一练';
+  if (transferTitle) transferTitle.textContent = sharedTransfer ? '独立应用与综合练习' : independentTransfer ? '独立迁移练习' : '继续练一练';
   transfer.replaceChildren();
   if (guide.independentApplication?.prompt) {
     const application = guide.independentApplication;
@@ -83,7 +84,7 @@ export function renderCourseLearning({ document: doc = document, lessonId, onTra
   transfer.append(make('p', guide.transferChallenge.prompt));
   if (guide.transferChallenge.assessmentScope) transfer.append(make('p', guide.transferChallenge.assessmentScope, 'scope-note'));
   if (guide.transferChallenge.lessonId) {
-    const button = make('button', independentTransfer ? '打开新的独立任务' : '打开相关练习', 'text-button');
+    const button = make('button', sharedTransfer ? '打开综合练习' : independentTransfer ? '打开新的独立任务' : '打开相关练习', 'text-button');
     button.type = 'button';
     button.addEventListener('click', () => onTransfer(guide.transferChallenge.lessonId, button));
     transfer.append(button);

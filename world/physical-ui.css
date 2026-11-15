@@ -16,19 +16,14 @@
 .physical-hotspot[data-hitbox="true"]:hover,.physical-hotspot[data-hitbox="true"].within-reach{background:transparent;border-color:transparent}
 .physical-hotspot:hover::after,.physical-hotspot:focus-visible::after,.physical-hotspot.within-reach::after{opacity:1;box-shadow:0 0 10px #ffe1a1}
 .physical-object{display:contents}
-.physical-object-foreground-light{position:absolute;inset:0;pointer-events:none}
-.physical-object-light{position:absolute;z-index:995;pointer-events:none;opacity:0;filter:brightness(1.5) saturate(1.12);transition:opacity .15s ease}
 .physical-object-outline{position:absolute;inset:0;width:100%;height:100%;overflow:visible;z-index:9000;pointer-events:none;opacity:0;filter:none;transition:opacity .15s ease}
 .physical-object-outline polygon{fill:none;stroke:#ffe5a8;stroke-width:2.2;stroke-linejoin:round}
 .physical-hotspot[data-object-shape="true"]{transform:none;border:0;border-radius:0;background:transparent;cursor:pointer;padding:0}
 .physical-hotspot[data-object-shape="true"]::after{display:none}
 .physical-hotspot[data-object-shape="true"]:is(:hover,:focus-visible,.within-reach){background:transparent;border:0;outline:0;box-shadow:none}
-.physical-object:has(.physical-hotspot:hover) .physical-object-light,.physical-object:has(.physical-hotspot:focus-visible) .physical-object-light{opacity:.43}
 .physical-object:has(.physical-hotspot:hover) .physical-object-outline,.physical-object:has(.physical-hotspot:focus-visible) .physical-object-outline{opacity:.95}
-.physical-object[data-selected="true"] .physical-object-light{opacity:.25}
 .physical-object[data-selected="true"] .physical-object-outline{opacity:.65}
 .physical-object:has(.physical-hotspot:focus-visible) .physical-object-outline polygon{stroke-dasharray:5 4;stroke-width:3}
-@media(prefers-reduced-motion:reduce){.physical-object-light,.physical-object-outline{transition:none}}
 .physical-actions{position:absolute;z-index:12;left:50%;bottom:30px;transform:translateX(-50%);display:flex;gap:12px;max-width:65%;align-items:center}
 .physical-actions button{min-height:52px;padding:5px 12px;border:12px solid transparent;border-image:var(--journal-frame) 128 stretch;border-radius:0;background:var(--journal-grain) center/256px repeat var(--journal-paper);background-clip:padding-box;color:#493621;font:15px/1.45 var(--ui);box-shadow:0 3px 6px #142c3833}
 .physical-actions .physical-interact{background-color:#ecd3a2;color:#493621;font-weight:700}
@@ -45,3 +40,5 @@ body.panel-open .physical-actions{visibility:hidden}
 .journey-start-error button{margin:16px 12px 0 0;padding:12px 20px;background:#31513b;color:#fff1cd;border-radius:4px}
 .result-notes{font:13px/1.7 var(--ui);color:var(--muted);white-space:pre-line;margin-block:10px}
 @media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;border-image:none;background:ButtonFace;color:ButtonText;box-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions .physical-return::before{color:ButtonText}.physical-object-outline polygon{stroke:Highlight}}
+html[data-motion="reduced"] .physical-object-outline{transition:none}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .physical-object-outline{transition:none}}

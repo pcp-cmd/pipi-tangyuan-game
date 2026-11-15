@@ -37,9 +37,9 @@
 #workshopPanel .learning-workbench-bookmark[aria-current] {
   border-color: #d1b77d;
   border-bottom-color: #bba36e;
-  background: #3f614b;
+  background: #984a2d;
   color: #fff0cf;
-  box-shadow: inset 0 1px #799576;
+  box-shadow: inset 0 1px #c99a63;
 }
 
 #workshopPanel .learning-workbench-bookmark:focus-visible {

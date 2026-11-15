@@ -9,6 +9,7 @@
   <title>皮皮与汤圆 · 群岛实践手账</title>
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="./scene.css">
+  <link rel="stylesheet" href="./harbor-canopy-wind.css">
   <link rel="stylesheet" href="./journal.css">
   <link rel="stylesheet" href="./access.css">
   <link rel="stylesheet" href="./knowledge-reader.css">
@@ -258,13 +259,13 @@
         </section><div class="journal-stats">
 <span><small>历史首奖</small><strong id="completedCount">未读取</strong></span><span><small>积累经验</small><strong id="xpCount">0 XP</strong></span>
 </div>
-<p class="journal-page-note">选择伙伴作为领队，继续当前实践；课程记录与首次奖励会保留在这份旅程里。</p>
+
 </div></section><section class="journal-page-pair" id="journalPage-courses" role="tabpanel" aria-labelledby="journalTab-courses" data-journal-panel="courses" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
-<header id="journalCourses" class="journal-learning-heading" tabindex="-1"><span class="eyebrow">实践手账</span><h3>下一项实践</h3></header>
+<header id="journalCourses" class="journal-learning-heading" tabindex="-1"><h3>下一页冒险</h3></header>
 <div id="journalCurrent" class="journal-current"></div>
 <div class="journal-tools">
-<label class="journal-search">找一项实践<input id="journalSearch" type="search" maxlength="100" placeholder="按课程名或知识点查找" autocomplete="off" aria-controls="journalEntries"></label>
-<label class="course-select">选择路线<select id="journalFilter"><option id="journalAll" value="all">全部实践</option>
+<label class="journal-search">查找课程<input id="journalSearch" type="search" maxlength="100" placeholder="课程名或知识点" autocomplete="off" aria-controls="journalEntries"></label>
+<label class="course-select">路线<select id="journalFilter"><option id="journalAll" value="all">全部实践</option>
 <option value="legacy">伙伴旅途</option>
 <option value="harbor">启航岛</option>
 <option value="market">集市岛</option>
@@ -275,7 +276,7 @@
 <option value="protocol">雾港协议工坊</option>
 <option value="async-foundations">异步入门站</option>
 <option value="lifecycle-depths">生命周期深水区</option></select></label>
-<label class="course-select journal-status-filter">实践状态<select id="journalStatus"><option value="all">全部状态</option>
+<label class="course-select journal-status-filter">状态<select id="journalStatus"><option value="all">全部状态</option>
 <option value="ready">现在可练 · 待独立通过</option>
 <option value="to-practice">待练习</option>
 <option value="recheck">待本版复验</option>
@@ -290,6 +291,7 @@
 <p id="courseAccessSummary" class="scope-note"></p></details>
 </div>
 </div><div class="journal-leaf journal-leaf-right">
+<h3 id="journalRouteTitle" class="journal-page-heading">课程路线</h3>
 <div class="journal-results-heading">
 <span id="journalResultCount" role="status" aria-live="polite"></span><button id="clearJournalFilters" type="button" hidden>清除搜索与状态</button>
 </div>
@@ -303,7 +305,7 @@
 <span class="eyebrow">小岛见闻</span><strong id="journalExplorationCount">0 / 4 处风景</strong>
 </div>
 <p id="journalDiscoveries"></p>
-<button id="journalExplore" class="secondary-button" type="button">翻开小岛漫游<img class="icon" src="./assets/icons/compass.svg" alt=""></button></section><div id="worldDiscoveries" class="world-discoveries"></div><p class="journal-page-note">见闻记录与你实际认识的地点有关。打开群岛地图，可以查看各地的课程与当前可探索范围。</p>
+<button id="journalExplore" class="secondary-button" type="button">翻开小岛漫游<img class="icon" src="./assets/icons/compass.svg" alt=""></button></section><div id="worldDiscoveries" class="world-discoveries"></div>
 </div>
 </div><div class="journal-leaf journal-leaf-right">
 <h3 class="journal-page-heading">旅途记录</h3>
@@ -318,7 +320,7 @@
 <div class="journey-actions">
 <button class="primary-button" id="journeyLoad" type="button" disabled>继续这份旅程</button><button class="secondary-button" id="journeyCreate" type="button" disabled>开始新旅程</button><button class="secondary-button" id="journeyExport" type="button" disabled>导出完整旅程</button><button class="secondary-button" id="journeyImport" type="button" disabled>导入到空旅程</button>
 </div>
-<p class="journal-page-note">读取与导入会先检查保存状态。已有进度和恢复原件会保留；仅选中旅程不会切换。</p>
+<p class="journal-page-note">选中后，按「继续」进入旅程。</p>
 </div>
 </div><div class="journal-leaf journal-leaf-right">
 <div id="journalSaves" class="save-card" tabindex="-1" role="group" aria-label="存档与恢复">
@@ -326,9 +328,20 @@
 <h3>把这段旅程装进口袋</h3>
 <p id="saveStatus">课程进度与草稿自动保存在这个浏览器。</p>
 </div>
-<button id="exportSave" class="secondary-button" type="button">备份当前旅程</button><p id="discoverySaveStatus" class="discovery-save-status"></p>
-<button id="exportDiscoveries" class="secondary-button" type="button">导出小岛见闻</button><button id="downloadOriginal" class="secondary-button" type="button" hidden>下载原始存档</button><button id="retrySave" class="secondary-button" type="button">重试保存</button><button id="reloadSaved" class="secondary-button" type="button">重载已保存版本</button>
+<button id="exportSave" class="primary-button" type="button">备份当前旅程</button><p id="discoverySaveStatus" class="discovery-save-status"></p>
+<div class="save-secondary-actions"><button id="exportDiscoveries" class="secondary-button" type="button">导出见闻</button><button id="downloadOriginal" class="secondary-button" type="button" hidden>下载原始存档</button><button id="retrySave" class="secondary-button" type="button">重试保存</button><button id="reloadSaved" class="secondary-button" type="button">重载已保存版本</button></div>
 </div>
+<details id="journalPreferences" class="journal-preferences">
+<summary><img class="icon" src="./assets/icons/keyboard.svg" alt="">键盘与显示</summary>
+<div class="preferences-grid">
+<label class="preference-select" for="journalKeyboard">行走按键<select id="journalKeyboard"><option value="wasd">W A S D</option><option value="arrows">方向键</option></select></label>
+<label class="preference-select" for="journalMotion">动态效果<select id="journalMotion"><option value="system">跟随系统</option><option value="reduce">减少动态</option><option value="full">正常动态</option></select></label>
+<p id="journalKeyboardHelp" class="preference-key-help">W A S D 行走 · E 互动 · Esc 停下</p>
+<label class="preference-range" for="journalTextSize"><span>阅读字号 <output id="journalTextSizeValue" for="journalTextSize">17</output></span><input id="journalTextSize" type="range" min="15" max="21" step="1" value="17"></label>
+<label class="preference-range" for="journalCodeSize"><span>代码字号 <output id="journalCodeSizeValue" for="journalCodeSize">17</output></span><input id="journalCodeSize" type="range" min="14" max="26" step="1" value="17"></label>
+<button id="journalPreferencesReset" type="button" class="text-button">恢复默认</button>
+<p id="journalPreferencesStatus" class="preference-status" role="status" aria-live="polite"></p>
+</div></details>
 <details class="journal-record-notes"><summary>关于学习记录</summary><p class="scope-note">草稿与进度保存在这个浏览器。导入旅程会保留原有记录与奖励；课程更新后，可重新运行确认本版结果。不同旅程不会自动合并金币。</p></details>
 </div></section>
 </div></section>

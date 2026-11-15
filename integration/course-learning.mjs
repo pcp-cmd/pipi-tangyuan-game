@@ -23,23 +23,16 @@ const records = new Map(LESSONS.map((lesson, index) => {
   const target = independentTargets[0] || LESSONS.find(candidate => candidate.id === transferId);
   const independentTarget = independentTargets.includes(target);
   const capability = capabilityFor(lesson.id);
-  const ownIndependentTask = ['transfer','debugging','project'].includes(lesson.practiceKind);
-  const applicationLesson = independentTarget ? target : ownIndependentTask ? lesson : null;
   const manualApplication = MANUAL_APPLICATIONS[lesson.id];
-  if (!applicationLesson && !manualApplication) throw new Error(`Missing independent application for ${lesson.id}`);
-  const independentApplication = applicationLesson ? {
-    prompt: applicationLesson.description,
-    checks: expectedLabels({kind:'lesson',lessonId:applicationLesson.id}),
-    graded: true, lessonId: applicationLesson.id,
-    environment: '在游戏中另行完成这份任务，以其自己的判题和记录为准。',
-  } : {
+  if (!manualApplication) throw new Error(`Missing independent application for ${lesson.id}`);
+  const independentApplication = {
     prompt: manualApplication[0], checks: manualApplication[1], graded: false, lessonId: null,
     environment: '在自己的 Python 文件中实践并自行核对；这项应用不自动写入游戏通过记录。',
   };
   const knowledge = lesson.concept || '';
   return [lesson.id, freeze({
     id: lesson.id,
-    contentVersion: '2026-11-14.2',
+    contentVersion: '2026-11-15.3',
     assessmentVersion: evidenceVersionFor(lesson.id),
     difficulty: lesson.id.startsWith('basics-') ? { level: ['basics-arguments','basics-recursion'].includes(lesson.id) ? 2 : 1, label: ['basics-arguments','basics-recursion'].includes(lesson.id) ? '组合应用' : '基础练习' } :
       { level: lesson.judgeKind || ['numeric-ratios','archive-median','archive-distance'].includes(lesson.id) ? 4 : index < 14 ? 1 : index < 30 ? 2 : 3,
@@ -55,7 +48,7 @@ const records = new Map(LESSONS.map((lesson, index) => {
     workedExample: { code, expected, steps: ['先读代码，写出你预测的输出或事件顺序。', `本例应观察到：${expected}`, '改变一个输入，说明规则是否仍成立。示例演示概念，不计入本课通过。'], standalone: true, executionEnvironment: '原生 Python 3.12 独立示例；游戏工作台只运行本课练习入口，部分示例模块或asyncio.run在该入口不可用' },
     tryAgain: { prompt: `重新从起始代码完成「${lesson.title}」。重点排查：${symptom}。先预测一组正常输入和一个边界，再运行本课完整检查。`, code: lesson.starter },
     typicalErrors: [{ symptom, reason: explanation, repair }],
-    transferChallenge: target ? { prompt: `${independentTarget ? '换一份新委托' : '继续应用'}：「${target.title}」。${target.description}`, lessonId: target.id, graded: true, relationship: independentTarget ? 'independent-transfer' : 'related-practice', assessmentScope: independentTarget ? '新需求、新起始代码与独立行为判题；需无辅助完成后才有这份任务的独立实践记录' : '关联课程的既有合同，不自动证明陌生迁移' }
+    transferChallenge: target ? { prompt: `${independentTarget && target.transferFrom.length === 1 ? '换一份新委托' : '综合练习'}：「${target.title}」。${target.description}`, lessonId: target.id, graded: true, relationship: independentTarget ? 'independent-transfer' : 'related-practice', assessmentScope: independentTarget ? '按目标任务自己的判题与记录完成。多门课可共用这个入口，通过只计该任务一次；不代替上方按本课设计的独立应用。' : '关联课程的既有合同，不自动证明陌生迁移。' }
       : { prompt: lesson.transfer || '为同一规则换一组名称、规模和故障位置，写出自己的测试并解释结果。当前未自动评估陌生迁移或延时保持。', lessonId: null, graded: false },
     independentPractice: { taskId: ['transfer','debugging','project'].includes(lesson.practiceKind) ? lesson.id : null,
       transferTaskIds: independentTargets.map(target => target.id),

@@ -44,6 +44,8 @@ import { moveTerrainAim } from './scene-terrain.mjs';
 import { mountSceneKeyboardFocus } from './scene-keyboard-focus.mjs';
 import { mountLearningWorkbench } from './learning-workbench.mjs';
 import { createPresentationTransitions } from './presentation-transitions.mjs';
+import { mountJournalPreferences, mapMovementKey } from './journal-preferences.mjs';
+import { mountHarborCanopyWind } from './harbor-canopy-wind.mjs';
 
 const $ = id => document.getElementById(id);
 const lessons = LESSONS;
@@ -100,7 +102,7 @@ let moveTimer;
 let companionSprites = null;
 let companionInput = null, companionRun = null, externalWorkPanel = null, classroomGraduation = null;
 let sceneKeyboardFocus = null;
-let physicalWorld = null, physicalPresentation = null, panelSpaceRelease = null;
+let physicalWorld = null, physicalPresentation = null, panelSpaceRelease = null, canopyWind = null;
 let journeyBusy = false, renderedPhysicalScene = null;
 let workbenchMode = 'learn', lastAcceptedResult = null, plannedIsland = null;
 const arrivalIntent = createArrivalIntent();
@@ -110,7 +112,11 @@ const hotspotClickIntent = createHotspotClickIntent({ pause: () => {
 } });
 const drawnActorPositions = new Map();
 let previousViewport = { width: 0, height: 0 };
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const preferences = mountJournalPreferences({ root: $('journalPreferences'),
+  systemMotion: matchMedia('(prefers-reduced-motion: reduce)'),
+  onChange: () => { stopKeyboardMovement(); updateMovementHint(); },
+});
+const reducedMotion = preferences.motionPreference;
 const presentationTransitions = createPresentationTransitions({ motionPreference: reducedMotion });
 const learningWorkbench = mountLearningWorkbench({ root: $('workshopPanel'), document, reducedMotion: () => reducedMotion.matches });
 let roaming = true;
@@ -141,7 +147,7 @@ const session = createWorldSession({ ...persistence, runtime: () => runtime,
 const journalExplorer = createJournalExplorer({
   lessons, assessmentVersion: ASSESSMENT_VERSION, evidenceVersionFor, session,
   groupOf: lessonGroup, selectedGroup: () => journalFilter, chooseLesson,
-  isVisible: () => panel.kind === 'journal',
+  isVisible: () => panel.kind === 'journal' && $('journalPanel').dataset.journalPage === 'courses',
   describeStart: (view, pendingSelection) => firstEntryStart(view, pendingSelection),
   onNavigationChange: () => refreshRegionEntryCopy(),
   elements: { list: $('journalEntries'), search: $('journalSearch'), filter: $('journalStatus'),
@@ -455,11 +461,18 @@ function buildScene() {
       camera = { x: view.scene.width / 2, y: view.scene.height / 2, zoom: 1, follow: true };
       const sceneTitle = view.scene.title.replace(/ · .*$/, '');
       $('game').setAttribute('aria-label', `皮皮与汤圆 · ${sceneTitle}`);
-      $('viewport').setAttribute('aria-label', `${sceneTitle}。点击地面或 WASD 行走，双击建筑或物件自动走近并使用，也可按 E 互动。方向键移动视角，Shift 加方向键选点，Enter 行走，Esc 停下。`);
+      updateMovementHint(sceneTitle);
     }
   });
   renderPhysical(physicalWorld.view());
+  canopyWind = mountHarborCanopyWind({ motionPreference: reducedMotion });
   syncCompanionPresentation();
+}
+
+function updateMovementHint(sceneTitle = physicalWorld?.view().scene.title.replace(/ · .*$/, '') || '启航岛') {
+  const arrows = preferences.value.keyboard === 'arrows';
+  $('viewport').setAttribute('aria-label', `${sceneTitle}。点击地面或${arrows ? '方向键' : ' WASD '}行走，双击建筑或物件自动走近并使用，也可按 E 互动。${arrows ? '拖动移动视角' : '方向键移动视角'}，Shift 加方向键选点，Enter 行走，Esc 停下。`);
+  $('sceneHint').textContent = `点击地面走路 · 双击建筑进入 · ${arrows ? '方向键' : 'WASD'} / E`;
 }
 
 function renderPhysical(view) {
@@ -1143,6 +1156,10 @@ $('atlasBackground').addEventListener('error', () => {
 });
 $('retryMapImage').addEventListener('click', loadMapImage);
 
+function regionCourseIds(region) {
+  return lessons.filter((lesson, index) => lessonGroup(lesson, index) === region.curriculumIslandId).map(lesson => lesson.id);
+}
+
 function renderRegions() {
   $('regionList').replaceChildren();
   $('atlasPins').replaceChildren();
@@ -1151,8 +1168,8 @@ function renderRegions() {
     const button = document.createElement('button'); button.type = 'button'; button.className = 'region-button'; button.dataset.region = region.id;
     const copy = document.createElement('span'); const name = document.createElement('strong'); name.textContent = region.name;
     const topic = document.createElement('small'); topic.textContent = region.topic; copy.append(name, topic);
-    const runnable = region.curriculumQuestIds.filter(id => session.accessOf(id).canRun).length;
-    const status = document.createElement('b'); status.textContent = access.available ? `${runnable} / ${region.curriculumQuestIds.length} 可练习` : '航线待开放';
+    const courseIds = regionCourseIds(region), runnable = courseIds.filter(id => session.accessOf(id).canRun).length;
+    const status = document.createElement('b'); status.textContent = access.available ? `${runnable} / ${courseIds.length} 可练习` : '航线待开放';
     button.dataset.locked = String(!access.available);
     button.append(icon(access.available ? 'map-pin' : 'lock-simple'), copy, status);
     button.addEventListener('click', () => revealRegionDetails(region.id));
@@ -1192,9 +1209,9 @@ function selectRegion(id) {
   const region = REGIONS.find(item => item.id === id) || REGIONS[0];
   panel.regionId = region.id;
   $('regionName').textContent = region.name;
-  const runnable = region.curriculumQuestIds.filter(id => session.accessOf(id).canRun).length;
+  const courseIds = regionCourseIds(region), runnable = courseIds.filter(id => session.accessOf(id).canRun).length;
   const access = islandAccess({islandId:region.curriculumIslandId,envelope:session.snapshot().envelope,physical:physicalWorld.view()});
-  $('regionStatus').textContent = `${region.curriculumQuestIds.length} 项课程 · ${access.available ? `${runnable} 项可练习 · 航线已开放` : '航线待开放'}`;
+  $('regionStatus').textContent = `${courseIds.length} 项课程 · ${access.available ? `${runnable} 项可练习 · 航线已开放` : '航线待开放'}`;
   const currentIsland = physicalWorld.view().scene.islandId;
   $('regionTravel').textContent = currentIsland === region.curriculumIslandId ? '继续探索这座岛' : access.available ? `前往${region.name}` : '查看启航条件';
   refreshRegionEntryCopy();
@@ -1375,6 +1392,7 @@ $('viewport').addEventListener('keydown', event => {
   if (event.target !== $('viewport')) return;
   const pan = { ArrowLeft: [-60, 0], ArrowRight: [60, 0], ArrowUp: [0, -60], ArrowDown: [0, 60] }[event.key];
   if (pan) {
+    if (preferences.value.keyboard === 'arrows' && !event.shiftKey) return;
     hotspotClickIntent.cancel();
     event.preventDefault();
     if (event.shiftKey) {
@@ -1392,16 +1410,32 @@ $('viewport').addEventListener('keydown', event => {
   }
 });
 const heldMovement = new Set();
-let steeringFrame = null, steeringTime = null;
+let steeringFrame = null, steeringTime = null, keyboardInteractionEpoch = 0;
 function clearMovement() {
+  ++keyboardInteractionEpoch;
   hotspotClickIntent.cancel();
   heldMovement.clear(); steeringTime = null;
   if (steeringFrame !== null) cancelAnimationFrame(steeringFrame);
   steeringFrame = null;
 }
+function stopKeyboardMovement() {
+  const wasMoving = heldMovement.size > 0;
+  clearMovement();
+  if (wasMoving && physicalWorld) void physicalWorld.act({ kind: 'stop' });
+}
+async function interactFromKeyboard() {
+  const view = physicalWorld.view(), hotspotId = view.nearby[0]?.id;
+  clearMovement();
+  const token = keyboardInteractionEpoch;
+  await stopWalking();
+  const current = physicalWorld.view();
+  if (!hotspotId || token !== keyboardInteractionEpoch || heldMovement.size ||
+      current.physicalSceneId !== view.physicalSceneId || !current.nearby.some(item => item.id === hotspotId)) return false;
+  return interactPhysical(hotspotId);
+}
 async function steerFrame(time) {
   steeringFrame = null;
-  if (!heldMovement.size || panel.kind || journeyBusy || runBusy || document.hidden || document.activeElement !== $('viewport')) { clearMovement(); return; }
+  if (!heldMovement.size || panel.kind || journeyBusy || runBusy || document.hidden || document.activeElement !== $('viewport')) { stopKeyboardMovement(); return; }
   const dt = steeringTime === null ? .016 : Math.min(.04, Math.max(.001, (time - steeringTime) / 1000)); steeringTime = time;
   const dx = Number(heldMovement.has('d')) - Number(heldMovement.has('a'));
   const dy = Number(heldMovement.has('s')) - Number(heldMovement.has('w'));
@@ -1410,21 +1444,22 @@ async function steerFrame(time) {
 }
 $('viewport').addEventListener('keydown', event => {
   if (event.target !== $('viewport') || event.isComposing || event.keyCode === 229 || event.ctrlKey || event.metaKey || event.altKey || panel.kind) return;
-  const key = event.key.toLowerCase();
-  if (['w','a','s','d'].includes(key)) {
+  const key = mapMovementKey(event.key, preferences.value.keyboard);
+  if (key && !(preferences.value.keyboard === 'arrows' && event.shiftKey)) {
+    ++keyboardInteractionEpoch;
     event.preventDefault(); hotspotClickIntent.cancel(); arrivalIntent.cancel(); physicalPresentation?.clearSelection(); heldMovement.add(key); camera.follow = true;
     if (steeringFrame === null) steeringFrame = requestAnimationFrame(steerFrame);
-  } else if (key === 'e' && !event.repeat) {
-    event.preventDefault(); clearMovement(); void interactPhysical();
+  } else if (event.key.toLowerCase() === 'e' && !event.repeat) {
+    event.preventDefault(); void interactFromKeyboard();
   }
 });
 window.addEventListener('keyup', event => {
-  if (!heldMovement.delete(event.key.toLowerCase())) return;
+  if (!heldMovement.delete(mapMovementKey(event.key, preferences.value.keyboard))) return;
   if (!heldMovement.size) { clearMovement(); void stopWalking(); }
 });
-window.addEventListener('blur', clearMovement);
-document.addEventListener('visibilitychange', () => { if (document.hidden) clearMovement(); });
-$('viewport').addEventListener('focusout', clearMovement);
+window.addEventListener('blur', stopKeyboardMovement);
+document.addEventListener('visibilitychange', () => { if (document.hidden) stopKeyboardMovement(); });
+$('viewport').addEventListener('focusout', stopKeyboardMovement);
 $('zoomIn').addEventListener('click', () => zoomAt(camera.zoom + .15));
 $('zoomOut').addEventListener('click', () => zoomAt(camera.zoom - .15));
 $('followCats').addEventListener('click', () => focusCats(true));
@@ -1657,6 +1692,7 @@ for (const id of ['reloadSaved','reloadEditorSaved']) $(id).addEventListener('cl
 
 document.addEventListener('keydown', event => {
   if (event.isComposing || event.keyCode === 229) return;
+  if (event.key === 'Escape') ++keyboardInteractionEpoch;
   if (event.key === 'Escape' && (physicalWorld.view().phase === 'walking' || heldMovement.size || hotspotClickIntent.pending())) { event.preventDefault(); clearMovement(); void stopWalking(true); return; }
   if (!panel.kind && event.key === 'Escape' && $('cameraDetails').open) { event.preventDefault(); $('cameraDetails').open = false; $('cameraSummary').focus(); return; }
   if (!panel.kind) return;
@@ -1708,7 +1744,7 @@ window.addEventListener('pagehide', event => {
   presentationTransitions.cancelAll();
   ++navigation; clearMovement(); void stopWalking();
   if (event.persisted) { cancelRun(); void session.flush(); }
-  else { learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages.dispose(); physicalWorld.dispose(); physicalPresentation?.dispose(); session.dispose(); }
+  else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages.dispose(); physicalWorld.dispose(); physicalPresentation?.dispose(); session.dispose(); }
   try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Optional camera state. */ }
 });
 window.addEventListener('pageshow', event => {

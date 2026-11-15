@@ -1,12 +1,13 @@
 import {createSaveStore} from '../integration/recovery-save-store.mjs';
 import {PHYSICAL_SCENES,DEFAULT_PHYSICAL_SCENE_ID,PHYSICAL_PORTS,PHYSICAL_ROUTES,PHYSICAL_REGISTRY_VERSION} from './physical-scenes.mjs';
 import {parsePhysicalState,upgradePhysicalState,freshPhysicalState,PHYSICAL_SAVE_KEY,LEGACY_PHYSICAL_STATE_SCHEMA,PHYSICAL_MIGRATION_PREFIX} from './physical-state.mjs';
-import {distance,pointSafe,pairSafe,pairStepSafe,segmentSafe,findPath,findReachablePath,findPassingPath,pathLength,alongPath,clearOfFuturePath,remainingPath} from './physical-navigation.mjs';
+import {distance,pointSafe,pairSafe,pairStepSafe,segmentSafe,findPath,findReachablePath,findPassingPath,findCompanionPassage,companionClearance,pathLength,alongPath,clearOfFuturePath,remainingPath} from './physical-navigation.mjs';
 export {parsePhysicalState,PHYSICAL_SAVE_KEY} from './physical-state.mjs';
 const copy=value=>structuredClone(value);
 const names=['pipi','tangyuan'];
 const opposite=cat=>cat==='pipi'?'tangyuan':'pipi';
 const point=p=>({x:p.x,y:p.y});
+const followGap=scene=>Math.max(scene.navigation.followGap,companionClearance(scene));
 const messages={busy:'正在确认保存或切换，请稍候。','outside-walkable-floor':'那里不能走，请选择地面。','no-clear-route':'暂时没有安全的通路，请换一个落点。','companion-space':'伙伴需要更多让路空间，请换方向或换一只带队。','not-near':'请先走到门或工作台旁，再按 E 交互。','not-near-exit':'请先走到出口旁，再按 E 返回。','asset-unavailable':'场景图片未能载入，当前位置保持不变。','learning-save-blocked':'代码尚未确认保存，当前位置保持不变。','return-before-preview':'请先返回启航岛，再打开另一间候选房。','obstacle':'前方是墙壁或家具。','companion-route-unavailable':'伙伴暂时找不到安全通路。','no-return-anchor':'这里没有室内返回入口。','not-near-port':'请先走到码头旁，再选择航线。','invalid-route':'这条航线无法从当前码头出发。'};
 const freeze=value=>{if(value&&typeof value==='object'){Object.values(value).forEach(freeze);Object.freeze(value);}return value;};
 async function browserAsset(scene){
@@ -108,20 +109,21 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     const moved=distance(candidateTrail.at(-1),leaderPoint);
     if(moved>.0001)candidateTrail.push(point(leaderPoint));
     const leaderTravel=trail.leaderTravel+moved;
-    const goal=Math.max(0,pathLength(candidateTrail)-spec.navigation.followGap);
-    let nextCursor=leaderTravel>=spec.navigation.followGap||finish?Math.min(goal,trail.cursor+spec.navigation.speed*1.15*dt):trail.cursor;
+    const goal=Math.max(0,pathLength(candidateTrail)-followGap(spec));
+    let nextCursor=leaderTravel>=followGap(spec)||finish?Math.min(goal,trail.cursor+spec.navigation.speed*1.15*dt):trail.cursor;
     // Stop at a trail corner instead of cutting across its two segments.
     let boundary=0;for(let i=1;i<candidateTrail.length;i++){boundary+=distance(candidateTrail[i-1],candidateTrail[i]);if(boundary>trail.cursor+1e-7){nextCursor=Math.min(nextCursor,boundary);break;}}
     let nextFollower=alongPath(candidateTrail,nextCursor);
     // Waiting is safe because the leader path was planned around this cat.
     // Do not let following consume the leader's still-needed passing space.
-    if(futurePath&&!clearOfFuturePath(before[follower],nextFollower,futurePath,2*spec.navigation.radius+6)){
+    const clearance=Math.min(route?.clearance??companionClearance(spec),distance(before.pipi,before.tangyuan));
+    if(futurePath&&!clearOfFuturePath(before[follower],nextFollower,futurePath,clearance)){
       nextFollower=point(before[follower]);nextCursor=trail.cursor;
     }
     let after={...before,[leader]:{...before[leader],...leaderPoint},[follower]:{...before[follower],...nextFollower}},cursor=nextCursor;
-    if(!pairStepSafe(spec,before,after)){
+    if(!pairStepSafe(spec,before,after,clearance)){
       after={...before,[leader]:{...before[leader],...leaderPoint}};cursor=trail.cursor;
-      if(!pairStepSafe(spec,before,after))return false;
+      if(!pairStepSafe(spec,before,after,clearance))return false;
     }
     trail.points=candidateTrail;trail.cursor=cursor;trail.leaderTravel=leaderTravel;
     while(trail.points.length>2&&trail.cursor>distance(trail.points[0],trail.points[1])){trail.cursor-=distance(trail.points[0],trail.points[1]);trail.points.shift();}
@@ -134,7 +136,12 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   }
   function tick(time){
     frame=null;if(disposed||phase!=='walking'||!route||pauses.size)return;
-    let remaining=Math.max(0,Math.min(1,(time-(lastTime??time-16))/1000));lastTime=time;
+    const elapsed=Math.max(0,Math.min(1,(time-(lastTime??time-16))/1000));lastTime=time;
+    const expected=route,token=generation;
+    progressRoute(elapsed);
+    if(route===expected&&phase==='walking'&&!disposed&&!pauses.size&&generation===token&&frame===null)queueFrame();
+  }
+  function progressRoute(remaining){
     const expected=route,token=generation;
     while(remaining>1e-7&&route===expected&&phase==='walking'&&!disposed&&!pauses.size&&generation===token){
       let cornerTime=Infinity,length=0;
@@ -144,7 +151,6 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
       }
       const dt=Math.min(.05,remaining,cornerTime);stepFrame(dt);remaining-=dt;
     }
-    if(route===expected&&phase==='walking'&&!disposed&&!pauses.size&&generation===token&&frame===null)queueFrame();
   }
   function stepFrame(dt){
     const expected=route;
@@ -154,7 +160,15 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
       if(!pairStepSafe(scene(),state.cats,after)){stopMotion();notice='伙伴暂时无法让路，请换方向。';emit();void flush();return;}
       movingFlags=Object.fromEntries(names.map(cat=>[cat,distance(state.cats[cat],after[cat])>.00001]));markMovement(after);route.travel=travel;emit();
       if(route!==expected||phase!=='walking'||disposed||pauses.size)return;
-      if(travel>=route.length-.001){const {target,requested,snapped}=route,id=navigation.movementId;stopMotion();if(walk(target,requested,snapped,id).status!=='started')void flush();return;}
+      if(travel>=route.length-.001){
+        if(route.setup.length){
+          const next=route.setup.shift();Object.assign(route,{cat:next.cat,path:next.path,length:pathLength(next.path),travel:0});
+        }else{
+          const {target,requested,snapped,mainPath,clearance,steering}=route,id=navigation?.movementId??null;
+          startPlan({path:mainPath,setup:[],clearance},target,requested,snapped,id,steering);
+        }
+        return;
+      }
       return;
     }
     const travel=Math.min(route.length,route.travel+scene().navigation.speed*dt),target=alongPath(route.path,travel);
@@ -162,30 +176,42 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     route.travel=travel;emit();
     if(route!==expected||phase!=='walking'||disposed||pauses.size)return;
     if(travel>=route.length-.001){
-      const together=pathLength(trail.points)-scene().navigation.followGap-trail.cursor<.1;
-      if(together||names.every(cat=>!movingFlags[cat])){stopMotion(true);notice=together?'':'已到达，伙伴在安全位置等候。';emit();void flush();return;}
+      const together=pathLength(trail.points)-followGap(scene())-trail.cursor<.1;
+      if(together||names.every(cat=>!movingFlags[cat])){const steering=route.steering;stopMotion(true);notice=together?'':'已到达，伙伴在安全位置等候。';emit();if(!steering)void flush();return;}
     }
+  }
+  function startPlan(plan,target,requested=target,snapped=false,resumeId=null,steering=null){
+    stopMotion();trail=null;
+    const steps=plan.setup.map(step=>({cat:step.role==='leader'?state.leader:opposite(state.leader),path:step.path}));
+    const first=steps.shift();
+    if(first)route={kind:'yield',cat:first.cat,path:first.path,length:pathLength(first.path),travel:0,setup:steps,mainPath:plan.path,clearance:plan.clearance,steering,target:point(target),requested:point(requested),snapped};
+    else{
+      trail=makeTrail();if(!trail)return blocked('companion-route-unavailable');
+      route={path:plan.path,length:pathLength(plan.path),travel:0,clearance:plan.clearance,steering};
+    }
+    navigation=steering?null:{movementId:resumeId??++movementId,target:point(target),requested:point(requested),snapped,status:'walking'};
+    phase='walking';notice=first?'伙伴正在让出通路…':'';lastTime=null;emit();
+    if(!steering)queueFrame();
+    return{...copy(navigation),status:'started',revision:state.revision};
   }
   function walk(target,requested=target,snapped=false,resumeId=null){
     if(!available())return blocked('busy');
-    if(!pointSafe(scene(),target))return blocked('outside-walkable-floor');
-    const leader=state.leader,follower=opposite(leader),r=scene().navigation.radius+6,p=state.cats[follower];
-    const avoid=[{...point(p),radius:r}];
-    let path=findPath(scene(),state.cats[leader],target,avoid);
-    if(!path){
-      const base=findPath(scene(),state.cats[leader],target);if(!base)return blocked('no-clear-route');
-      const yielding=findPassingPath(scene(),p,state.cats[leader],base,2*scene().navigation.radius+6);
-      if(yielding){
-        stopMotion();trail=null;route={kind:'yield',cat:follower,path:yielding,length:pathLength(yielding),travel:0,target:point(target),requested:point(requested),snapped};
-        navigation={movementId:resumeId??++movementId,target:point(target),requested:point(requested),snapped,status:'walking'};
-        phase='walking';notice='伙伴正在让出通路…';lastTime=null;emit();queueFrame();return{...copy(navigation),status:'started',revision:state.revision};
+    const spec=scene(),leader=state.cats[state.leader],follower=state.cats[opposite(state.leader)];
+    if(!pointSafe(spec,target))return blocked('outside-walkable-floor');
+    let plan=findCompanionPassage(spec,leader,follower,target);
+    if(!plan){
+      const clearance=2*spec.navigation.radius+6,avoid=p=>[{...point(p),radius:clearance-spec.navigation.radius}];
+      const path=findPath(spec,leader,target,avoid(follower));
+      if(path)plan={path,setup:[],clearance};
+      else{
+        const base=findPath(spec,leader,target);if(!base)return blocked('no-clear-route');
+        const yielding=findPassingPath(spec,follower,leader,base,clearance);
+        const resumed=yielding&&findPath(spec,leader,target,avoid(yielding.at(-1)));
+        if(!resumed)return blocked('companion-space');
+        plan={path:resumed,setup:[{role:'follower',path:yielding}],clearance};
       }
-      return blocked('companion-space');
     }
-    stopMotion();trail=makeTrail();if(!trail)return blocked('companion-route-unavailable');
-    route={path,length:pathLength(path),travel:0,moving:{pipi:false,tangyuan:false}};
-    navigation={movementId:resumeId??++movementId,target:point(target),requested:point(requested),snapped,status:'walking'};
-    phase='walking';notice='';lastTime=null;emit();queueFrame();return{...copy(navigation),status:'started',revision:state.revision};
+    return startPlan(plan,target,requested,snapped,resumeId);
   }
   async function transition(targetId,{returnTrail,destination,leader=state.leader,commitGuard=null}){
     if(!available())return blocked('busy');
@@ -222,10 +248,19 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     }
     if(intent.kind==='steer'){
       if(![intent.dx,intent.dy,intent.dt].every(Number.isFinite)||intent.dt<=0||intent.dt>.1)return blocked('invalid-steer');
-      stopMotion();const magnitude=Math.hypot(intent.dx,intent.dy);if(!magnitude)return{status:'done',revision:state.revision};
-      const lead=state.cats[state.leader],length=scene().navigation.speed*intent.dt;
-      const target={x:lead.x+intent.dx/magnitude*length,y:lead.y+intent.dy/magnitude*length};
-      if(!segmentSafe(scene(),lead,target))return blocked('obstacle');
+      const magnitude=Math.hypot(intent.dx,intent.dy),direction=magnitude?{x:intent.dx/magnitude,y:intent.dy/magnitude}:null;
+      if(route?.steering&&direction&&distance(route.steering,direction)<.001){progressRoute(intent.dt);return{status:'done',revision:state.revision};}
+      if(route?.kind==='yield')trail=null;
+      stopMotion();if(!direction){emit();return{status:'done',revision:state.revision};}
+      const spec=scene(),lead=state.cats[state.leader],follower=state.cats[opposite(state.leader)],length=spec.navigation.speed*intent.dt;
+      const target={x:lead.x+direction.x*length,y:lead.y+direction.y*length};
+      if(!segmentSafe(spec,lead,target))return blocked('obstacle');
+      const clearance=companionClearance(spec),after={...state.cats,[state.leader]:{...lead,...target}};
+      if(distance(lead,follower)<clearance-.001||!pairStepSafe(spec,state.cats,after,clearance)){
+        const ahead=findReachablePath(spec,lead,{x:lead.x+direction.x*clearance*2,y:lead.y+direction.y*clearance*2});
+        const plan=ahead&&findCompanionPassage(spec,lead,follower,ahead.target);
+        if(plan){startPlan(plan,ahead.target,ahead.target,false,null,direction);progressRoute(intent.dt);return{status:'done',revision:state.revision};}
+      }
       if(!advance(target,intent.dt))return blocked('companion-space');
       notice='';emit();return{status:'done',revision:state.revision};
     }

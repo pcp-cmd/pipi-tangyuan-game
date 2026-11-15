@@ -1,0 +1,9 @@
+.harbor-canopy-wind {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  user-select: none;
+  image-rendering: auto;
+}
+.world:not([data-physical-scene="harbor.exterior"]) > .harbor-canopy-wind,
+html[data-motion="reduced"] .harbor-canopy-wind { display: none; }
