@@ -12,14 +12,16 @@ export const loadPaperRuntime = createRuntimeLoader(async () => {
 });
 
 export const loadJournalRuntime = createRuntimeLoader(async () => {
-  const [explorer, pages, external, graduation] = await Promise.all([
+  const [explorer, pages, rows, graduation] = await Promise.all([
     import('../journal-explorer.mjs'),
-    import('../journal-pages.mjs'),
-    import('../external-work-panel.mjs'),
+    import('./journal-pages.mjs'),
+    import('./journal-course-row.mjs'),
     import('../classroom-graduation.mjs'),
   ]);
-  return { ...explorer, ...pages, ...external, ...graduation };
+  return { ...explorer, ...pages, ...rows, ...graduation };
 });
+
+export const loadExternalWorkRuntime = createRuntimeLoader(() => import('../external-work-panel.mjs'));
 
 
 //# sourceURL=../typed/journal-runtime.mts

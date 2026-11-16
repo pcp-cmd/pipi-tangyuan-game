@@ -20,6 +20,10 @@
 }
 .panel:has(#workshopPanel:not([hidden])) {
   inset: clamp(104px, 14vh, 158px) 3% 22px; max-width: 1480px;
+  padding: 10px 10px 0;
+  background: url('./assets/journal-v5/workbench-wood-v1.webp') center / 768px repeat #70482e;
+  border-radius: 5px;
+  box-shadow: 0 9px 18px #171a1c70, inset 0 1px #d5a06499;
 }
 .panel:has(#workshopPanel:not([hidden])) .panel-header,
 .panel:has(#journalPanel:not([hidden])) .panel-header {
@@ -53,7 +57,7 @@
 
 /* One paper task page and one usable editor board. Their content can scroll. */
 #workshopPanel { overflow: visible; position: relative; isolation: isolate; }
-#workshopPanel::before { content: ''; position: absolute; inset: 28px -12px -10px; z-index: -1; background: url('./assets/journal-v5/workbench-wood-v1.webp') center / 768px 768px repeat; border-radius: 3px; box-shadow: 0 9px 15px #1c1c1e60; pointer-events: none; }
+#workshopPanel::before { content: none; }
 #workshopPanel .workshop-scroll {
   grid-template-columns: minmax(330px, .48fr) minmax(0, 1fr);
   gap: 12px; padding: 0; overflow: visible;
@@ -551,7 +555,7 @@ html[data-motion='reduced'] :is(.top-right .hud-button:hover, #journalTabs butto
 .camera-hud > summary, .camera-controls {
   border: 12px solid transparent; border-image: var(--journal-frame) 128 stretch;
   border-radius: 0; background: var(--journal-grain) center / 256px repeat var(--journal-paper);
-  background-clip: padding-box; color: #493923; box-shadow: 0 3px 8px #172b2830;
+  background-clip: border-box; color: #493923; box-shadow: 0 3px 8px #172b2830;
 }
 .camera-hud > summary { padding: 3px 7px; }
 .camera-controls { padding: 8px; bottom: 64px; }

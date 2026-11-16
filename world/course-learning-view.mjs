@@ -1,10 +1,11 @@
 import { courseLearning } from '../integration/course-learning.mjs';
 import { LESSONS } from '../integration/contracts.mjs';
 import { renderKnowledgeText } from './knowledge-reader.mjs';
+import { mountCourseArticle } from './generated/course-article.mjs';
 
 const titles = new Map(LESSONS.map(lesson => [lesson.id, lesson.title]));
 
-export function renderCourseLearning({ document: doc = document, lessonId, onTransfer }) {
+export function renderCourseLearning({ document: doc = document, lessonId, onTransfer, articleLoader }) {
   const guide = courseLearning(lessonId);
   const make = (tag, text, className) => {
     const node = doc.createElement(tag);
@@ -15,34 +16,9 @@ export function renderCourseLearning({ document: doc = document, lessonId, onTra
   const taskTitle = doc.getElementById('lessonTaskTitle');
   if (taskTitle) taskTitle.textContent = titles.get(lessonId) || '';
   const explanation = doc.getElementById('lessonExplanation');
-  renderKnowledgeText(explanation, [...new Set(guide.explanation.filter(Boolean))].join('\n\n'));
-  if (guide.inputContract) {
-    const inputs = make('details');
-    inputs.append(make('summary', '输入范围'), make('p', guide.inputContract));
-    explanation.append(inputs);
-  }
-  if (guide.bridgeLessons?.length) {
-    const bridges = make('nav'); bridges.setAttribute('aria-label', '建议先补充的练习');
-    bridges.append(make('p', '需要时先练'));
-    for (const id of guide.bridgeLessons) {
-      const button = make('button', titles.get(id) || id, 'text-button');
-      button.type = 'button';
-      button.addEventListener('click', () => onTransfer(id, button));
-      bridges.append(button);
-    }
-    explanation.append(bridges);
-  }
+  mountCourseArticle({ root: explanation, lessonId, disclosure: doc.getElementById('conceptDetails'), loader: articleLoader });
   const example = doc.getElementById('lessonExample');
-  const code = make('pre', guide.workedExample.code);
-  code.tabIndex = 0; code.setAttribute('aria-label', '概念示例代码，只读');
-  const expected = make('details');
-  expected.append(make('summary', '预测与预期结果'));
-  const steps = make('ol');
-  for (const step of guide.workedExample.steps || []) steps.append(make('li', step));
-  expected.append(steps, make('pre', guide.workedExample.expected));
-  const environment = make('details', undefined, 'example-environment');
-  environment.append(make('summary', '示例运行环境'), make('p', guide.workedExample.executionEnvironment || '概念示例 · 不作为本课提交'));
-  example.replaceChildren(code, expected, environment);
+  example.replaceChildren(); example.hidden = true;
   const mistakes = doc.getElementById('lessonMistakes');
   mistakes.replaceChildren(...guide.typicalErrors.map(error => {
     const detail = make('details');
@@ -64,34 +40,24 @@ export function renderCourseLearning({ document: doc = document, lessonId, onTra
     }));
   }
   const transfer = doc.getElementById('lessonTransfer');
-  const independentTransfer = guide.transferChallenge.relationship === 'independent-transfer';
-  const sharedTransfer = independentTransfer && (LESSONS.find(lesson => lesson.id === guide.transferChallenge.lessonId)?.transferFrom?.length || 0) > 1;
   const transferTitle = doc.getElementById('lessonTransferTitle');
-  if (transferTitle) transferTitle.textContent = sharedTransfer ? '独立应用与综合练习' : independentTransfer ? '独立迁移练习' : '继续练一练';
+  if (transferTitle) transferTitle.textContent = '相关练习与输入约定';
   transfer.replaceChildren();
-  if (guide.independentApplication?.prompt) {
-    const application = guide.independentApplication;
-    const section = make('section', undefined, 'independent-application');
-    const checks = make('ul');
-    for (const check of application.checks || []) checks.append(make('li', check));
-    section.append(make('h4', '自己再试一次'), make('p', application.prompt),
-      make('p', application.graded ? '按这些方向检查你的结果' : '自行核对', 'scope-note'), checks);
-    if (application.environment) section.append(make('p', application.environment, 'scope-note'));
-    // Observation prompts never grant evidence or offer a synthetic pass button.
-    // Any graded task still enters through the existing guarded transfer action.
-    transfer.append(section);
+  if (guide.inputContract) transfer.append(make('p', guide.inputContract));
+  if (guide.bridgeLessons?.length) {
+    const bridges = make('nav'); bridges.setAttribute('aria-label', '建议先补充的练习');
+    for (const id of guide.bridgeLessons) {
+      const button = make('button', titles.get(id) || id, 'text-button'); button.type = 'button';
+      button.addEventListener('click', () => onTransfer(id, button)); bridges.append(button);
+    }
+    transfer.append(bridges);
   }
-  transfer.append(make('p', guide.transferChallenge.prompt));
-  if (guide.transferChallenge.assessmentScope) transfer.append(make('p', guide.transferChallenge.assessmentScope, 'scope-note'));
   if (guide.transferChallenge.lessonId) {
-    const button = make('button', sharedTransfer ? '打开综合练习' : independentTransfer ? '打开新的独立任务' : '打开相关练习', 'text-button');
+    const button = make('button', `打开相关练习：${titles.get(guide.transferChallenge.lessonId) || ''}`, 'text-button');
     button.type = 'button';
     button.addEventListener('click', () => onTransfer(guide.transferChallenge.lessonId, button));
     transfer.append(button);
   }
-  const boundary = make('details');
-  boundary.append(make('summary', '本课边界'), make('p', guide.boundaries));
-  transfer.append(boundary);
   const nativeProject = doc.getElementById('lessonNativeProject');
   nativeProject.replaceChildren();
   nativeProject.hidden = !guide.nativeProject;

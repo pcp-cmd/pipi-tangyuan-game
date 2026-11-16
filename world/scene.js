@@ -6,7 +6,6 @@ import { createFirstEntrySourceReader, canDescribeCurrentFirstStepAsStart } from
 import { firstFailureView, renderFirstFailureFeedback } from './first-failure-feedback.mjs';
 import { evidenceCompatibility } from './learning-history.mjs';
 import { createErrorLineAction } from './error-line-action.mjs';
-import { renderKnowledgeText } from './knowledge-reader.mjs';
 import { lessonSceneView } from './course-scenes.mjs';
 import { accessLabel, accessSummaryCopy, allowLessonIntent, successContinuation } from './lesson-access-view.mjs';
 import { LESSONS, LESSON_IDS, ASSESSMENT_VERSION, evidenceVersionFor } from '../integration/contracts.mjs';
@@ -44,8 +43,9 @@ import { mountJournalPreferences, mapMovementKey } from './journal-preferences.m
 import { mountHarborCanopyWind } from './harbor-canopy-wind.mjs';
 import { reportStartupStage } from './generated/startup.mjs';
 import { coordinateSceneStartup } from './generated/scene-startup.mjs';
-import { loadJournalRuntime, loadPaperRuntime } from './generated/journal-runtime.mjs';
+import { loadJournalRuntime, loadPaperRuntime, loadExternalWorkRuntime } from './generated/journal-runtime.mjs';
 import { mountStartupRecovery } from './generated/startup-recovery.mjs';
+import { showSaveRecovery } from './generated/save-recovery-view.mjs';
 
 const $ = id => document.getElementById(id);
 const lessons = LESSONS;
@@ -110,6 +110,8 @@ let workbenchMode = 'learn', lastAcceptedResult = null, plannedIsland = null;
 let cameraHolds = 0;
 let approachRequest = null;
 let journalExplorer = null, journalPages = null, journalReady = null;
+let externalWorkReady = null;
+let externalTaskRequest = 0, pageDisposed = false;
 let mailboxNote = null, paperControls = null, pythonStatus = null, paperReady = null;
 let recoveryPanel = null, startupRecovery = null;
 const arrivalIntent = createArrivalIntent();
@@ -152,6 +154,7 @@ const session = createWorldSession({ ...persistence, runtime: () => runtime,
     if (view.game) state = view.game;
     const copy = view.notice || ({ saved: '进度与草稿已保存。', saving: '正在保存…', conflict: '另一页面已改动存档，请先导出。', 'backup-only': '浏览器不支持安全协调，当前仅保留恢复备份。', 'locks-required': '浏览器不支持安全协调。当前内容未保存，请先导出。', 'recovery-capacity': '恢复空间已满，旧备份未删除。请先导出当前完整草稿。', 'recovery-owner-conflict': '本页仍有不同的旧恢复分支，不能覆盖。请先保留两份内容。', 'recovery-invalid': '恢复记录无法校验，原件未覆盖。请先导出当前内容。', 'recovery-error': '恢复备份尚未确认写入。请保持页面打开并导出完整内容。', 'pending-local': '本地仍有未保存内容，请先导出或明确重载。', 'missing-authority': '已保存的主记录已不在原位置。本地内容仍保留，请先导出，不会新建空白进度覆盖。', error: '保存未完成，当前进度仍在页面，请导出后重试。' }[view.status] || '原存档受保护，请先导出再处理。');
     $('saveStatus').textContent = copy; $('editorSaveStatus').textContent = copy;
+    showSaveRecovery($('saveRecoveryOptions'), view.status);
     $('downloadOriginal').hidden = !session?.original();
     if (initialized) {
       if (!view.selecting) updateQuest();
@@ -162,8 +165,10 @@ const session = createWorldSession({ ...persistence, runtime: () => runtime,
 });
 
 function ensurePaperPanels() {
+  if (pageDisposed) return Promise.reject(new Error('页面已关闭。'));
   if (paperReady) return paperReady;
   paperReady = loadPaperRuntime().then(({ mountMailboxNote, mountPythonStatus, mountPaperControls }) => {
+    if (pageDisposed) throw new Error('页面已关闭。');
     mailboxNote = mountMailboxNote({ panel: $('panel'), content: $('inspectionCourses'), intro: $('inspectionText'), returnButton: $('inspectionJournal') });
     paperControls = mountPaperControls($('panel'));
     pythonStatus = mountPythonStatus({ row: $('runtimeStatus').parentElement, status: $('runtimeStatus'), editor: $('workshopPanel').querySelector('.code-area') });
@@ -173,8 +178,10 @@ function ensurePaperPanels() {
 }
 
 function ensureJournalPanels() {
+  if (pageDisposed) return Promise.reject(new Error('页面已关闭。'));
   if (journalReady) return journalReady;
   journalReady = Promise.all([loadJournalRuntime(), ensurePaperPanels()]).then(([modules]) => {
+    if (pageDisposed) throw new Error('页面已关闭。');
     journalExplorer = modules.createJournalExplorer({
   lessons, assessmentVersion: ASSESSMENT_VERSION, evidenceVersionFor, session,
   groupOf: lessonGroup, selectedGroup: () => journalFilter, chooseLesson,
@@ -185,11 +192,10 @@ function ensureJournalPanels() {
     count: $('journalResultCount'), summary: $('journalLearningSummary'), current: $('journalCurrent'),
     clear: $('clearJournalFilters'), empty: $('journalEmpty'), notice: $('journalSelectionNotice') }
     });
-    externalWorkPanel = modules.mountExternalWorkPanel({ root: $('externalWorkContent'), session, download: downloadText, browseCourse,
-      canWrite: () => !journeyBusy && !runBusy && session.snapshot().loadedValid && !session.snapshot().selecting });
     classroomGraduation = modules.mountClassroomGraduation({ root: $('classroomGraduation'), session, browseCourse, download: downloadText });
     journalPages = modules.mountJournalPages({ root: $('journalPanel'), onPageChange: page => {
-      if (page === 'courses') { journalExplorer.render(); externalWorkPanel.render(); }
+      ++externalTaskRequest;
+      if (page === 'courses') { journalExplorer.render(); externalWorkPanel?.render(); }
       if (page === 'saves') renderJourneys();
       if (page === 'discoveries') renderWorldDiscoveries();
       paperControls.refresh();
@@ -198,6 +204,51 @@ function ensureJournalPanels() {
   }).catch(error => { journalReady = null; throw error; });
   return journalReady;
 }
+
+function ensureExternalWorkPanel() {
+  if (pageDisposed) return Promise.reject(new Error('页面已关闭。'));
+  if (externalWorkReady) return externalWorkReady;
+  const root = $('externalWorkContent');
+  root.setAttribute('aria-busy', 'true');
+  root.textContent = '正在翻开工程委托…';
+  externalWorkReady = loadExternalWorkRuntime().then(modules => {
+    if (pageDisposed) throw new Error('页面已关闭。');
+    root.replaceChildren();
+    externalWorkPanel = modules.mountExternalWorkPanel({ root, session, download: downloadText, browseCourse,
+      canWrite: () => !journeyBusy && !runBusy && session.snapshot().loadedValid && !session.snapshot().selecting });
+    paperControls?.refresh();
+    return externalWorkPanel;
+  }).catch(error => {
+    externalWorkReady = null;
+    if (pageDisposed) throw error;
+    const message = document.createElement('p'); message.setAttribute('role', 'status');
+    message.textContent = '委托暂未读到，当前旅程仍保留。';
+    const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'text-button'; retry.textContent = '重新翻开';
+    retry.addEventListener('click', () => { void ensureExternalWorkPanel().catch(() => {}); });
+    root.replaceChildren(message, retry);
+    throw error;
+  }).finally(() => { if (!pageDisposed) root.removeAttribute('aria-busy'); });
+  return externalWorkReady;
+}
+
+async function openExternalTask(taskId) {
+  if (pageDisposed || !journalPages) return false;
+  journalPages.show('courses'); $('externalWorkPanel').open = true;
+  const token = navigation, epoch = session.snapshot().epoch, request = ++externalTaskRequest;
+  try {
+    const controller = await ensureExternalWorkPanel();
+    if (pageDisposed || request !== externalTaskRequest || token !== navigation || epoch !== session.snapshot().epoch ||
+      panel.kind !== 'journal' || $('journalPanel').dataset.journalPage !== 'courses' || !$('externalWorkPanel').open) return false;
+    controller.selectTask(taskId || controller.selectedTaskId, { focus: true });
+    paperControls?.refresh();
+    return true;
+  } catch { return false; }
+}
+
+$('externalWorkPanel').addEventListener('toggle', () => {
+  if ($('externalWorkPanel').open) void ensureExternalWorkPanel().catch(() => {});
+  else ++externalTaskRequest;
+});
 
 function companionSlots() {
   if (document.hidden) return [];
@@ -609,10 +660,7 @@ function renderAgentObject(item) {
         ? chooseLesson(lessonIds.indexOf(id), opener) : browseCourse(id, opener),
       onProject: async (id, opener) => {
         if (!externalAssignment(id) || !await openPanel('journal', opener)) return false;
-        journalPages.show('courses'); $('externalWorkPanel').open = true;
-        externalWorkPanel.selectTask(id, { focus: true });
-        paperControls.refresh();
-        return true;
+        return openExternalTask(id);
       }
     });
     return;
@@ -646,8 +694,7 @@ function renderAgentObject(item) {
     button.textContent = `打开工程 · ${assignment.title}`;
     button.addEventListener('click', async () => {
       if (await openPanel('journal', button)) {
-        journalPages.show('courses'); $('externalWorkPanel').open = true;
-        externalWorkPanel.selectTask(taskId, { focus: true });
+        await openExternalTask(taskId);
       }
     });
     root.append(button);
@@ -667,8 +714,7 @@ function renderAgentObject(item) {
   const submissions = document.createElement('button'); submissions.type = 'button'; submissions.className = 'text-button'; submissions.textContent = '查看独立工程与作品记录';
   submissions.addEventListener('click', async () => {
     if (await openPanel('journal', submissions)) {
-      journalPages.show('courses'); $('externalWorkPanel').open = true;
-      externalWorkPanel.selectTask(externalWorkPanel.selectedTaskId, { focus: true });
+      await openExternalTask();
     }
   });
   root.append(submissions);
@@ -698,8 +744,7 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, 
     if (item?.uiAction === 'external-task' && externalAssignment(item.externalTaskId)) {
       const opened = await openPanel('journal', opener);
       if (opened) {
-        journalPages.show('courses'); $('externalWorkPanel').open = true;
-        externalWorkPanel.selectTask(item.externalTaskId, { focus: true });
+        return openExternalTask(item.externalTaskId);
       }
       return opened;
     }
@@ -844,7 +889,6 @@ function renderLesson({ resetResult = true } = {}) {
   $('codeEditor').value = state.drafts[lesson.id] ?? lesson.starter;
   $('codeEditor').maxLength = MAX_CODE;
   $('conceptTitle').textContent = lesson.topic;
-  renderKnowledgeText($('conceptText'), lesson.concept);
   renderMarketStockContext({ task: $('marketStockTask'), supplement: $('marketStockSupplement'), lessonId: lesson.id });
   $('conceptCode').hidden = true;
   renderCourseLearning({ document, lessonId: lesson.id, onTransfer: (id, opener) => chooseLesson(lessonIds.indexOf(id), opener) });
@@ -1575,6 +1619,7 @@ $('followCats').addEventListener('click', () => focusCats(true));
 $('showTerrain').addEventListener('click', () => {
   const visible = $('terrainOverlay').hasAttribute('hidden');
   $('terrainOverlay').toggleAttribute('hidden', !visible);
+  physicalPresentation?.refreshTerrain();
   $('showTerrain').setAttribute('aria-pressed', String(visible));
   toast(visible ? '亮点是可选落脚位置。点击地面出发；拖动只移动视角。' : '已收起范围。仍可点击小径出发。');
 });
@@ -1852,6 +1897,7 @@ window.addEventListener('beforeunload', event => { if (session.hasUnsaved() || p
 window.addEventListener('pagehide', event => {
   presentationTransitions.cancelAll();
   ++navigation; clearMovement(); void stopWalking();
+  if (!event.persisted) pageDisposed = true;
   if (event.persisted) { cancelRun(); void session.flush(); }
   else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages?.dispose(); mailboxNote?.dispose(); paperControls?.dispose(); recoveryPanel?.dispose(); startupRecovery?.dispose(); hotspotClickIntent.dispose(); physicalWorld?.dispose(); physicalPresentation?.dispose(); session.dispose(); }
   try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Optional camera state. */ }

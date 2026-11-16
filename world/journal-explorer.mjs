@@ -1,8 +1,9 @@
 import { describeLearningHistory, journalSummary, filterJournalLessons } from './learning-history.mjs';
 import { accessLabel, appendAccessDetails } from './lesson-access-view.mjs';
-import { coursePresentation, courseLearning } from './course-presentation.mjs';
+import { coursePresentation } from './course-presentation.mjs';
 import { orderedLearningLessons, learningOrdinal } from './learning-order.mjs';
-import { renderKnowledgeText } from './knowledge-reader.mjs';
+import { mountCourseArticle } from './generated/course-article.mjs';
+import { buildCourseRow, wrapCurrentCompatibilityNote } from './generated/journal-course-row.mjs';
 
 const element = (tag, className, text) => {
   const node = document.createElement(tag);
@@ -41,16 +42,11 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     function populate() {
       if (preview.dataset.loaded) return;
       preview.dataset.loaded = 'true';
-      const guide = courseLearning(lesson.id);
       const body = element('div', 'course-preview-content');
-      body.append(element('h5', '', '要学会什么'), element('p', '', guide.objective));
       const explanation = element('div', 'knowledge-reader');
-      renderKnowledgeText(explanation, [...new Set(guide.explanation.filter(Boolean))].join('\n\n'));
-      body.append(explanation, element('h5', '', '先读一个例子'));
-      const code = element('pre', '', guide.workedExample.code);
-      code.tabIndex = 0; code.setAttribute('aria-label', '课程概念示例，只读');
-      body.append(code, element('h5', '', '轮到你来完成'), element('p', '', lesson.description));
+      body.append(explanation, element('h5', '', '工作台任务'), element('p', '', lesson.description));
       preview.append(body);
+      mountCourseArticle({ root: explanation, lessonId: lesson.id });
     }
     preview.addEventListener('toggle', () => { if (preview.open) populate(); });
     return { node: preview, open() { populate(); preview.open = true; } };
@@ -148,10 +144,12 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     }
     current.replaceChildren();
     const active = lessons[game.mission];
+    const context = current.ownerDocument?.getElementById?.('journalCourseContext');
+    if (context) context.textContent = view.loadedValid ? active.title : '原存档待恢复';
     const activeAccess = session.accessOf(active.id);
     const activeLabel = element('span', 'journal-current-copy');
     const currentCopy = element('small', '', view.loadedValid ? `接着上次 · ${String(learningOrdinal(lessons, active.id)).padStart(2, '0')} / ${lessons.length}` : '课程目录仍可浏览');
-    activeLabel.append(currentCopy, element('strong', '', view.loadedValid ? active.title : '原存档暂不能读取'));
+    activeLabel.append(currentCopy);
     const resume = element('button', 'primary-button journal-resume', activeAccess.canRun ? '继续当前稿' : '查看当前草稿');
     resume.type = 'button'; resume.dataset.resumeLesson = active.id; resume.disabled = pendingSelection || !canOpen(active.id, view);
     resume.addEventListener('click', () => { void navigate(game.mission, resume); });
@@ -169,7 +167,7 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     if (view.loadedValid) {
       current.append(resume);
       const activeInfo = describeLearningHistory({ lessonId: active.id, status: statusOf(active.id), assessmentVersion: evidenceVersionFor(active.id) });
-      if (activeInfo.compatibilityNote) current.append(element('p', 'history-compatibility', activeInfo.compatibilityNote));
+      if (activeInfo.compatibilityNote) current.append(wrapCurrentCompatibilityNote(element('p', 'history-compatibility', activeInfo.compatibilityNote)));
       // An explicit next step, never an automatic switch after a successful run.
       // Search/region filters describe the list; this labelled shortcut spans all courses.
       if (statusOf(active.id) === 'independent-practice') {
@@ -222,14 +220,12 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
       const article = element('article', 'journal-entry course-entry');
       article.dataset.lessonCard = lesson.id;
       article.dataset.current = String(view.loadedValid && index === game.mission);
-      const top = element('div', 'course-entry-top');
       const ordinal = element('span', 'course-ordinal', String(learningOrdinal(lessons, lesson.id)).padStart(2, '0'));
       const markers = element('div', 'course-markers');
       if (view.loadedValid && index === game.mission) markers.append(element('span', 'course-current', '当前课程'));
       if (lesson.judgeKind === 'protocol') markers.append(element('span', 'course-protocol', '协议试航'));
       if (lesson.judgeKind === 'foundations') markers.append(element('span', 'course-protocol', '异步基础'));
       if (lesson.judgeKind === 'lifecycle') markers.append(element('span', 'course-protocol', '生命周期实训'));
-      top.append(ordinal, markers);
       const title = element('h4', '', lesson.title);
       const topic = element('p', 'course-topic', lesson.topic);
       const badge = element('span', `learning-badge ${info.tone}`, info.label);
@@ -258,10 +254,11 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
       const art = element('img', 'course-context-art'); art.loading = 'lazy'; art.decoding = 'async';
       art.alt = presentation.contextArt.alt; art.src = presentation.contextArt.src;
       const context = element('p', 'course-context-copy', `${presentation.locationLabel} · ${presentation.scenario}`);
-      article.append(top, title, topic, badge, eligibility, button, art, context, preview.node);
-      if (info.compatibilityNote) article.append(element('p', 'history-compatibility', info.compatibilityNote));
-      article.append(historyDetails(lesson));
-      appendAccessDetails(document, article, lesson, access, (id, opener) => { void navigate(lessons.findIndex(item => item.id === id), opener); });
+      const detailsContent = [markers, topic, eligibility, context, preview.node];
+      if (info.compatibilityNote) detailsContent.push(element('p', 'history-compatibility', info.compatibilityNote));
+      detailsContent.push(historyDetails(lesson));
+      const row = buildCourseRow({ article, title, ordinal, action: button, art, badge, detailsContent });
+      appendAccessDetails(document, row.body, lesson, access, (id, opener) => { void navigate(lessons.findIndex(item => item.id === id), opener); });
       list.append(article);
     }
     setNavigationBusy(pendingSelection);

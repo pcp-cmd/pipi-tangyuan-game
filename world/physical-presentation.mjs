@@ -1,6 +1,6 @@
 import { worldGazeAngle } from './pets-frame-adapter.mjs';
 import { physicalFootAnchor } from './physical-cats.mjs';
-import { pointSafe } from './physical-navigation.mjs';
+import { mountTerrainOverlay } from './generated/terrain-overlay.mjs';
 import { createHotspotClickIntent } from './hotspot-click-intent.mjs';
 import { physicalObjectShape } from './physical-object-shape.mjs';
 import {physicalObjectCue,physicalArtClip,createObjectCueSelection} from './physical-object-cue.mjs';
@@ -12,6 +12,7 @@ export const physicalDepthZ = (footY, layer = 0) => 2000 + 5 * Math.round(footY)
 export function mountPhysicalPresentation({ document: doc = document, sprites, sceneSpec, onApproach, onInteract, onActivate = onInteract, onReturn, onSceneChange = () => {}, clickIntent = createHotspotClickIntent() }) {
   const world = doc.getElementById('world'), host = doc.getElementById('game');
   const background = doc.getElementById('sceneBackground');
+  const terrain = mountTerrainOverlay(doc.getElementById('terrainOverlay'));
   const actorNodes = Object.fromEntries(Object.keys(names).map(cat => [cat, doc.getElementById(`${cat}Actor`)]));
   const hotspots = doc.createElement('div'); hotspots.id = 'physicalHotspots'; world.append(hotspots);
   const foreground = doc.createElement('div'); foreground.id = 'physicalForeground'; foreground.setAttribute('aria-hidden', 'true'); world.append(foreground);
@@ -126,16 +127,7 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
       layer.style.clipPath = `polygon(${polygonPoints(mask.polygon).map(([x,y]) => `${x / view.scene.width * 100}% ${y / view.scene.height * 100}%`).join(',')})`;
       layer.style.zIndex = String(physicalDepthZ(mask.frontY, 2)); foreground.append(layer);
     }
-    const overlay = doc.getElementById('terrainOverlay');
-    overlay.setAttribute('viewBox', `0 0 ${view.scene.width} ${view.scene.height}`);
-    overlay.replaceChildren();
-    const ns = 'http://www.w3.org/2000/svg';
-    const safePoints = [];
-    for (let y = 12; y < view.scene.height; y += 16) for (let x = 12; x < view.scene.width; x += 16) {
-      if (pointSafe(spec, { x, y })) safePoints.push(`M${x - 2},${y - 2}h4v4h-4z`);
-    }
-    const floor = doc.createElementNS(ns, 'path'); floor.classList.add('physical-walkable-grid');
-    floor.setAttribute('d', safePoints.join('')); overlay.append(floor);
+    terrain.setScene(spec, view.scene.width, view.scene.height);
     onSceneChange(view);
   }
   function render(view) {
@@ -167,6 +159,6 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
     doc.getElementById('stopRoam').disabled = !moving;
     doc.getElementById('roamStatus').textContent = moving ? '两位伙伴正在走路' : '';
   }
-  function dispose() { clickIntent.dispose(); observer.disconnect(); actions.remove(); save.remove(); hotspots.remove(); foreground.remove(); }
-  return Object.freeze({ render, clearSelection, dispose });
+  function dispose() { clickIntent.dispose(); observer.disconnect(); terrain.dispose(); actions.remove(); save.remove(); hotspots.remove(); foreground.remove(); }
+  return Object.freeze({ render, clearSelection, refreshTerrain: terrain.refresh, dispose });
 }

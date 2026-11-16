@@ -60,6 +60,10 @@ export function startSceneBoot({ document: doc, load, schedule = setTimeout, can
             : '小岛暂时没有准备好。请重新载入再试。';
         return { ready: false, status, ...(reason ? { reason } : {}) };
       }
+      for (const id of ['pipiActor', 'tangyuanActor']) {
+        const actor = doc.getElementById(id);
+        if (actor) actor.hidden = false;
+      }
       game.inert = false;
       game.setAttribute('aria-busy', 'false');
       game.removeAttribute('aria-describedby');

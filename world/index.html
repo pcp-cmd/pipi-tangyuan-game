@@ -20,6 +20,7 @@
   <link rel="stylesheet" href="./landmark-signs.css">
   <link rel="modulepreload" href="./learning-history.mjs">
 <link rel="stylesheet" href="./font-tokens.css">
+<link rel="stylesheet" href="./font-article-tokens.css">
 <link rel="stylesheet" href="./desktop-ui.css">
 <link rel="stylesheet" href="./physical-ui.css">
 <link rel="stylesheet" href="./full-world-ui.css">
@@ -45,8 +46,8 @@
         <span id="groundTarget" class="ground-target" aria-hidden="true" hidden></span>
         <div id="placeHotspots" class="place-hotspots"></div>
         <button id="destinationMarker" class="destination-marker" type="button"><img class="icon" src="./assets/icons/flag.svg" alt=""><span id="destinationName"></span></button>
-        <button id="pipiActor" class="cat-actor" data-actor="pipi" type="button" aria-label="皮皮"><span class="cat-art cat-sprite pipi"><img src="./assets/pets/pipi-idle-v2.png" alt="灰白长毛、金眼、宽脸的皮皮" draggable="false"></span><span class="cat-name">皮皮<small>领队</small></span></button>
-        <button id="tangyuanActor" class="cat-actor" data-actor="tangyuan" type="button" aria-label="汤圆"><span class="cat-art cat-sprite tangyuan"><img src="./assets/pets/tangyuan-idle-v2.png" alt="灰白长毛、绿眼、脸型较收的汤圆" draggable="false"></span><span class="cat-name">汤圆<small>同行</small></span></button>
+        <button id="pipiActor" class="cat-actor" data-actor="pipi" type="button" aria-label="皮皮" hidden><span class="cat-art cat-sprite pipi"><img src="./assets/pets/pipi-idle-v2.png" alt="灰白长毛、金眼、宽脸的皮皮" draggable="false"></span><span class="cat-name">皮皮<small>领队</small></span></button>
+        <button id="tangyuanActor" class="cat-actor" data-actor="tangyuan" type="button" aria-label="汤圆" hidden><span class="cat-art cat-sprite tangyuan"><img src="./assets/pets/tangyuan-idle-v2.png" alt="灰白长毛、绿眼、脸型较收的汤圆" draggable="false"></span><span class="cat-name">汤圆<small>同行</small></span></button>
       </div>
       <span id="groundAim" class="ground-aim" aria-hidden="true">＋</span>
       <span class="ground-keyboard-help" aria-hidden="true">Shift＋方向键选点 · Enter 出发</span>
@@ -259,8 +260,8 @@
 <span><small>历史首奖</small><strong id="completedCount">未读取</strong></span><span><small>积累经验</small><strong id="xpCount">0 XP</strong></span>
 </div>
 
-</div></section><section class="journal-page-pair" id="journalPage-courses" role="tabpanel" aria-labelledby="journalTab-courses" data-journal-panel="courses" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
-<header id="journalCourses" class="journal-learning-heading" tabindex="-1"><h3>下一页冒险</h3></header>
+</div></section><section class="journal-page-pair" id="journalPage-courses" role="tabpanel" aria-labelledby="journalTab-courses" data-journal-panel="courses" hidden=""><div class="journal-leaf journal-leaf-left">
+<header id="journalCourses" class="journal-learning-heading" tabindex="-1"><h3>正在记录</h3><strong id="journalCourseContext"></strong></header><div class="journal-leaf-body">
 <div id="journalCurrent" class="journal-current"></div>
 <div class="journal-tools">
 <label class="journal-search">查找课程<input id="journalSearch" type="search" maxlength="100" placeholder="课程名或知识点" autocomplete="off" aria-controls="journalEntries"></label>
@@ -291,13 +292,14 @@
 </div>
 </div><div class="journal-leaf journal-leaf-right">
 <h3 id="journalRouteTitle" class="journal-page-heading">课程路线</h3>
+<div class="journal-leaf-body">
 <div class="journal-results-heading">
 <span id="journalResultCount" role="status" aria-live="polite"></span><button id="clearJournalFilters" type="button" hidden>清除搜索与状态</button>
 </div>
 <p id="journalSelectionNotice" class="journal-selection-notice" role="status" aria-live="polite"></p>
 <p id="journalEmpty" class="journal-empty" hidden>这条路线里暂时没有匹配的实践。试试别的名称，或清除搜索与状态条件。</p>
 <div id="journalEntries" class="journal-entries" aria-label="课程实践列表"></div>
-</div></section><section class="journal-page-pair" id="journalPage-discoveries" role="tabpanel" aria-labelledby="journalTab-discoveries" data-journal-panel="discoveries" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
+</div></div></section><section class="journal-page-pair" id="journalPage-discoveries" role="tabpanel" aria-labelledby="journalTab-discoveries" data-journal-panel="discoveries" hidden=""><div class="journal-leaf journal-leaf-left"><div class="journal-leaf-body">
 <h3 class="journal-page-heading">沿途见闻</h3>
 <figure class="discovery-photo" id="discoveryPhoto" hidden><img loading="lazy" decoding="async" id="discoveryPhotoArt" alt="" decoding="async"><figcaption id="discoveryPhotoCaption"></figcaption></figure>
 <section id="journalSightseeing" class="discovery-journal" tabindex="-1" aria-label="小岛见闻"><div>
@@ -328,7 +330,8 @@
 <p id="saveStatus">课程进度与草稿自动保存在这个浏览器。</p>
 </div>
 <button id="exportSave" class="primary-button" type="button">备份当前旅程</button><p id="discoverySaveStatus" class="discovery-save-status"></p>
-<div class="save-secondary-actions"><button id="exportDiscoveries" class="secondary-button" type="button">导出见闻</button><button id="downloadOriginal" class="secondary-button" type="button" hidden>下载原始存档</button><button id="retrySave" class="secondary-button" type="button">重试保存</button><button id="reloadSaved" class="secondary-button" type="button">重载已保存版本</button></div>
+<div class="save-secondary-actions"><button id="exportDiscoveries" class="secondary-button" type="button">导出见闻</button></div>
+<details id="saveRecoveryOptions" class="save-recovery-options"><summary>恢复选项</summary><div class="save-secondary-actions"><button id="downloadOriginal" class="secondary-button" type="button" hidden>下载原始存档</button><button id="retrySave" class="secondary-button" type="button">重试保存</button><button id="reloadSaved" class="secondary-button" type="button">重载已保存版本</button></div></details>
 </div>
 <details id="journalPreferences" class="journal-preferences">
 <summary><img loading="lazy" decoding="async" class="icon" src="./assets/icons/keyboard.svg" alt="">键盘与显示</summary>
