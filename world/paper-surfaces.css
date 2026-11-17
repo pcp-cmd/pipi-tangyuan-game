@@ -1,0 +1,27 @@
+/* The filled source contains both edge and interior; no rectangular backing. */
+.hud .paper-surface, .atlas-page .paper-surface, .hud.paper-surface {
+  border: var(--paper-edge,12px) solid transparent;
+  border-image: var(--workbench-paper-surface) 128 fill stretch;
+  border-radius: 0;
+  background: none;
+  color: var(--journal-ink);
+  box-shadow: none;
+}
+.paper-selection { background: transparent; }
+.paper-selection[aria-pressed="true"] {
+  background: color-mix(in srgb,var(--interaction-paper-selection-color,#e9d2a4) 44%,transparent);
+  box-shadow: none;
+  color: var(--journal-ink);
+}
+.paper-selection[aria-pressed="true"]:not(:hover):not(:active) { filter: brightness(var(--interaction-paper-selection-brightness,1.06)); }
+.paper-selection:focus-visible, .panel .paper-selection:focus-visible { outline: 2px dashed var(--interaction-focus-color,#74482c); outline-offset: -3px; }
+.paper-scroll { scrollbar-width: thin; scrollbar-color: var(--interaction-scrollbar-thumb,#947047) var(--interaction-scrollbar-track,#ead9b5); }
+.paper-scroll::-webkit-scrollbar { width: 9px; height: 9px; }
+.paper-scroll::-webkit-scrollbar-track { background: var(--interaction-scrollbar-track,#ead9b5); border-radius: 5px; }
+.paper-scroll::-webkit-scrollbar-thumb { min-height: 32px; background: var(--interaction-scrollbar-thumb,#947047); border: 2px solid transparent; background-clip: padding-box; border-radius: 5px; }
+@media (forced-colors:active) {
+  .hud .paper-surface, .atlas-page .paper-surface, .hud.paper-surface { border: 1px solid CanvasText; border-image: none; background: Canvas; color: CanvasText; }
+  .paper-selection[aria-pressed="true"] { background: SelectedItem; color: SelectedItemText; filter: none; }
+  .paper-selection:focus-visible, .panel .paper-selection:focus-visible { outline-color: Highlight; }
+  .paper-scroll { scrollbar-color: auto; }
+}

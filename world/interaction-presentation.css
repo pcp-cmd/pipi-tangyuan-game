@@ -5,11 +5,17 @@ button:disabled,[aria-disabled="true"]{opacity:var(--interaction-disabled-opacit
 :is(button,a,summary,[role="option"]):focus-visible{outline:2px dashed var(--interaction-focus-color,#74482c);outline-offset:3px}
 :is(button,[role="option"])[aria-selected="true"]:not(:hover):not(:active),button[aria-pressed="true"]:not(:hover):not(:active){filter:brightness(var(--interaction-selected-brightness,.94))}
 .physical-hotspot:focus-visible{outline:0}
-.physical-object-glow{position:absolute;inset:0;pointer-events:none;opacity:0;filter:brightness(1.18) drop-shadow(0 0 var(--interaction-glow-radius,5px) var(--interaction-glow-color,#f5dfa1));transition:opacity var(--interaction-duration,180ms) var(--interaction-easing,ease-out)}
+.physical-object-glow{position:absolute;inset:0;pointer-events:none;opacity:0;filter:brightness(1.06) drop-shadow(0 0 var(--interaction-glow-radius,2px) var(--interaction-glow-color,#f3d5a0));transition:opacity var(--interaction-duration,180ms) var(--interaction-easing,ease-out)}
 .object-glow-paint{position:absolute;pointer-events:none;user-select:none}
-.physical-object[data-active="true"] .physical-object-glow{opacity:var(--interaction-glow-opacity,.42)}
-.physical-object[data-selected="true"]:not([data-hover="true"]):not([data-focus="true"]) .physical-object-glow{opacity:calc(var(--interaction-glow-opacity,.42)*.6)}
-.physical-object[data-focus="true"] .physical-object-glow{opacity:var(--interaction-glow-opacity,.42);filter:brightness(1.25) drop-shadow(0 0 2px #fff4d7) drop-shadow(0 0 var(--interaction-glow-radius,5px) var(--interaction-glow-color,#f5dfa1))}
+.physical-object[data-active="true"] .physical-object-glow{opacity:var(--interaction-glow-opacity,.18)}
+.physical-focus-label{display:none;position:absolute;z-index:11000;transform:translate(-50%,-100%);pointer-events:none;color:#4b3826;background:#f9eac5;padding:3px 6px;font:var(--world-label-font,12px)/1.5 var(--ui);white-space:nowrap;outline:2px dashed var(--interaction-focus-color,#74482c);outline-offset:2px}
+.physical-hotspot:focus-visible ~ .physical-focus-label{display:block}
+.physical-interact{position:absolute;z-index:12000;transform:translate(-50%,-50%);display:grid;place-items:center;width:48px;height:48px;min-width:48px;min-height:48px;padding:0;border:0;border-radius:8px;background:none;box-shadow:none;color:#4b3826;touch-action:manipulation;cursor:pointer}
+.physical-interact kbd{position:relative;display:grid;place-items:center;width:30px;height:32px;border:1px solid #ab8150;border-radius:7px;background:linear-gradient(#fff3d4,#e9cd97);box-shadow:inset 0 1px #fff8e5,0 2px 1px #63472c77;font:700 20px/1 var(--display);pointer-events:none}
+.physical-interact kbd::after{content:'';position:absolute;top:calc(100% + 4px);left:11px;border:4px solid transparent;border-top-color:#e9cd97}
+.physical-interact .physical-action-label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.physical-interact:focus-visible{outline:2px dashed var(--interaction-focus-color,#74482c);outline-offset:1px;background:#fff2d329}
+body.panel-open .physical-interact{visibility:hidden}
 html[data-motion="reduced"] :is(button,a,summary,[role="option"],.physical-object-glow){transition:none}
 @media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) :is(button,a,summary,[role="option"],.physical-object-glow){transition:none}}
-@media(forced-colors:active){:where(button,a,summary):focus-visible{outline:2px solid Highlight}.physical-object[data-focus="true"] .physical-hotspot{outline:2px solid Highlight;outline-offset:-2px}}
+@media(forced-colors:active){:where(button,a,summary):focus-visible{outline:2px solid Highlight}.physical-focus-label{background:Canvas;color:CanvasText;outline-color:Highlight}.physical-interact kbd{background:ButtonFace;color:ButtonText;border-color:ButtonText;box-shadow:none}.physical-interact:focus-visible{outline-color:Highlight}}

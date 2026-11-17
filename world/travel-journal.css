@@ -529,7 +529,6 @@ html[data-motion='reduced'] :is(.top-right .hud-button:hover, #journalTabs butto
 .panel:has(#travelPanel:not([hidden])) .panel-header .eyebrow,
 .panel:has(#inspectionPanel:not([hidden])) .panel-header .eyebrow { color: #756145; }
 .review-index { background: transparent; border-right-color: var(--journal-line); }
-.review-course[aria-pressed='true'] { color: #274b35; background: #9caf6b35; box-shadow: inset 4px 0 #3a6445; }
 .review-course[aria-pressed='true'] strong { font-weight: 700; }
 .review-course-heading .course-context-art { width: 128px; height: 128px; }
 .review-current-result pre { background: #e2d2ad; color: #334735; }
@@ -540,21 +539,9 @@ html[data-motion='reduced'] :is(.top-right .hud-button:hover, #journalTabs butto
 .inspection-group button { text-align: left; width: 100%; }
 #inspectionJournal { margin-top: 24px; }
 .inspection-courses .agent-recent-records { flex-basis: 100%; padding-left: 20px; color: #51412c; line-height: 1.8; }
-.atlas-page .region-detail {
-  border: 18px solid transparent; border-image: var(--journal-frame) 128 stretch; border-radius: 0;
-  background: var(--journal-grain) 0 0 / 384px 384px repeat var(--journal-paper);
-  background-clip: padding-box; color: var(--journal-ink); padding: 10px 14px;
-  --gold: #3d5f41; --muted: #725f41;
-}
+.atlas-page .region-detail { padding: 10px 14px; --gold: #3d5f41; --muted: #725f41; }
 .atlas-page .region-detail .eyebrow, .atlas-page .region-detail p { color: #6c583a; font-size: 14px; }
 .atlas-page .region-detail #closeRegionDetail { color: #4b422c; }
-.atlas-page .atlas-pin[aria-pressed='true'] { outline: 2px solid #ffe8a7; outline-offset: 3px; }
-.bottom-quest, body.panel-open .bottom-quest {
-  border: 12px solid transparent; border-image: var(--journal-frame) 128 stretch;
-  background: var(--journal-grain) 0 0 / 384px 384px repeat var(--journal-paper);
-  background-clip: padding-box; border-radius: 0; color: #483823;
-  box-shadow: 0 4px 12px #11261d33;
-}
 .bottom-quest > summary, .bottom-quest[open] > summary { padding: 5px 9px; }
 .bottom-quest > summary strong { font-size: 15px; font-weight: 600; }
 .bottom-quest > summary .quest-expand-label, .bottom-quest > summary .quest-collapse-label,
@@ -562,11 +549,6 @@ html[data-motion='reduced'] :is(.top-right .hud-button:hover, #journalTabs butto
 .bottom-quest .quest-brief strong { color: #483823; }
 .bottom-quest > summary .icon { filter: brightness(.45) sepia(.4); }
 
-.camera-hud > summary, .camera-controls {
-  border: 12px solid transparent; border-image: var(--journal-frame) 128 stretch;
-  border-radius: 0; background: var(--journal-grain) center / 256px repeat var(--journal-paper);
-  background-clip: border-box; color: #493923; box-shadow: 0 3px 8px #172b2830;
-}
 .camera-hud > summary { padding: 3px 7px; }
 .camera-controls { padding: 8px; bottom: 64px; }
 .camera-hud .icon { filter: brightness(.48) sepia(.45); }

@@ -403,17 +403,18 @@
 #workshopPanel .knowledge-reader > .knowledge-heading:first-child { color: #78462a; margin-top: 16px; }
 #workshopPanel .knowledge-example figcaption { color: #7f6950; font-size: 13px; }
 
-#questDetails.bottom-quest { border: 0; padding: 7px 9px; border-radius: 5px 3px 6px 4px; background: url('./assets/journal-v5/workbench-wood-v1.webp') center / 420px repeat #765036; box-shadow: 0 4px 9px #10251e44; }
-#questDetails.bottom-quest > summary { color: #f7e0b2; }
-#questDetails.bottom-quest > summary :is(strong,.quest-expand-label,.quest-collapse-label) { color: #f7e0b2; text-shadow: 0 1px 1px #3e271c; }
-#questDetails.bottom-quest > summary .icon { filter: invert(92%) sepia(26%) saturate(338%); }
-#questDetails .quest-content { border: 0; margin: 4px 0 0; padding: 10px 8px 5px; background: none; }
-#questDetails .quest-brief :is(strong,span) { color: #f7e0b2; }
+#questDetails.bottom-quest { --paper-edge: 8px; padding: 0; }
+#questDetails.bottom-quest > summary { color: var(--journal-ink); }
+#questDetails.bottom-quest > summary strong { color: inherit; text-shadow: none; }
+#questDetails.bottom-quest > summary :is(.icon,.quest-expand-label,.quest-collapse-label) { display: none; }
+#questDetails.bottom-quest > summary::after { content: '⌃'; flex: none; margin-left: auto; color: var(--journal-muted); }
+#questDetails.bottom-quest[open] > summary::after { content: '⌄'; }
+#questDetails .quest-content { border: 0; margin: 0; padding: 10px 8px 5px; background: none; }
+#questDetails .quest-brief strong { color: var(--journal-ink); }
+#questDetails .quest-brief span { color: var(--journal-muted); }
 #questDetails #openWorkshop { color: #5e3e28; background: var(--journal-grain) center / 300px repeat #f0dab0; border: 0; border-radius: 2px; box-shadow: 1px 2px 3px #3c261e55; }
 .physical-actions { gap: 10px; }
 .physical-actions button { min-height: 46px; padding: 9px 16px; border: 1px solid #b38450; border-image: none; border-radius: 3px; background: url('./assets/journal-v5/workbench-wood-v1.webp') center / 420px repeat #6f482d; background-clip: border-box; color: #f3dfb8; box-shadow: 0 3px 5px #30201655, inset 0 1px #e7b77966; text-shadow: 0 1px 1px #3e2618; }
-.physical-actions .physical-interact { display: inline-flex; align-items: center; gap: 11px; color: #f3dfb8; font-weight: 500; }
-.physical-actions .physical-interact kbd { margin: 0; padding: 0 2px 0 0; border: 0; background: none; box-shadow: none; color: #ffe3ab; font: 700 20px/1.3 var(--code); text-shadow: 0 1px #3c2417, 0 -1px #bd915744; }
 .physical-actions .physical-return::before { color: #f3dfb8; }
 .physical-actions button:focus-visible { outline: 2px solid #f4d8a0; outline-offset: 3px; }
 .panel :is(.mailbox-course-tag,.mailbox-envelope,.mailbox-return,.paper-choice-trigger):focus-visible { outline: 2px solid var(--paper-focus); outline-offset: 4px; }
@@ -467,8 +468,7 @@ html[data-motion='reduced'] #inspectionPanel :is(.mailbox-course-tag,.mailbox-en
   .mailbox-envelope-flap, .mailbox-wax, .mailbox-course-tag::before, .mailbox-course-tag::after { display: none; }
   #workshopPanel .python-state-row { color: CanvasText; }
   #workshopPanel #codeEditor:focus-visible { outline-color: Highlight; }
-  .physical-actions :is(button,.physical-interact), .physical-actions .physical-interact kbd { background: ButtonFace; color: ButtonText; box-shadow: none; text-shadow: none; }
-  .physical-actions button { border-color: ButtonText; }
+  .physical-actions :is(button,.physical-interact),   .physical-actions button { border-color: ButtonText; }
 }
 
 #journalPanel .knowledge-reader { color: #463624; }

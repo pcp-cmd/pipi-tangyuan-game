@@ -1,9 +1,10 @@
 export const PRESENTATION_DEFAULTS = Object.freeze({
   duration: 180, sceneDuration: 220, hoverBrightness: 1.08, pressedBrightness: .96, selectedBrightness: .94,
-  disabledOpacity: .52, glowOpacity: .42, glowRadius: 5, glowColor: '#f5dfa1', focusColor: '#74482c', easing: 'ease-out',
+  paperSelectionBrightness: 1.06, paperSelectionColor: '#e9d2a4', scrollbarThumb: '#947047', scrollbarTrack: '#ead9b5',
+  disabledOpacity: .52, glowOpacity: .18, glowRadius: 2, glowColor: '#f3d5a0', focusColor: '#74482c', easing: 'ease-out',
 });
-const numeric = { duration: [0, 800], sceneDuration: [0, 1000], hoverBrightness: [1, 1.3], pressedBrightness: [.7, 1], selectedBrightness: [.7, 1], disabledOpacity: [.3, .9], glowOpacity: [.1, .8], glowRadius: [1, 12] };
-const cssNames = { duration: 'duration', sceneDuration: 'scene-duration', hoverBrightness: 'hover-brightness', pressedBrightness: 'pressed-brightness', selectedBrightness: 'selected-brightness', disabledOpacity: 'disabled-opacity', glowOpacity: 'glow-opacity', glowRadius: 'glow-radius', glowColor: 'glow-color', focusColor: 'focus-color', easing: 'easing' };
+const numeric = { paperSelectionBrightness: [1, 1.2], duration: [0, 800], sceneDuration: [0, 1000], hoverBrightness: [1, 1.3], pressedBrightness: [.7, 1], selectedBrightness: [.7, 1], disabledOpacity: [.3, .9], glowOpacity: [.1, .8], glowRadius: [1, 12] };
+const cssNames = { paperSelectionBrightness: 'paper-selection-brightness', paperSelectionColor: 'paper-selection-color', scrollbarThumb: 'scrollbar-thumb', scrollbarTrack: 'scrollbar-track', duration: 'duration', sceneDuration: 'scene-duration', hoverBrightness: 'hover-brightness', pressedBrightness: 'pressed-brightness', selectedBrightness: 'selected-brightness', disabledOpacity: 'disabled-opacity', glowOpacity: 'glow-opacity', glowRadius: 'glow-radius', glowColor: 'glow-color', focusColor: 'focus-color', easing: 'easing' };
 export function createPresentationTransitions({ motionPreference, root = globalThis.document?.documentElement }) {
   const groups = new Map(), completions = new Map(); let disposed = false, values = { ...PRESENTATION_DEFAULTS };
   function cancel(group) {

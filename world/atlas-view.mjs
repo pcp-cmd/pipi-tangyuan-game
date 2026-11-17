@@ -23,10 +23,10 @@ export function atlasCenter(layout, left, top) {
     y: clamp((top + layout.height / 2 - layout.top) / layout.artHeight, 0, 1) };
 }
 
-export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, detail, initialView = 'cover', topInset = () => 72, preparePinFocus = () => false, hostWindow = window }) {
+export function createAtlasView({ viewport, stage, art, zoomIn, zoomOut, fit, detail, detailOverlay = true, initialView = 'cover', topInset = () => 72, preparePinFocus = () => false, hostWindow = window }) {
   let layout = null, zoom = 1, drag = null, mode = initialView === 'fit' ? 'fit' : 'cover', pointerFocusPin = null;
   const guard = new GestureClickGuard();
-  const bottom = () => detail.hidden ? 0 : detail.getBoundingClientRect().height + 24;
+  const bottom = () => !detailOverlay || detail.hidden ? 0 : detail.getBoundingClientRect().height + 24;
   function draw(center = atlasCenter(layout, viewport.scrollLeft, viewport.scrollTop)) {
     if (!viewport.clientWidth || !viewport.clientHeight) return;
     if (mode === 'cover') zoom = atlasGeometry(viewport.clientWidth, viewport.clientHeight).cover;

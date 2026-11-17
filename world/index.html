@@ -30,6 +30,7 @@
 <link rel="stylesheet" href="./journal-ui.css">
 <link rel="stylesheet" href="./interaction-presentation.css">
 <link rel="stylesheet" href="./course-thumbnails.css">
+<link rel="stylesheet" href="./paper-surfaces.css">
 </head>
 <body>
   <a class="skip" href="#questSummary">跳到当前任务</a>
@@ -76,18 +77,19 @@
     </nav>
 
     <details name="island-hud" id="cameraDetails" class="hud camera-hud">
-      <summary id="cameraSummary" aria-label="场景视角控制"><img class="icon" src="./assets/icons/crosshair.svg" alt=""><span>视角</span></summary>
-      <div class="camera-controls">
+      <summary id="cameraSummary" class="paper-surface" aria-label="场景视角控制"><img class="icon" src="./assets/icons/crosshair.svg" alt=""><span>视角</span></summary>
+      <div class="camera-controls paper-surface">
       <div class="zoom-group">
 <button id="zoomOut" class="icon-button" type="button" aria-label="缩小场景"><img class="icon" src="./assets/icons/minus.svg" alt=""></button><span id="zoomValue" aria-live="off">100%</span><button id="zoomIn" class="icon-button" type="button" aria-label="放大场景"><img class="icon" src="./assets/icons/plus.svg" alt=""></button>
 </div>
       <button id="followCats" class="hud-button follow-button" type="button" title="回到伙伴"><img class="icon" src="./assets/icons/crosshair.svg" alt=""><span>回到伙伴</span></button>
+      <button id="cameraOverview" class="hud-button terrain-toggle" type="button" aria-pressed="false">看全景</button>
       <button id="showTerrain" class="hud-button terrain-toggle" type="button" aria-pressed="false" aria-controls="terrainOverlay">可走范围</button>
       <button id="stopRoam" class="hud-button stop-roam" type="button" title="停下行走（Esc）" disabled>停下行走</button>
       </div>
     </details>
-    <details name="island-hud" id="questDetails" class="hud bottom-quest">
-      <summary id="questSummary" aria-label="当前任务" aria-controls="questContent"><img class="icon" src="./assets/icons/flag.svg" alt=""><span class="quest-expand-label">当前任务</span><strong id="questSummaryTitle">给冒险一个起点</strong><span class="quest-collapse-label">收起</span></summary>
+    <details name="island-hud" id="questDetails" class="hud bottom-quest paper-surface paper-scroll">
+      <summary id="questSummary" aria-labelledby="questSummaryTitle" aria-controls="questContent"><img class="icon" src="./assets/icons/flag.svg" alt=""><span class="quest-expand-label">当前任务</span><strong id="questSummaryTitle">给冒险一个起点</strong><span class="quest-collapse-label">收起</span></summary>
       <div id="questContent" class="quest-content">
         <img class="icon terminal-icon" src="./assets/icons/terminal-window.svg" alt="">
         <div class="quest-brief">
@@ -194,12 +196,12 @@
       </section>
 
       <section id="lighthousePanel" class="panel-page" aria-label="测试灯塔验证与回顾" hidden>
-        <div class="lighthouse-layout"><div class="review-index">
+        <div class="lighthouse-layout paper-scroll"><div class="review-index paper-scroll">
           <p class="eyebrow">查阅 · 验证 · 再试一次</p>
           <label>查找课程<input id="reviewSearch" type="search" maxlength="100" placeholder="课程名或知识点" autocomplete="off"></label>
           <label>查看记录<select id="reviewFilter"><option value="all">全部课程</option><option value="ready">现在可验证</option><option value="failed">最近未通过</option><option value="guided">跟做后再独立试</option><option value="recheck">待本版复验</option></select></label>
           <p id="reviewCount" role="status"></p><ol id="reviewCourses" aria-label="验证课程列表"></ol>
-        </div><div id="reviewDetail" class="review-detail" aria-label="所选课程的检查与提交记录"></div></div>
+        </div><div id="reviewDetail" class="review-detail paper-scroll" aria-label="所选课程的检查与提交记录"></div></div>
       </section>
       <section id="travelPanel" class="panel-page" aria-label="船埠航线" hidden><div class="panel-scroll travel-scroll">
         <img loading="lazy" decoding="async" class="travel-compass" src="./assets/icons/compass.svg" alt=""><p id="travelCurrent"></p><p id="travelPlan" class="scope-note" hidden></p><div id="travelRoutes" class="travel-routes"></div><p class="scope-note">上船前会保存草稿、课程和两位伙伴的位置。</p>
@@ -207,6 +209,7 @@
       <section id="inspectionPanel" class="panel-page" aria-label="地点观察" hidden><div class="panel-scroll inspection-scroll"><p id="inspectionText"></p><div id="inspectionCourses" class="inspection-courses"></div><button id="inspectionJournal" class="secondary-button" type="button">查看学习手账</button></div></section>
 
       <section id="mapPanel" class="panel-page atlas-page" aria-label="群岛地图" hidden>
+      <div class="atlas-canvas">
       <div id="atlasViewport" class="atlas-viewport" tabindex="0" role="region" aria-label="群岛地图画面。拖动或方向键移动视角，加减键缩放，零键查看全图。">
         <div id="atlasStage" class="atlas-stage"><div id="atlasArt" class="atlas-art">
           <img loading="lazy" decoding="async" id="atlasBackground" data-src="./assets/world-map-background.png" decoding="async" width="1586" height="992" draggable="false" alt="群岛地形总图：启航岛、集市岛、工匠岛、档案岛、观测岛、灯塔岛与雾港协议工坊，六段航线相连。">
@@ -214,7 +217,7 @@
         </div></div>
       </div>
       <div class="atlas-tools">
-        <details id="regionMenu" class="region-menu"><summary id="regionMenuToggle">地区 <img loading="lazy" decoding="async" class="icon small" src="./assets/icons/caret-down.svg" alt=""></summary><div id="regionList" class="region-list"></div></details>
+        <details id="regionMenu" class="region-menu"><summary id="regionMenuToggle" class="paper-surface">岛屿索引 <img loading="lazy" decoding="async" class="icon small" src="./assets/icons/caret-down.svg" alt=""></summary><div id="regionList" class="region-list paper-surface paper-scroll"></div></details>
         <div class="atlas-zoom" role="group" aria-label="地图视角">
           <button id="atlasZoomOut" type="button" aria-label="缩小地图">−</button><button id="atlasFit" type="button">全图</button><button id="atlasZoomIn" type="button" aria-label="放大地图">＋</button>
         </div>
@@ -223,10 +226,15 @@
         </div>
       </div>
       <p class="atlas-hint">七座岛相连 · 选地点查看航线与课程</p>
-      <article id="regionDetail" class="region-detail" tabindex="-1" aria-labelledby="regionName" hidden>
-        <span id="regionStatus" class="eyebrow"></span><h3 id="regionName"></h3>
+      </div>
+      <article id="regionDetail" class="region-detail paper-surface paper-scroll" tabindex="-1" aria-labelledby="regionName" hidden>
+        <details id="regionDetailDisclosure" open>
+          <summary id="regionDetailSummary"><h3 id="regionName"></h3><span class="region-detail-affordance" aria-hidden="true"></span></summary>
+          <div class="region-detail-content"><span id="regionStatus" class="eyebrow"></span>
 <p id="regionDescription"></p>
 <button id="regionTravel" class="primary-button" type="button">到船埠出发</button><button id="enterRegion" class="secondary-button" type="button">查看这座岛的课程</button>
+          </div>
+        </details>
         <button id="closeRegionDetail" class="icon-button" type="button" aria-label="收起地区详情">×</button>
       </article>
     </section>

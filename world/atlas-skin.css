@@ -94,44 +94,30 @@ body.map-open .panel-header > .icon-button {
   pointer-events: auto;
 }
 body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
-.atlas-page .atlas-tools { top: 112px; left: 22px; right: 22px; }
-.atlas-page .region-menu {
-  border: 3px ridge #bf9254;
-  border-radius: 50%;
-  background: #64462d;
-  min-width: 56px;
-  box-shadow: 0 4px 5px #082a4280;
-}
-.atlas-page .region-menu > summary {
-  width: 58px;
-  height: 58px;
-  min-height: 58px;
-  padding: 7px;
-  gap: 0;
-  justify-content: center;
-  color: #fff0cf;
-  font-size: 13px;
-}
-.atlas-page .region-menu > summary .icon { width: 14px; height: 14px; }
-.atlas-page .region-menu .region-list {
-  top: 70px;
-  max-height: calc(100dvh - 218px);
-  border: 12px solid transparent;
-  border-image: var(--journal-frame) 128 stretch;
-  border-radius: 0;
-  background: var(--journal-grain) center / 384px repeat var(--journal-paper);
-  background-clip: padding-box;
-}
+.atlas-page { display: grid; grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr); gap: 12px; padding: 104px 12px 12px; }
+.atlas-page:has(.region-detail:not([hidden])) { grid-template-columns: minmax(0,1fr) clamp(260px,26vw,360px); }
+.atlas-canvas { position: relative; min-width: 0; min-height: 0; overflow: hidden; }
+.atlas-page .atlas-tools { top: 8px; left: 0; right: 12px; }
+.atlas-page .region-menu { border: 0; border-radius: 0; background: none; min-width: 0; box-shadow: none; }
+.atlas-page .region-menu > summary { --paper-edge: 7px; width: auto; height: auto; min-height: 44px; padding: 3px 8px; gap: 7px; justify-content: center; font-size: 13px; white-space: nowrap; }
+.atlas-page .region-menu > summary .icon { width: 13px; height: 13px; }
+.atlas-page .region-menu .region-list { --paper-edge: 10px; top: 52px; max-height: calc(100dvh - 200px); }
+.atlas-page .region-detail { position: relative; inset: auto; transform: none; width: auto; min-width: 0; min-height: 0; max-height: none; margin: 0; overflow: auto; align-self: stretch; }
+.region-detail summary { list-style: none; padding-right: 36px; cursor: pointer; }
+.region-detail summary::-webkit-details-marker { display: none; }
+.region-detail summary h3 { display: inline; }
+.region-detail-affordance { display: none; }
+.region-detail-content { padding-top: 14px; }
+.atlas-page .region-detail h3 { font-size: clamp(20px,2vw,28px); margin: 0; line-height: 1.5; }
+.atlas-page #closeRegionDetail { top: 0; right: 0; width: 44px; height: 44px; }
 .atlas-page .region-menu .region-button {
   color: #413724;
-  background: transparent;
   border: 0;
   border-bottom: 1px solid #ad91664d;
   border-radius: 0;
 }
 .atlas-page .region-menu .region-button :is(small, b) { color: #68523c; }
 .atlas-page .region-menu .region-button > .icon { filter: brightness(.5) sepia(.5); }
-.atlas-page .region-menu .region-button[aria-pressed='true'] { background: #b8bf8a60; box-shadow: inset 3px 0 #476849; }
 .atlas-page .atlas-zoom {
   align-items: center;
   gap: 7px;
@@ -176,8 +162,9 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
 .atlas-page .atlas-pin > span { display: block; color: #665439; font: 12px/1.4 var(--ui); text-wrap: balance; }
 .atlas-page .atlas-pin[data-locked='true'] { background-color: #e5cfaa; }
 .atlas-page .atlas-pin[data-locked='true'] span { color: #775035; }
-.atlas-page .atlas-pin[aria-pressed='true'] { outline: 3px solid #ffe2a0; outline-offset: 2px; border-color: transparent; background: var(--journal-grain) center / 256px repeat #fff0c3; background-clip: padding-box; color: #46321f; }
-.atlas-page .atlas-pin[aria-pressed='true'] strong { text-decoration: underline; text-underline-offset: 4px; }
+.atlas-page .atlas-pin[aria-pressed='true'] { outline: none; border-color: transparent; }
+.atlas-page .atlas-pin[aria-pressed='true']:not(:hover):not(:active) { filter: brightness(var(--interaction-paper-selection-brightness,1.06)); }
+.atlas-page .atlas-pin:focus-visible { outline: 2px dashed #f7dfab; outline-offset: 3px; }
 .atlas-page .atlas-pin[data-current='true']::before {
   content: '';
   position: absolute;
@@ -208,7 +195,7 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
 .atlas-page .map-load-notice { position: static; flex-basis: 100%; margin: 0; padding: 6px 10px; border-radius: 4px; background: #f1e0bb; color: #493620; font-size: var(--text-small); }
 .atlas-page .map-load-notice[hidden] { display: none; }
 body.map-open :is(button, summary):focus-visible { outline: 3px solid #ffe3a0; outline-offset: 4px; }
-.atlas-page .region-menu .region-button:focus-visible { outline-color: #28634d; outline-offset: -3px; }
+.atlas-page .region-menu .region-button:focus-visible { outline-color: var(--interaction-focus-color,#74482c); outline-offset: -3px; }
 
 @media (max-width: 900px), (max-height: 640px) {
   body.map-open .panel-header { top: 12px; padding-inline: 76px; }
@@ -217,9 +204,9 @@ body.map-open :is(button, summary):focus-visible { outline: 3px solid #ffe3a0; o
   body.map-open .panel-header h2 { font-size: clamp(20px, 3.2vw, 30px); letter-spacing: .025em; }
   body.map-open .panel-header .atlas-wordmark { height: 54px; }
   body.map-open .panel-header > .icon-button { right: 12px; width: 46px; height: 46px; border-width: 3px; }
-  .atlas-page .atlas-tools { top: 88px; left: 14px; right: 14px; }
-  .atlas-page .region-menu > summary { width: 46px; height: 46px; min-height: 46px; }
-  .atlas-page .region-menu { min-width: 46px; }
+  .atlas-page .atlas-tools { top: 6px; left: 0; right: 6px; }
+  .atlas-page .region-menu > summary { min-height: 44px; }
+  .atlas-page .region-menu { min-width: 0; }
   .atlas-page .region-menu .region-list { top: 58px; max-height: calc(100dvh - 170px); }
   .atlas-page .atlas-zoom { gap: 4px; }
   .atlas-page .atlas-zoom button { width: 44px; height: 44px; border-width: 3px; }
@@ -246,4 +233,15 @@ body.map-open :is(button, summary):focus-visible { outline: 3px solid #ffe3a0; o
   .atlas-page .atlas-pin[data-locked='true'] span { color: CanvasText; }
   .atlas-page .atlas-pin[data-current='true']::before { background: Highlight; border-color: Canvas; }
   body.map-open :is(button, summary):focus-visible { outline-color: Highlight; }
+}
+
+@media (max-width:900px), (max-height:560px) {
+  .atlas-page, .atlas-page:has(.region-detail:not([hidden])) { grid-template-columns: minmax(0,1fr); grid-template-rows: minmax(0,1fr) auto; gap: 6px; padding: 82px 8px 8px; }
+  .atlas-page .region-detail { --paper-edge: 9px; max-height: min(42dvh,320px); padding: 2px 10px; }
+  .region-detail-affordance { display: inline; margin-left: 10px; font: 12px var(--ui); color: var(--journal-muted); }
+  .region-detail-affordance::after { content: '展开详情 ⌃'; }
+  #regionDetailDisclosure[open] .region-detail-affordance::after { content: '收起 ⌄'; }
+  .region-detail summary { min-height: 44px; display: flex; align-items: center; flex-wrap: wrap; }
+  .atlas-page .region-detail h3 { font-size: 19px; }
+  .region-detail-content { padding: 6px 0 12px; }
 }

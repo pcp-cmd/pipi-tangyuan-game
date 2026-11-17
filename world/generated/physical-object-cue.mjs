@@ -50,17 +50,42 @@ export function physicalArtClip(item         )                {
   return `polygon(${polygon.map(([x, y]) => `${(x - asset.x) / asset.width * 100}% ${(y - asset.y) / asset.height * 100}%`).join(',')})`;
 }
 
+                           
+                                   
+                          
+                         
+                                                      
+                                                                                                       
+ 
+
 export function createObjectCueSelection() {
   let selected                = null;
   let hovered                = null;
   let focused                = null;
+  let context                = null;
+  let selectedReached = false;
+  function clear() { selected = null; hovered = null; focused = null; selectedReached = false; }
+  function resolve(view                 ) {
+    const nextContext = `${view.physicalSceneId}/${view.leader}`;
+    if (context !== null && context !== nextContext) clear();
+    context = nextContext;
+    if (!['ready', 'walking'].includes(view.phase)) { clear(); return null; }
+    const eligible = new Map(view.hotspots.filter(item => view.nearby.some(near => near.id === item.id)).map(item => [item.id, item]));
+    if (focused && !eligible.has(focused)) focused = null;
+    if (hovered && !eligible.has(hovered)) hovered = null;
+    if (selected && (!view.hotspots.some(item => item.id === selected) || selectedReached && !eligible.has(selected))) { selected = null; selectedReached = false; }
+    if (selected && eligible.has(selected)) selectedReached = true;
+    const id = [focused, hovered, selected].find(id => id !== null && eligible.has(id)) ?? view.nearby.find(item => eligible.has(item.id))?.id;
+    const item = id ? eligible.get(id) : null;
+    return item ? Object.freeze({ id: item.id, label: item.label, kind: item.kind, sceneId: view.physicalSceneId, leader: view.leader }) : null;
+  }
   return Object.freeze({
     enter(id        ) { hovered = id; },
     leave(id        ) { if (hovered === id) hovered = null; },
     focus(id        ) { focused = id; },
     blur(id        ) { if (focused === id) focused = null; },
-    select(id        ) { selected = id; },
-    clear() { selected = null; hovered = null; focused = null; },
+    select(id        ) { selected = id; hovered = null; focused = null; selectedReached = false; },
+    clear, resolve,
     view: () => Object.freeze({ selected, active: hovered ?? focused ?? selected }),
   });
 }

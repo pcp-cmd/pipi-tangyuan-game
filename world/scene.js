@@ -37,6 +37,7 @@ import { mountCompanionInput } from './companion-input.mjs';
 import { externalAssignment } from '../integration/external-work.mjs';
 import { createReferencePreview } from './reference-preview.mjs';
 import { createAtlasView } from './atlas-view.mjs';
+import { mountAtlasDetails } from './atlas-details.mjs';
 import { moveTerrainAim } from './scene-terrain.mjs';
 import { mountSceneKeyboardFocus } from './scene-keyboard-focus.mjs';
 import { mountLearningWorkbench } from './learning-workbench.mjs';
@@ -86,6 +87,7 @@ let initialized = false;
 let navigation = 0;
 let journalFilter = 'all';
 let camera = { x: SCENE.width / 2, y: SCENE.height / 2, zoom: 1, follow: true };
+let cameraOverview = false;
 let panel = { kind: null, help: { concept: false, hint: false }, placeId: null, regionId: 'departure' };
 let runtime = null;
 let runtimeModule = null;
@@ -144,10 +146,12 @@ const mobile = () => innerWidth <= 760;
 const icon = name => { const image = document.createElement('img'); image.src = `./assets/icons/${name}.svg`; image.alt = ''; image.className = 'icon'; return image; };
 
 const atlasView = createAtlasView({ viewport: $('atlasViewport'), stage: $('atlasStage'), art: $('atlasArt'),
-  zoomIn: $('atlasZoomIn'), zoomOut: $('atlasZoomOut'), fit: $('atlasFit'), detail: $('regionDetail'), initialView: 'fit',
+  zoomIn: $('atlasZoomIn'), zoomOut: $('atlasZoomOut'), fit: $('atlasFit'), detail: $('regionDetail'), detailOverlay: false, initialView: 'fit',
   preparePinFocus: () => { const detail = $('regionDetail'); const changed = !detail.hidden; detail.hidden = true; return changed; },
   topInset: () => Math.max(72, ...[$('panel').querySelector('.panel-header'), $('mapPanel').querySelector('.atlas-tools')]
     .filter(Boolean).map(node => node.getBoundingClientRect().bottom - $('atlasViewport').getBoundingClientRect().top + 12)) });
+const atlasDetails = mountAtlasDetails({ detail: $('regionDetail'), disclosure: $('regionDetailDisclosure'), summary: $('regionDetailSummary'),
+  compact: window.matchMedia('(max-width:900px), (max-height:560px)'), onResize: () => atlasView.resize() });
 const modalPanel = () => !!panel.kind && (mobile() || ['map','journal','workshop','lighthouse','travel','inspection'].includes(panel.kind));
 
 const persistence = journeyIO.learning;
@@ -470,7 +474,11 @@ function dimensions() {
   const width = $('viewport').clientWidth;
   const height = $('viewport').clientHeight;
   const scene = physicalWorld?.view().scene || SCENE;
-  return { width, height, scale: Math.max(width / scene.width, height / scene.height) * camera.zoom };
+  const { width: sceneWidth, height: sceneHeight } = scene;
+  const scale = cameraOverview
+    ? Math.max(Number.EPSILON, Math.min(width / sceneWidth, height / sceneHeight))
+    : Math.max(width / sceneWidth, height / sceneHeight) * camera.zoom;
+  return { width, height, scale, sceneWidth, sceneHeight };
 }
 
 function clampCamera() {
@@ -484,18 +492,22 @@ function clampCamera() {
 
 function drawCamera(save = true) {
   sceneKeyboardFocus?.clear();
-  clampCamera();
-  const { width, height, scale } = dimensions();
-  const x = width / 2 - camera.x * scale;
-  const y = height / 2 - camera.y * scale;
+  if (!cameraOverview) clampCamera();
+  const { width, height, scale, sceneWidth, sceneHeight } = dimensions();
+  const centerX = cameraOverview ? sceneWidth / 2 : camera.x;
+  const centerY = cameraOverview ? sceneHeight / 2 : camera.y;
+  const x = width / 2 - centerX * scale;
+  const y = height / 2 - centerY * scale;
   $('world').style.transform = `translate(${x}px, ${y}px) scale(${scale})`;
+  physicalPresentation?.projectPrompt({ x, y, scale, width, height });
   $('world').style.setProperty('--world-min-target', `${45 / scale}px`);
   $('world').style.setProperty('--world-label-font', `${12 / scale}px`);
-  $('zoomValue').textContent = `${Math.round(camera.zoom * 100)}%`;
-  $('zoomOut').disabled = camera.zoom <= 1.001;
-  $('zoomIn').disabled = camera.zoom >= 2.199;
-  $('followCats').setAttribute('aria-pressed', String(camera.follow));
-  if (save) {
+  $('zoomValue').textContent = cameraOverview ? '全景' : `${Math.round(camera.zoom * 100)}%`;
+  $('zoomOut').disabled = cameraOverview || camera.zoom <= 1.001;
+  $('zoomIn').disabled = !cameraOverview && camera.zoom >= 2.199;
+  $('cameraOverview')?.setAttribute('aria-pressed', String(cameraOverview));
+  $('followCats').setAttribute('aria-pressed', String(!cameraOverview && camera.follow));
+  if (save && !cameraOverview) {
     clearTimeout(cameraTimer);
     cameraTimer = setTimeout(() => { try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Camera persistence is optional. */ } }, 120);
   }
@@ -513,10 +525,14 @@ function focusCats(announce = false, save = true) {
 
 function zoomAt(next, x = innerWidth / 2, y = innerHeight / 2) {
   hotspotClickIntent.cancel();
+  if (cameraOverview && next <= camera.zoom) return;
   const before = dimensions();
-  const worldX = camera.x + (x - before.width / 2) / before.scale;
-  const worldY = camera.y + (y - before.height / 2) / before.scale;
-  camera.zoom = Math.max(1, Math.min(2.2, next));
+  const centerX = cameraOverview ? before.sceneWidth / 2 : camera.x;
+  const centerY = cameraOverview ? before.sceneHeight / 2 : camera.y;
+  const worldX = centerX + (x - before.width / 2) / before.scale;
+  const worldY = centerY + (y - before.height / 2) / before.scale;
+  camera.zoom = cameraOverview ? 1 : Math.max(1, Math.min(2.2, next));
+  cameraOverview = false;
   const after = dimensions();
   camera.x = worldX - (x - after.width / 2) / after.scale;
   camera.y = worldY - (y - after.height / 2) / after.scale;
@@ -551,7 +567,7 @@ function buildScene() {
   }
   physicalPresentation = mountPhysicalPresentation({ sprites: companionSprites, sceneSpec: physicalScene,
     clickIntent: hotspotClickIntent,
-    onApproach: approachPhysical, onInteract: interactPhysical,
+    onApproach: approachPhysical, onInteract: (_id, opener, target) => interactFromKeyboard(target, opener),
     onActivate: (id, intent) => activatePhysical(id, null, intent), onReturn: returnPhysical,
     onRetry: async () => physicalNotice(await physicalWorld.act({ kind: 'retry-transition' })),
     onSceneChange: view => {
@@ -590,6 +606,7 @@ function renderPhysical(view) {
   const intent = arrivalIntent.take(view);
   if (intent) queueMicrotask(async () => {
     if (!arrivalIntent.current(intent.token) || panel.kind || journeyBusy || runBusy) return;
+    physicalPresentation.selectTarget(intent.hotspotId);
     const done = await interactPhysical(intent.hotspotId);
     if (done && intent.continuation === 'learn') void enterWorkshop();
     else if (done && intent.continuation?.island) void guideToIsland(intent.continuation.island);
@@ -625,6 +642,7 @@ async function approachPhysical(hotspotId, intent = null) {
   arrivalIntent.cancel();
   clearMovement({ cancelIntent: false });
   if (journeyBusy || runBusy || panel.kind || intent && !intent.isCurrent()) return false;
+  physicalPresentation?.selectTarget(hotspotId);
   journeyTimings.approach(hotspotId);
   const request = { sceneId: physicalWorld.view().physicalSceneId, hotspotId, intentId: intent?.intentId,
     promise: physicalWorld.act({ kind: 'approach', hotspotId }) };
@@ -734,7 +752,7 @@ function renderAgentObject(item) {
   root.append(submissions);
 }
 
-async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, opener) {
+async function interactPhysical(hotspotId, opener) {
   arrivalIntent.cancel();
   if (!hotspotId || journeyBusy || runBusy || panel.kind) return false;
   journeyTimings.arrive(hotspotId);
@@ -772,9 +790,7 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, 
     if (item?.uiAction === 'map') {
       const opened = await openPanel('map');
       if (opened) {
-        selectRegion(REGIONS.find(region => region.curriculumIslandId === physicalWorld.view().scene.islandId)?.id);
-        $('regionDetail').hidden = false;
-        $('regionDetail').focus({ preventScroll: true });
+        revealRegionDetails(REGIONS.find(region => region.curriculumIslandId === physicalWorld.view().scene.islandId)?.id);
       }
       return opened;
     }
@@ -790,6 +806,7 @@ async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, 
 }
 
 async function activatePhysical(hotspotId, continuation = null, intent = null) {
+  physicalPresentation?.selectTarget(hotspotId);
   const token = arrivalIntent.cancel();
   clearMovement({ cancelIntent: false });
   if (!hotspotId || journeyBusy || runBusy || panel.kind || intent && !intent.isCurrent()) return false;
@@ -843,6 +860,10 @@ async function walkToPlace(id, intent = null) {
 
 async function walkToGround(point) {
   if (panel.kind || journeyBusy || runBusy) return false;
+  if (cameraOverview) {
+    const { sceneWidth, sceneHeight } = dimensions();
+    if (point.x < 0 || point.x > sceneWidth || point.y < 0 || point.y > sceneHeight) return false;
+  }
   physicalPresentation?.clearSelection();
   arrivalIntent.cancel(); clearMovement();
   const outcome = await physicalWorld.act({ kind: 'groundWalk', point });
@@ -1341,7 +1362,7 @@ function renderRegions() {
   $('atlasPins').replaceChildren();
   for (const region of REGIONS) {
     const access = islandAccess({islandId:region.curriculumIslandId,envelope:session.snapshot().envelope,physical:physicalWorld?.view()});
-    const button = document.createElement('button'); button.type = 'button'; button.className = 'region-button'; button.dataset.region = region.id;
+    const button = document.createElement('button'); button.type = 'button'; button.className = 'region-button paper-selection'; button.dataset.region = region.id;
     const copy = document.createElement('span'); const name = document.createElement('strong'); name.textContent = region.name;
     const topic = document.createElement('small'); topic.textContent = region.topic; copy.append(name, topic);
     const courseIds = regionCourseIds(region), runnable = courseIds.filter(id => session.accessOf(id).canRun).length;
@@ -1367,11 +1388,10 @@ function renderRegions() {
 
 function revealRegionDetails(id) {
   selectRegion(id);
-  const detail = $('regionDetail');
   $('regionMenu').open = false;
-  detail.hidden = false;
+  atlasDetails.show();
   atlasView.refreshDetails(document.querySelector(`[data-map-region="${panel.regionId}"]`));
-  detail.focus({ preventScroll: true });
+  atlasDetails.focus();
 }
 
 function closeRegionDetails() {
@@ -1530,13 +1550,17 @@ window.addEventListener('pointermove', event => {
   if (pointers.size >= 2) {
     if (gesture.kind !== 'pinch') gesture = { kind: 'pinch', distance: pointDistance(), zoom: camera.zoom };
     const points = [...pointers.values()];
-    zoomAt(gesture.zoom * pointDistance() / Math.max(1, gesture.distance), (points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
+    const distance = pointDistance();
+    const wasOverview = cameraOverview;
+    zoomAt(gesture.zoom * distance / Math.max(1, gesture.distance), (points[0].x + points[1].x) / 2, (points[0].y + points[1].y) / 2);
+    if (wasOverview && !cameraOverview) gesture = { kind: 'pinch', distance, zoom: camera.zoom };
     clickGuard.drag();
   } else if (gesture.kind === 'pan' && event.pointerId === gesture.pointer) {
     const dx = event.clientX - gesture.x, dy = event.clientY - gesture.y;
     if (!gesture.moved && Math.hypot(dx, dy) < 6) return;
     hotspotClickIntent.cancel();
     gesture.moved = true;
+    if (cameraOverview) { clickGuard.drag(); return; }
     const { scale } = dimensions();
     camera.x = gesture.cameraX - dx / scale; camera.y = gesture.cameraY - dy / scale; camera.follow = false;
     $('viewport').classList.add('dragging');
@@ -1574,7 +1598,7 @@ $('viewport').addEventListener('keydown', event => {
     if (event.shiftKey) {
       groundAim = moveTerrainAim(groundAim, event.key, dimensions()) || groundAim;
       $('groundAim').style.left = `${groundAim.x*100}%`; $('groundAim').style.top = `${groundAim.y*100}%`;
-    } else { camera.x += pan[0] / dimensions().scale; camera.y += pan[1] / dimensions().scale; camera.follow = false; drawCamera(); }
+    } else if (!cameraOverview) { camera.x += pan[0] / dimensions().scale; camera.y += pan[1] / dimensions().scale; camera.follow = false; drawCamera(); }
   }
   if (event.key === 'Home') { event.preventDefault(); hotspotClickIntent.cancel(); groundAim = {x:.5,y:.5}; $('groundAim').style.left = '50%'; $('groundAim').style.top = '50%'; }
   if (event.key === '+' || event.key === '=') { event.preventDefault(); zoomAt(camera.zoom + .15); }
@@ -1599,15 +1623,18 @@ function stopKeyboardMovement() {
   clearMovement();
   if (wasMoving && physicalWorld) void physicalWorld.act({ kind: 'stop' });
 }
-async function interactFromKeyboard() {
-  const view = physicalWorld.view(), hotspotId = view.nearby[0]?.id;
+async function interactFromKeyboard(expected = null, opener) {
+  const view = physicalWorld.view(), target = physicalPresentation?.interactionTarget(view);
+  if (expected && (!target || target.id !== expected.id || target.sceneId !== expected.sceneId || target.leader !== expected.leader)) return false;
+  const hotspotId = target?.id;
   clearMovement();
   const token = keyboardInteractionEpoch;
   await stopWalking();
   const current = physicalWorld.view();
   if (!hotspotId || token !== keyboardInteractionEpoch || heldMovement.size ||
-      current.physicalSceneId !== view.physicalSceneId || !current.nearby.some(item => item.id === hotspotId)) return false;
-  return interactPhysical(hotspotId);
+      current.physicalSceneId !== view.physicalSceneId || current.leader !== view.leader ||
+      physicalPresentation?.interactionTarget(current)?.id !== hotspotId) return false;
+  return interactPhysical(hotspotId, opener);
 }
 async function steerFrame(time) {
   steeringFrame = null;
@@ -1619,8 +1646,8 @@ async function steerFrame(time) {
   if (heldMovement.size) steeringFrame = requestAnimationFrame(steerFrame);
 }
 $('viewport').addEventListener('keydown', event => {
-  if (event.target !== $('viewport') || event.isComposing || event.keyCode === 229 || event.ctrlKey || event.metaKey || event.altKey || panel.kind) return;
-  const key = mapMovementKey(event.key, preferences.value.keyboard);
+  if ((event.target !== $('viewport') && !event.target.closest?.('.physical-hotspot, .physical-interact')) || event.isComposing || event.keyCode === 229 || event.ctrlKey || event.metaKey || event.altKey || panel.kind) return;
+  const key = event.target === $('viewport') ? mapMovementKey(event.key, preferences.value.keyboard) : null;
   if (key && !(preferences.value.keyboard === 'arrows' && event.shiftKey)) {
     ++keyboardInteractionEpoch;
     event.preventDefault(); hotspotClickIntent.cancel(); arrivalIntent.cancel(); physicalPresentation?.clearSelection(); heldMovement.add(key); camera.follow = true;
@@ -1633,14 +1660,19 @@ window.addEventListener('keyup', event => {
   if (!heldMovement.delete(mapMovementKey(event.key, preferences.value.keyboard))) return;
   if (!heldMovement.size) { clearMovement(); void stopWalking(); }
 });
-window.addEventListener('blur', stopKeyboardMovement);
-document.addEventListener('visibilitychange', () => { if (document.hidden) stopKeyboardMovement(); });
+window.addEventListener('blur', () => { stopKeyboardMovement(); physicalPresentation?.clearSelection(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden) { stopKeyboardMovement(); physicalPresentation?.clearSelection(); } });
 $('viewport').addEventListener('focusout', event => {
   if (!$('viewport').contains(event.relatedTarget)) stopKeyboardMovement();
 });
 $('zoomIn').addEventListener('click', () => zoomAt(camera.zoom + .15));
 $('zoomOut').addEventListener('click', () => zoomAt(camera.zoom - .15));
-$('followCats').addEventListener('click', () => focusCats(true));
+$('cameraOverview')?.addEventListener('click', () => {
+  hotspotClickIntent.cancel();
+  cameraOverview = !cameraOverview;
+  if (!cameraOverview && camera.follow) focusCats(false, false); else drawCamera(false);
+});
+$('followCats').addEventListener('click', () => { cameraOverview = false; focusCats(true); });
 $('showTerrain').addEventListener('click', () => {
   const visible = $('terrainOverlay').hasAttribute('hidden');
   $('terrainOverlay').toggleAttribute('hidden', !visible);
@@ -1871,7 +1903,7 @@ for (const id of ['reloadSaved','reloadEditorSaved']) $(id).addEventListener('cl
 
 document.addEventListener('keydown', event => {
   if (event.isComposing || event.keyCode === 229) return;
-  if (event.key === 'Escape') ++keyboardInteractionEpoch;
+  if (event.key === 'Escape') { ++keyboardInteractionEpoch; physicalPresentation?.clearSelection(); }
   if (event.key === 'Escape' && (physicalWorld?.view().phase === 'walking' || heldMovement.size || hotspotClickIntent.pending())) { event.preventDefault(); clearMovement(); void stopWalking(true); return; }
   if (!panel.kind && event.key === 'Escape' && $('cameraDetails').open) { event.preventDefault(); $('cameraDetails').open = false; $('cameraSummary').focus(); return; }
   if (!panel.kind) return;

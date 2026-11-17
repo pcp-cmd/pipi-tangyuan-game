@@ -99,7 +99,7 @@ export function mountLighthousePanel({ root, lessons, session, latestResult, onV
     root.querySelector('#reviewCount').textContent = `${matches.length} / ${lessons.length} 课`;
     list.replaceChildren();
     for (const item of matches) {
-      const row = el(doc, 'li'), button = el(doc, 'button', 'review-course'); button.type = 'button'; button.dataset.reviewLesson = item.id; button.setAttribute('aria-pressed', String(item.id === selectedId));
+      const row = el(doc, 'li'), button = el(doc, 'button', 'review-course paper-selection'); button.type = 'button'; button.dataset.reviewLesson = item.id; button.setAttribute('aria-pressed', String(item.id === selectedId));
       const art = el(doc, 'img', 'course-context-art'); art.src = item.contextArt.src; art.alt = ''; art.loading = 'lazy';
       const copy = el(doc, 'span'); copy.append(el(doc, 'strong', '', `${String(learningOrdinal(lessons, item.id)).padStart(2, '0')} · ${item.title}`), el(doc, 'small', '', `${item.status.label} · ${item.accessLabel}`)); button.append(art, copy);
       button.addEventListener('click', () => { selectedId = item.id; render(); }); row.append(button); list.append(row);

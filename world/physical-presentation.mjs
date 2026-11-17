@@ -1,3 +1,4 @@
+import { mountInteractionPrompt } from './interaction-prompt.mjs';
 import { createObjectGlow } from './object-glow.mjs';
 import { worldGazeAngle } from './pets-frame-adapter.mjs';
 import { physicalFootAnchor } from './physical-cats.mjs';
@@ -18,22 +19,25 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
   const hotspots = doc.createElement('div'); hotspots.id = 'physicalHotspots'; world.append(hotspots);
   const foreground = doc.createElement('div'); foreground.id = 'physicalForeground'; foreground.setAttribute('aria-hidden', 'true'); world.append(foreground);
   const actions = doc.createElement('nav'); actions.className = 'physical-actions'; actions.setAttribute('aria-label', '场景互动');
-  const interact = doc.createElement('button'); interact.id = 'physicalInteract'; interact.type = 'button'; interact.className = 'physical-interact'; interact.hidden = true;
-  const interactKey = doc.createElement('kbd'); interactKey.textContent = 'E'; interactKey.setAttribute('aria-hidden','true');
-  const interactLabel = doc.createElement('span'); interactLabel.className = 'physical-action-label'; interact.append(interactKey,interactLabel);
+  const prompt = mountInteractionPrompt({ document: doc, viewport: doc.getElementById('viewport'), onActivate: (target, button) => onInteract(target.id, button, target) });
   const back = doc.createElement('button'); back.id = 'physicalReturn'; back.type = 'button'; back.className = 'physical-return'; back.hidden = true;
   const save = doc.createElement('p'); save.id = 'physicalSaveStatus'; save.setAttribute('role', 'status'); save.className = 'physical-save-status'; save.hidden = true;
   const retry = doc.createElement('button'); retry.type = 'button'; retry.className = 'physical-retry'; retry.textContent = '重试进入'; retry.hidden = true;
   retry.addEventListener('click', () => { clickIntent.cancel(); void onRetry(); });
-  actions.append(back, interact, retry); host.append(actions, save);
+  actions.append(back, retry); host.append(actions, save);
   const cueSelection=createObjectCueSelection();
   let latest = null, currentScene = null;
-  function clearSelection() { cueSelection.clear(); updateSelection(); }
+  function clearSelection() { cueSelection.clear(); prompt.cancel(); updateSelection(); }
+  function interactionTarget(view = latest) { return view ? cueSelection.resolve(view) : null; }
+  function selectTarget(id) { cueSelection.select(id); updateSelection(); }
   function updateSelection() {
-    const {active,selected}=cueSelection.view();
-    for (const object of hotspots.querySelectorAll('.physical-object')) {object.dataset.active=String(object.dataset.objectId===active);object.dataset.selected=String(object.dataset.objectId===selected);}
+    const target = interactionTarget();
+    for (const object of hotspots.querySelectorAll('.physical-object')) {
+      object.dataset.active = String(object.dataset.objectId === target?.id);
+      object.dataset.selected = String(object.dataset.objectId === target?.id);
+    }
+    prompt.update(target, latest?.hotspots.find(item => item.id === target?.id));
   }
-  interact.addEventListener('click', () => { clickIntent.cancel(); const item = latest?.nearby[0]; if (item) void onInteract(item.id); });
   back.addEventListener('click', () => { clickIntent.cancel(); void onReturn(); });
   const updateAnchor = cat => {
     const actor = actorNodes[cat], art = actor.querySelector('.cat-art');
@@ -114,7 +118,9 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
       const select = (action,intent) => { cueSelection.select(item.id); updateSelection(); return action(item.id,intent); };
       button.addEventListener('pointerdown', () => { cueSelection.select(item.id); updateSelection(); });
       clickIntent.bind(button, { approach: intent => select(onApproach,intent), activate: intent => select(onActivate,intent) });
-      object.append(button); hotspots.append(object);
+      const focusLabel = doc.createElement('span'); focusLabel.className = 'physical-focus-label'; focusLabel.textContent = item.label; focusLabel.setAttribute('aria-hidden', 'true');
+      focusLabel.style.left = `${item.x}px`; focusLabel.style.top = `${item.y}px`;
+      object.append(button, focusLabel); hotspots.append(object);
     }
     foreground.replaceChildren();
     for (const mask of spec?.occluders ?? []) {
@@ -140,10 +146,7 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
       sprites.setMotion?.(cat, { moving: Boolean(pose.moving), facing: pose.facing });
       updateAnchor(cat);
     }
-    const nearest = view.nearby[0];
-    interact.hidden = !nearest || !['ready','walking'].includes(view.phase);
-    interactLabel.textContent = nearest?.label ?? '';
-    interact.setAttribute('aria-label',nearest?`E：${nearest.label}`:'场景互动');
+    updateSelection();
     back.hidden = !view.returnAvailable;
     back.textContent = view.scene.legacyPreview ? '回到来处' : '走向出口';
     back.disabled = ['loading','asset-blocked','transitioning','suspended','recovery-required'].includes(view.phase);
@@ -156,6 +159,6 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
     doc.getElementById('stopRoam').disabled = !moving;
     doc.getElementById('roamStatus').textContent = moving ? '两位伙伴正在走路' : '';
   }
-  function dispose() { clickIntent.dispose(); observer.disconnect(); terrain.dispose(); actions.remove(); save.remove(); hotspots.remove(); foreground.remove(); }
-  return Object.freeze({ render, clearSelection, refreshTerrain: terrain.refresh, dispose });
+  function dispose() { clickIntent.dispose(); observer.disconnect(); terrain.dispose(); prompt.dispose(); actions.remove(); save.remove(); hotspots.remove(); foreground.remove(); }
+  return Object.freeze({ render, clearSelection, selectTarget, interactionTarget, projectPrompt: prompt.project, refreshTerrain: terrain.refresh, dispose });
 }
