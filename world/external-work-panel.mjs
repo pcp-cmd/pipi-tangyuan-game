@@ -86,7 +86,7 @@ function mountAssignmentPanel({ root, session, download, browseCourse, canWrite,
   const localHelp = make('details'); localHelp.append(make('summary', '在 VS Code 做完后，带回哪份结果？'));
   localHelp.append(make('p', '在自己的工程目录运行下载工具，生成 LOCAL-CHECK.json。将它和对应源码、测试一同选入材料；改稿后重跑。游戏只核对报告与材料，不执行上交代码。'));
   localHelp.append(make('pre', `python -B "检查工具目录/local-check.py" --task ${assignment.id} --project .`));
-  localHelp.append(make('p', '本次测试无失败、无跳过、进程正常结束且运行期间未改稿，才显示本机自测通过；测试是否充分、可信审核与独立能力仍单独确认。'));
+  localHelp.append(make('p', 'AE26 工程作品另行审核；课堂通过不等于实际掌握。本次测试无失败、无跳过、进程正常结束且运行期间未改稿，才显示本机自测通过；测试是否充分、可信审核与独立能力仍单独确认。'));
   const readings = make('details'); readings.hidden = !assignment.readingUrls?.length;
   readings.append(make('summary', '工程学习手册'));
   const chapters = make('ol'); readings.append(chapters);

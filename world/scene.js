@@ -1,3 +1,4 @@
+import { journeyTimings } from './interaction-timing.mjs';
 import {serviceJournalPage} from './service-buildings.mjs';
 import { renderCourseLearning, presentRunChecks } from './course-learning-view.mjs';
 import { mountLandmarkSign } from './landmark-signs.mjs';
@@ -31,6 +32,7 @@ import { GestureClickGuard } from './gesture-click-guard.js';
 import { readDiscoveries, visitPlace, loadDiscoveryStorage, saveDiscoveryStorage } from './exploration-model.js';
 import { planIndentation, planContinuedIndentation } from './editor-helpers.mjs';
 import { createCompanionSprites } from './pets-renderer.mjs';
+import { mountCompanionRecovery } from './companion-recovery.mjs';
 import { mountCompanionInput } from './companion-input.mjs';
 import { externalAssignment } from '../integration/external-work.mjs';
 import { createReferencePreview } from './reference-preview.mjs';
@@ -102,6 +104,8 @@ let toastTimer;
 let cameraTimer;
 let moveTimer;
 let companionSprites = null;
+const companionRecovery = mountCompanionRecovery({ root: $('companionRecovery'), message: $('companionRecoveryMessage'),
+  retry: $('retryCompanionArt'), onRetry: () => companionSprites.retry() });
 let companionInput = null, companionRun = null, externalWorkPanel = null, classroomGraduation = null;
 let sceneKeyboardFocus = null;
 let physicalWorld = null, physicalPresentation = null, panelSpaceRelease = null, canopyWind = null;
@@ -530,7 +534,7 @@ function buildScene() {
     actors: Object.fromEntries(['pipi', 'tangyuan'].map(cat => [cat, $(`${cat}Actor`).querySelector('.cat-art')])),
     portraits: Object.fromEntries(['pipi', 'tangyuan'].map(cat => [cat, $(`${cat}Portrait`).parentElement])),
     surfaces: { workbench: { pipi: $('workbenchPipiSlot'), tangyuan: $('workbenchTangyuanSlot') } },
-    mediaQuery: reducedMotion, sceneVisible: true,
+    mediaQuery: reducedMotion, sceneVisible: true, onStatus: companionRecovery.update,
   });
   companionInput = mountCompanionInput({ root: $('panel'), sprites: companionSprites,
     visibleSlots: companionSlots, context: () => companionSprites.contextToken(), canGreet: () => !runBusy && !journeyBusy });
@@ -549,6 +553,7 @@ function buildScene() {
     clickIntent: hotspotClickIntent,
     onApproach: approachPhysical, onInteract: interactPhysical,
     onActivate: (id, intent) => activatePhysical(id, null, intent), onReturn: returnPhysical,
+    onRetry: async () => physicalNotice(await physicalWorld.act({ kind: 'retry-transition' })),
     onSceneChange: view => {
       mailboxNote?.reset(); paperControls?.close(); approachRequest = null;
       camera = { x: view.scene.width / 2, y: view.scene.height / 2, zoom: 1, follow: true };
@@ -578,7 +583,7 @@ function renderPhysical(view) {
     renderedPhysicalScene = view.physicalSceneId;
     updateQuest();
     syncCompanionPresentation();
-    if (wasVisible && !panel.kind) presentationTransitions.enter('scene', [$('world')]);
+    if (wasVisible && !panel.kind) presentationTransitions.playTransition('sceneEnter', [$('world')]);
   }
   if (camera.follow) focusCats(false, false); else drawCamera(false);
   $('groundTarget').hidden = true;
@@ -602,6 +607,7 @@ async function stopWalking(announce = false) {
   const moving = physicalWorld?.view().phase === 'walking';
   if (physicalWorld) await physicalWorld.act({ kind: 'stop' });
   $('groundTarget').hidden = true;
+  if (moving) journeyTimings.cancelTravel();
   if (moving && announce) toast('伙伴停下了。');
   return moving;
 }
@@ -619,6 +625,7 @@ async function approachPhysical(hotspotId, intent = null) {
   arrivalIntent.cancel();
   clearMovement({ cancelIntent: false });
   if (journeyBusy || runBusy || panel.kind || intent && !intent.isCurrent()) return false;
+  journeyTimings.approach(hotspotId);
   const request = { sceneId: physicalWorld.view().physicalSceneId, hotspotId, intentId: intent?.intentId,
     promise: physicalWorld.act({ kind: 'approach', hotspotId }) };
   approachRequest = request;
@@ -672,6 +679,11 @@ function renderAgentObject(item) {
   };
   $('inspectionText').textContent = explanations[item.ae26Purpose] || '';
   const root = $('inspectionCourses'); root.replaceChildren();
+  const courseGroup = document.createElement('fieldset'); courseGroup.className = 'inspection-group';
+  const courseLegend = document.createElement('legend'); courseLegend.textContent = '课程实践'; courseGroup.append(courseLegend);
+  const projectGroup = document.createElement('fieldset'); projectGroup.className = 'inspection-group';
+  const projectLegend = document.createElement('legend'); projectLegend.textContent = '独立工程'; projectGroup.append(projectLegend);
+  root.append(courseGroup, projectGroup);
   for (const id of item.lessonIds || []) {
     const lesson = lessons.find(value => value.id === id);
     if (!lesson) continue;
@@ -680,7 +692,7 @@ function renderAgentObject(item) {
     button.textContent = lesson.title;
     button.setAttribute('aria-label', `${lesson.title} · ${canStart ? '开始实践' : '查看课程'}`);
     button.addEventListener('click', () => session.accessOf(id).canSelect ? chooseLesson(lessonIds.indexOf(id), button) : browseCourse(id, button));
-    root.append(button);
+    courseGroup.append(button);
   }
   const projects = {
     messages: ['durable-dispatch'],
@@ -697,8 +709,10 @@ function renderAgentObject(item) {
         await openExternalTask(taskId);
       }
     });
-    root.append(button);
+    projectGroup.append(button);
   }
+  courseGroup.hidden = courseGroup.children.length === 1;
+  projectGroup.hidden = projectGroup.children.length === 1;
   if (item.ae26Purpose !== 'records') return;
   const attempts = Object.entries(session.snapshot().envelope?.records || {}).flatMap(([id, record]) =>
     (record.attempts || []).map(attempt => ({ ...attempt, id }))
@@ -723,6 +737,7 @@ function renderAgentObject(item) {
 async function interactPhysical(hotspotId = physicalWorld.view().nearby[0]?.id, opener) {
   arrivalIntent.cancel();
   if (!hotspotId || journeyBusy || runBusy || panel.kind) return false;
+  journeyTimings.arrive(hotspotId);
   const outcome = await physicalWorld.act({ kind: 'interact', hotspotId });
   physicalNotice(outcome);
   if (outcome.status === 'done') {
@@ -798,6 +813,7 @@ async function activatePhysical(hotspotId, continuation = null, intent = null) {
     if (done && continuation?.island) return guideToIsland(continuation.island);
     return done;
   }
+  journeyTimings.approach(hotspotId);
   const outcome = physicalNotice(await physicalWorld.act({ kind: 'approach', hotspotId }));
   if (!arrivalIntent.current(token) || intent && !intent.isCurrent() || outcome.status !== 'started') return false;
   arrivalIntent.arm({ token, sceneId: view.physicalSceneId, hotspotId, movementId: outcome.movementId, continuation });
@@ -1008,8 +1024,10 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
   $('viewport').inert = modalPanel();
   document.body.dataset.panel = kind;
   if (kind === 'workshop') {
+    const editorReady = journeyTimings.span(physicalWorld.view().physicalSceneId, 'editor');
     if (!lessonContentReady || renderedEditorLessonId !== lessons[state.mission].id) renderLesson();
     else renderWorkbenchChoice();
+    editorReady('ready');
     void prepareRuntime();
   }
   if (kind === 'lighthouse') lighthousePanel.render({ resetSelection: changed });
@@ -1027,7 +1045,7 @@ async function openPanel(kind, opener = document.activeElement, suppliedToken = 
     const scroll = $(`${kind}Panel`).querySelector('.panel-scroll');
     if (scroll) scroll.scrollTop = 0;
     $('closePanel').focus({ preventScroll: true });
-    presentationTransitions.enter('panel', kind === 'workshop'
+    presentationTransitions.playTransition('panelEnter', kind === 'workshop'
       ? [$('workbenchTask'), $('workbenchCode'), $('workbenchResult')] : [$(`${kind}Panel`)]);
   }
   syncCompanionPresentation();
@@ -1044,7 +1062,8 @@ async function closePanel(options = {}) {
   if (!await flushForNavigation(token)) return false;
   if (typeof options.allowClose === 'function' && !options.allowClose()) return false;
   mailboxNote?.reset(); paperControls?.close();
-  presentationTransitions.cancel('panel');
+  if (panel.kind) await presentationTransitions.playTransition('panelExit', [$(`${panel.kind}Panel`)]);
+  if (token !== navigation || journeyBusy) return false;
   panel.kind = null;
   $('panel').hidden = true;
   document.body.classList.remove('panel-open', 'map-open');
@@ -1060,11 +1079,12 @@ async function closePanel(options = {}) {
 }
 
 async function prepareRuntime(force = false) {
+  const pythonReady = journeyTimings.span(physicalWorld?.view().physicalSceneId ?? 'workshop', 'python');
   const waiting = panel.kind === 'workshop' && !runBusy ? companionSprites?.beginWait?.(syncCompanionPresentation()) : null;
   try {
     if (!runtimeImport) runtimeImport = import(`../integration/runtime-controller.mjs${runtimeImportRetry ? `?retry=${runtimeImportRetry}` : ''}`);
     runtimeModule = await runtimeImport;
-    if (panel.kind !== 'workshop') return;
+    if (panel.kind !== 'workshop') { pythonReady('cancelled'); return; }
     if (force && runtime) { runtime.dispose(); runtime = null; }
     if (!runtime) {
       runtime = runtimeModule.createRuntime({ onStatus: status => {
@@ -1077,7 +1097,9 @@ async function prepareRuntime(force = false) {
       } });
     }
     await runtime.prepare();
+    pythonReady(runtimePhase === 'ready' ? 'ready' : runtimePhase);
   } catch {
+    pythonReady('failed');
     runtimeImport = null;
     runtimeImportRetry++;
     runtimePhase = 'failed';
@@ -1293,17 +1315,20 @@ function loadMapImage() {
   $('retryMapImage').hidden = true;
   map.closest('.atlas-art').setAttribute('aria-busy', 'true');
   map.src = map.dataset.src;
+  atlasView.resize();
 }
 
 $('atlasBackground').addEventListener('load', () => {
   $('mapLoadNotice').hidden = true;
   $('atlasBackground').closest('.atlas-art').setAttribute('aria-busy', 'false');
+  atlasView.resize();
 });
 $('atlasBackground').addEventListener('error', () => {
   $('mapLoadNotice').hidden = false;
   $('mapLoadMessage').textContent = '地图图片暂未载入，可展开左上角的地区列表。';
   $('retryMapImage').hidden = false;
   $('atlasBackground').closest('.atlas-art').setAttribute('aria-busy', 'false');
+  atlasView.resize();
 });
 $('retryMapImage').addEventListener('click', loadMapImage);
 
@@ -1899,7 +1924,7 @@ window.addEventListener('pagehide', event => {
   ++navigation; clearMovement(); void stopWalking();
   if (!event.persisted) pageDisposed = true;
   if (event.persisted) { cancelRun(); void session.flush(); }
-  else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages?.dispose(); mailboxNote?.dispose(); paperControls?.dispose(); recoveryPanel?.dispose(); startupRecovery?.dispose(); hotspotClickIntent.dispose(); physicalWorld?.dispose(); physicalPresentation?.dispose(); session.dispose(); }
+  else { canopyWind?.dispose(); preferences.dispose(); learningWorkbench.dispose(); presentationTransitions.dispose(); companionInput?.dispose(); companionRecovery.dispose(); companionSprites?.dispose(); externalWorkPanel?.dispose(); classroomGraduation?.dispose(); journalPages?.dispose(); journalExplorer?.dispose(); mailboxNote?.dispose(); paperControls?.dispose(); recoveryPanel?.dispose(); startupRecovery?.dispose(); hotspotClickIntent.dispose(); physicalWorld?.dispose(); physicalPresentation?.dispose(); session.dispose(); }
   try { journeyStorage.setItem(CAMERA_KEY, JSON.stringify(camera)); } catch { /* Optional camera state. */ }
 });
 window.addEventListener('pageshow', event => {
@@ -1944,13 +1969,16 @@ async function initializeScene() {
     },
     synchronizeLeader: () => physicalWorld.view().leader === state.activeCat
       ? Promise.resolve({ status: 'done' }) : physicalWorld.act({ kind: 'leader', cat: state.activeCat }),
-    prepareControls: () => {
+    prepareControls: async () => {
       const lesson = lessons[state.mission];
       $('codeEditor').value = state.drafts[lesson.id] ?? lesson.starter;
       $('codeEditor').maxLength = MAX_CODE;
       renderedEditorLessonId = lesson.id;
       assisted = session.snapshot().envelope?.draftAssistance[lesson.id] === true;
       buildScene(); updateProgress();
+      const readiness = await companionSprites.whenPlayable();
+      if (pageDisposed || readiness.status === 'disposed') throw new Error('页面已关闭。');
+      companionRecovery.update(readiness);
       if (camera.follow) focusCats(false, false); else drawCamera(false);
       initialized = true; syncControls();
       previousViewport = { width: innerWidth, height: innerHeight };
@@ -1967,3 +1995,5 @@ async function initializeScene() {
 }
 
 export const startupResult = await initializeScene();
+
+$('viewport').addEventListener('dragstart', event => { if (event.target instanceof HTMLImageElement || event.target.closest?.('.physical-object-glow')) event.preventDefault(); });

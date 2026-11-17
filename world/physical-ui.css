@@ -10,13 +10,9 @@
 .physical-hotspot:is(:hover,:focus-visible,.within-reach){outline:0;border:0;background:transparent;box-shadow:none}
 .physical-hotspot[data-hitbox="true"]{transform:none}
 .physical-object{display:contents}
-.physical-object-cue{position:absolute;inset:0;width:100%;height:100%;overflow:hidden;pointer-events:none;opacity:0;filter:none;transition:opacity 80ms ease}
-.physical-object-cue polygon{fill:#fff2cc22;stroke:#f4dbab;stroke-width:1.2;stroke-linejoin:round}
 .physical-hotspot[data-object-shape="true"]{transform:none;border:0;border-radius:0;background:transparent;cursor:pointer;padding:0}
 .physical-hotspot[data-object-shape="true"]::after{display:none}
 .physical-hotspot[data-object-shape="true"]:is(:hover,:focus-visible,.within-reach){background:transparent;border:0;outline:0;box-shadow:none}
-.physical-object[data-active="true"] .physical-object-cue{opacity:.92}
-.physical-object[data-active="true"]:has(.physical-hotspot:focus-visible) .physical-object-cue polygon{stroke-dasharray:3 2;stroke-width:1.8}
 .physical-actions{position:absolute;z-index:12;left:50%;bottom:26px;transform:translateX(-50%);display:flex;gap:12px;max-width:65%;align-items:center}
 .physical-actions button{display:flex;align-items:center;gap:10px;min-height:44px;padding:8px 15px;border:2px solid #704a2e;border-radius:3px 7px 6px 3px;background:var(--journal-grain) center/256px repeat #c6955b;color:#392719;font:15px/1.4 var(--ui);box-shadow:inset 0 1px #ebc58b,inset 0 -2px #a77944,0 3px 4px #17222335;text-shadow:0 1px #e9c38c;white-space:nowrap}
 .physical-actions .physical-interact{font-weight:700}
@@ -35,6 +31,4 @@ body.panel-open .physical-actions{visibility:hidden}
 .journey-start-error{position:fixed;inset:12% 10%;z-index:180;background:#ede1c0;color:#273a2d;padding:32px;overflow:auto;font:16px/1.8 var(--ui)}
 .journey-start-error button{margin:16px 12px 0 0;padding:12px 20px;background:#31513b;color:#fff1cd;border-radius:4px}
 .result-notes{font:13px/1.7 var(--ui);color:var(--muted);white-space:pre-line;margin-block:10px}
-@media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none;text-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions :is(kbd,.physical-return::before){color:ButtonText}.physical-object-cue polygon{fill:none;stroke:Highlight}}
-html[data-motion="reduced"] .physical-object-cue{transition:none}
-@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .physical-object-cue{transition:none}}
+@media(forced-colors:active){.physical-actions :is(button,.physical-interact){border:2px solid ButtonText;background:ButtonFace;color:ButtonText;box-shadow:none;text-shadow:none}.physical-actions button:focus-visible{outline-color:Highlight}.physical-actions :is(kbd,.physical-return::before){color:ButtonText}}

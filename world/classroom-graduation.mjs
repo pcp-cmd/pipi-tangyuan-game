@@ -4,12 +4,12 @@ export function mountClassroomGraduation({root, session, browseCourse, download}
   const create = (tag, className, text = '') => {
     const node = document.createElement(tag); node.className = className; node.textContent = text; return node;
   };
-  const kicker = create('p', 'classroom-graduation-kicker', '课堂结业');
+  const kicker = create('p', 'classroom-graduation-kicker', '旅程目标');
   const title = create('h3', 'classroom-graduation-title', '海神大使');
   const status = create('p', 'classroom-graduation-status');
   status.setAttribute('role', 'status'); status.setAttribute('aria-live', 'polite');
   const progress = create('p', 'classroom-graduation-progress');
-  const scope = create('p', 'classroom-graduation-scope', 'AE26 工程作品另行审核；课堂通过不等于实际掌握。');
+  const scope = create('p', 'classroom-graduation-scope', '与皮皮和汤圆走过群岛，把每一次独立解题留在旅途中。');
   const actions = create('div', 'classroom-graduation-actions');
   const next = create('button', 'classroom-graduation-next', '继续练习');
   const retry = create('button', 'classroom-graduation-retry', '重试保存');

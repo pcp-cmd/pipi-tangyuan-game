@@ -1,0 +1,30 @@
+{
+  "pipi": {
+    "source": "world/assets/pets/pipi-original-v2.png",
+    "sourceSha256": "6fff745acc4f50a7bb434a3ca348d2c2f63bc7f8670794fc53fd7464a5f3e603",
+    "output": "world/assets/pets/pipi-idle-v2.png",
+    "sha256": "f89618927362a41b0ae043d662bcc08f2325bbb502518dbf55cee46b25445190",
+    "bytes": 61839,
+    "rect": [
+      0,
+      0,
+      192,
+      208
+    ],
+    "comparison": "All RGBA bytes including transparent-pixel RGB are exact."
+  },
+  "tangyuan": {
+    "source": "world/assets/pets/tangyuan-original-v2.png",
+    "sourceSha256": "dee5545c7693afe9de8fd4ec21a27facc2fc9872fb805adf88d816808fa646fa",
+    "output": "world/assets/pets/tangyuan-idle-v2.png",
+    "sha256": "5577e00f589103962a71e73bcb6b7356ed11823e1ebbe3bf1899fe405faa3671",
+    "bytes": 58400,
+    "rect": [
+      0,
+      0,
+      192,
+      208
+    ],
+    "comparison": "All RGBA bytes including transparent-pixel RGB are exact."
+  }
+}

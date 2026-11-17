@@ -435,8 +435,8 @@
 #journalPanel .journal-stats > span + span { border: 0; padding-left: 0; }
 #journalPanel .journal-stats strong { color: #855839; }
 #journalPanel .journal-stats small { color: #977a55; font-size: var(--text-small); }
-.discovery-photo { margin: 0 5px 22px; padding: 7px 7px 11px; background: #fff5d8; box-shadow: 1px 4px 6px #6b4a2f40; transform: rotate(-1deg); }
-.discovery-photo img { display: block; width: 100%; height: 190px; object-fit: contain; }
+.discovery-photo { width: fit-content; max-width: 100%; margin: 0 5px 22px; padding: 4px 4px 6px; background: #fff5d8; box-shadow: 1px 4px 6px #6b4a2f40; transform: rotate(-1deg); }
+.discovery-photo img { display: block; max-width: 100%; width: auto; max-height: 240px; height: auto; }
 .discovery-photo figcaption { color: #695337; text-align: center; margin-top: 7px; font-size: var(--text-small); }
 #journalPanel .discovery-journal { padding: 5px 0 16px; margin: 0; border: 0; }
 #journalPanel .history-details { padding: 8px 12px 10px; background: #faeccc75; box-shadow: 1px 3px 4px #76533220; }
@@ -528,7 +528,12 @@ html[data-motion='reduced'] :is(.top-right .hud-button:hover, #journalTabs butto
 .review-course[aria-pressed='true'] strong { font-weight: 700; }
 .review-course-heading .course-context-art { width: 128px; height: 128px; }
 .review-current-result pre { background: #e2d2ad; color: #334735; }
-.inspection-courses { display: flex; flex-wrap: wrap; gap: 12px; }
+.inspection-courses { display: grid; gap: 20px; }
+.inspection-group { min-width: 0; margin: 0; padding: 0; border: 0; display: grid; gap: 10px; }
+.inspection-group[hidden] { display: none; }
+.inspection-group legend { margin-bottom: 10px; color: #5b402a; font-weight: 650; }
+.inspection-group button { text-align: left; width: 100%; }
+#inspectionJournal { margin-top: 24px; }
 .inspection-courses .agent-recent-records { flex-basis: 100%; padding-left: 20px; color: #51412c; line-height: 1.8; }
 .atlas-page .region-detail {
   border: 18px solid transparent; border-image: var(--journal-frame) 128 stretch; border-radius: 0;

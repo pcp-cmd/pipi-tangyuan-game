@@ -1,3 +1,4 @@
+import { journeyTimings } from './interaction-timing.mjs';
 import {loadSceneAssets} from './generated/asset-loader.mjs';
 import {createPhysicalStartup} from './generated/startup-physical.mjs';
 import {createSaveStore} from '../integration/recovery-save-store.mjs';
@@ -17,6 +18,7 @@ function browserAsset(scene,{signal}={}){return loadSceneAssets(scene,import.met
 export function createPhysicalWorld({storage,locks,beforeTransition=async()=>true,travelGuard=()=>true,loadAsset=browserAsset,onChange=()=>{},requestFrame=callback=>requestAnimationFrame(callback),cancelFrame=id=>cancelAnimationFrame(id),now=()=>performance.now()}={}){
   if(!storage||typeof beforeTransition!=='function'||typeof travelGuard!=='function')throw new TypeError('PhysicalWorld requires a scoped storage and transition guards');
   let pendingState=null,state=null,phase='loading',notice='',issue='',generation=0,disposed=false,frame=null,route=null,trail=null,lastTime=null,activeWrite=false,persistedState=null,migration=null,movementId=0,navigation=null,movingFlags={pipi:false,tangyuan:false};
+  let assetFailure=null,retryTransition=null;
   const pauses=new Set(),assets=new Map(),assetController=new AbortController();
   const retainedStorage={
     getItem:key=>storage.getItem(key),
@@ -39,7 +41,7 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     const leader=value.cats[value.leader];
     const nearby=spec.hotspots.filter(h=>distance(leader,h.approach)<=h.radius)
       .sort((a,b)=>distance(leader,a.approach)-distance(leader,b.approach)).map(({id,label,kind})=>({id,label,kind}));
-    return freeze({phase:disposed?'disposed':phase,physicalSceneId:value.physicalSceneId,revision:value.revision,scene:spec,poses,leader:value.leader,discovered:[...value.discovered],hotspots:spec.hotspots,nearby,returnAvailable:value.returnTrail.length>0,navigation:navigation?copy(navigation):null,save:{status:save.status,dirty:!!state&&JSON.stringify(state)!==persistedState,issue,raw:save.raw,pendingRaw:(phase==='recovery-required'||save.dirty)?store.pendingExport()?.raw||null:null},notice});
+    return freeze({phase:disposed?'disposed':phase,physicalSceneId:value.physicalSceneId,revision:value.revision,scene:spec,poses,leader:value.leader,discovered:[...value.discovered],hotspots:spec.hotspots,nearby,returnAvailable:value.returnTrail.length>0,assetFailure:assetFailure?copy(assetFailure):null,retryTransitionAvailable:!!retryTransition,navigation:navigation?copy(navigation):null,save:{status:save.status,dirty:!!state&&JSON.stringify(state)!==persistedState,issue,raw:save.raw,pendingRaw:(phase==='recovery-required'||save.dirty)?store.pendingExport()?.raw||null:null},notice});
   }
   function emit(){try{onChange(view());}catch{}}
   function stopMotion(arrived=false,preserveArrival=false){if(navigation&&(!preserveArrival||navigation.status==='walking'))navigation={...navigation,status:arrived?'arrived':'cancelled'};if(frame!==null)cancelFrame(frame);frame=null;route=null;lastTime=null;movingFlags={pipi:false,tangyuan:false};if(phase==='walking')phase=pauses.size?'suspended':'ready';}
@@ -48,7 +50,7 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   function available(){return !disposed&&state&&['ready','walking'].includes(phase)&&!pauses.size&&!activeWrite;}
   function epochCurrent(token){return !disposed&&token===generation&&!pauses.size;}
   async function preload(spec){
-    if(!assets.has(spec.id))assets.set(spec.id,Promise.resolve().then(()=>loadAsset(spec,{signal:assetController.signal})).then(size=>{if(size?.width!==spec.width||size?.height!==spec.height)throw new Error('asset-dimensions');return true;}).catch(error=>{assets.delete(spec.id);throw error;}));
+    if(!assets.has(spec.id))assets.set(spec.id,Promise.resolve().then(()=>loadAsset(spec,{signal:assetController.signal})).then(size=>{if(size?.width!==spec.width||size?.height!==spec.height)throw Object.assign(new Error('asset-dimensions'),{code:'asset-dimensions',phase:'dimensions'});assetFailure=null;return true;}).catch(error=>{assets.delete(spec.id);assetFailure={targetId:spec.id,code:error?.code||'asset-unavailable',phase:error?.phase||'request',httpStatus:error?.httpStatus??null,path:error?.url?new URL(error.url,import.meta.url).pathname:spec.background};throw error;}));
     return assets.get(spec.id);
   }
   async function save(candidate,{initializing=false,token=null,publish=true,successNotice=''}={}){
@@ -215,10 +217,17 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
   async function transition(targetId,{returnTrail,destination,leader=state.leader,commitGuard=null}){
     if(!available())return blocked('busy');
     const target=PHYSICAL_SCENES[targetId];if(!target)return blocked('unknown-scene');
-    stopMotion();const token=++generation;phase='transitioning';notice='正在确认入口与保存…';emit();
+    stopMotion();assetFailure=null;retryTransition=null;const token=++generation;phase='transitioning';notice='正在确认入口与保存…';emit();
     const source=copy(state);destination??=target.spawn;
     if(!pairSafe(target,destination)){phase='ready';return blocked('unsafe-arrival');}
-    try{await preload(target);}catch{if(!epochCurrent(token))return{status:'superseded'};phase='ready';return blocked('asset-unavailable');}
+    const endResources=journeyTimings.span(targetId,'resources');
+    try{await preload(target);endResources('ready');}catch{
+      endResources('failed');if(!epochCurrent(token))return{status:'superseded'};phase='ready';
+      retryTransition={targetId,fromSceneId:source.physicalSceneId,revision:source.revision,options:{returnTrail:copy(returnTrail),destination:copy(destination),leader,commitGuard}};
+      const failure=assetFailure;
+      const detail=failure?.httpStatus?`HTTP ${failure.httpStatus}`:{'asset-timeout':'等待超时','asset-identity':'文件校验未通过','asset-dimensions':'图片尺寸不匹配','asset-decode':'图片解码失败','asset-aborted':'请求已取消'}[failure?.code]||'网络请求失败';
+      return blocked('asset-unavailable',`${detail}。伙伴仍在原处，可重试进入。`);
+    }
     if(!epochCurrent(token))return{status:'superseded'};
     let guard;try{guard=await beforeTransition();}catch{guard=false;}
     if(!epochCurrent(token))return{status:'superseded'};
@@ -236,6 +245,12 @@ export function createPhysicalWorld({storage,locks,beforeTransition=async()=>tru
     if(!intent||typeof intent.kind!=='string')return blocked('invalid-action');
     if(intent.kind==='stop'){stopMotion();emit();return state&&['ready','suspended'].includes(phase)?flush():{status:'done',revision:state?.revision??0};}
     if(!(intent.kind==='leader'&&state&&phase==='suspended'&&!activeWrite&&!disposed)&&!available())return blocked('busy');
+    if(intent.kind==='retry-transition'){
+      const retry=retryTransition;
+      if(!retry)return blocked('no-asset-retry');
+      if(retry.fromSceneId!==state.physicalSceneId||retry.revision!==state.revision){retryTransition=null;assetFailure=null;return blocked('stale-asset-retry','位置已经变化，请重新走近入口。');}
+      return transition(retry.targetId,retry.options);
+    }
     if(intent.kind==='walk')return walk(intent.point);
     if(intent.kind==='groundWalk'){
       const plan=findReachablePath(scene(),state.cats[state.leader],intent.point);

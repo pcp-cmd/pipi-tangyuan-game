@@ -470,3 +470,13 @@ html[data-motion='reduced'] #inspectionPanel :is(.mailbox-course-tag,.mailbox-en
   .physical-actions :is(button,.physical-interact), .physical-actions .physical-interact kbd { background: ButtonFace; color: ButtonText; box-shadow: none; text-shadow: none; }
   .physical-actions button { border-color: ButtonText; }
 }
+
+#journalPanel .knowledge-reader { color: #463624; }
+#journalPanel .knowledge-reader :is(pre,.knowledge-example) { background: #f0e1c0; color: #382b1f; border-color: #bda57d; box-shadow: none; }
+#journalPanel .knowledge-reader :is(pre,code) { color: #382b1f; background: #f0e1c0; }
+#journalPanel .knowledge-reader pre { white-space: pre; overflow-x: auto; }
+#journalPanel .knowledge-reader :is(ul,ol) { color: #463624; line-height: 1.8; padding-left: 1.5em; }
+#journalPanel .knowledge-reader li { padding-left: .2em; margin-block: .4em; }
+#journalPanel .knowledge-reader li::marker { color: #61442c; font-weight: 700; }
+#journalPanel #journalSearch:focus { border-color: #866749; outline: none; box-shadow: none; }
+#journalPanel #journalSearch:focus-visible { outline: 2px dashed var(--interaction-focus-color, #74482c); outline-offset: 3px; }

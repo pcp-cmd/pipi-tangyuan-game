@@ -1,15 +1,16 @@
+import { createObjectGlow } from './object-glow.mjs';
 import { worldGazeAngle } from './pets-frame-adapter.mjs';
 import { physicalFootAnchor } from './physical-cats.mjs';
 import { mountTerrainOverlay } from './generated/terrain-overlay.mjs';
 import { createHotspotClickIntent } from './hotspot-click-intent.mjs';
 import { physicalObjectShape } from './physical-object-shape.mjs';
-import {physicalObjectCue,physicalArtClip,createObjectCueSelection} from './physical-object-cue.mjs';
+import {physicalArtClip,createObjectCueSelection} from './physical-object-cue.mjs';
 const names = { pipi: '皮皮', tangyuan: '汤圆' };
 const polygonPoints = polygon => polygon.map(point => Array.isArray(point) ? point : [point.x, point.y]);
 // Foot depth first; stable cat order and foreground paint never share a slot.
 export const physicalDepthZ = (footY, layer = 0) => 2000 + 5 * Math.round(footY) + layer;
 
-export function mountPhysicalPresentation({ document: doc = document, sprites, sceneSpec, onApproach, onInteract, onActivate = onInteract, onReturn, onSceneChange = () => {}, clickIntent = createHotspotClickIntent() }) {
+export function mountPhysicalPresentation({ document: doc = document, sprites, sceneSpec, onApproach, onInteract, onActivate = onInteract, onReturn, onRetry = () => {}, onSceneChange = () => {}, clickIntent = createHotspotClickIntent() }) {
   const world = doc.getElementById('world'), host = doc.getElementById('game');
   const background = doc.getElementById('sceneBackground');
   const terrain = mountTerrainOverlay(doc.getElementById('terrainOverlay'));
@@ -22,7 +23,9 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
   const interactLabel = doc.createElement('span'); interactLabel.className = 'physical-action-label'; interact.append(interactKey,interactLabel);
   const back = doc.createElement('button'); back.id = 'physicalReturn'; back.type = 'button'; back.className = 'physical-return'; back.hidden = true;
   const save = doc.createElement('p'); save.id = 'physicalSaveStatus'; save.setAttribute('role', 'status'); save.className = 'physical-save-status'; save.hidden = true;
-  actions.append(back, interact); host.append(actions, save);
+  const retry = doc.createElement('button'); retry.type = 'button'; retry.className = 'physical-retry'; retry.textContent = '重试进入'; retry.hidden = true;
+  retry.addEventListener('click', () => { clickIntent.cancel(); void onRetry(); });
+  actions.append(back, interact, retry); host.append(actions, save);
   const cueSelection=createObjectCueSelection();
   let latest = null, currentScene = null;
   function clearSelection() { cueSelection.clear(); updateSelection(); }
@@ -77,19 +80,12 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
         button.style.left = `${shape.x}px`; button.style.top = `${shape.y}px`;
         button.style.width = `${shape.width}px`; button.style.height = `${shape.height}px`;
         button.style.clipPath = shape.clip;
-        const detail=physicalObjectCue(item);
-        const createCue = zIndex => {
-          const ns = 'http://www.w3.org/2000/svg', outline = doc.createElementNS(ns, 'svg'), polygon = doc.createElementNS(ns, 'polygon');
-          outline.classList.add('physical-object-cue'); outline.setAttribute('aria-hidden', 'true');
-          outline.style.zIndex = String(zIndex); outline.setAttribute('viewBox', `0 0 ${view.scene.width} ${view.scene.height}`);
-          polygon.setAttribute('points', detail.map(point => point.join(',')).join(' '));
-          polygon.setAttribute('vector-effect', 'non-scaling-stroke'); outline.append(polygon);
-          return outline;
-        };
-        if(detail)object.append(createCue(item.asset ? physicalDepthZ(item.asset.frontY, 3) : 996));
-        for (const mask of spec?.occluders ?? []) {
-          if (!detail||!item.highlightOccluderIds?.includes(mask.id)) continue;
-          const outline = createCue(physicalDepthZ(mask.frontY, 3));
+        const owned = (spec?.occluders ?? []).filter(mask => item.highlightOccluderIds?.includes(mask.id));
+        const base = createObjectGlow({ document: doc, item, scene: view.scene, zIndex: item.asset ? physicalDepthZ(item.asset.frontY, 3) : 996, exclude: owned.map(mask => mask.polygon) });
+        if (base) object.append(base);
+        for (const mask of owned) {
+          const outline = createObjectGlow({ document: doc, item, scene: view.scene, zIndex: physicalDepthZ(mask.frontY, 3) });
+          if (!outline) continue;
           outline.dataset.occluder = mask.id;
           outline.style.clipPath = `polygon(${polygonPoints(mask.polygon).map(([x,y]) => `${x / view.scene.width * 100}% ${y / view.scene.height * 100}%`).join(',')})`;
           object.append(outline);
@@ -109,10 +105,10 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
         }
       };
       const clearLook = () => { for (const cat of Object.keys(names)) sprites.clearLook?.(cat); };
-      const enter=()=>{cueSelection.enter(item.id);updateSelection();lookAt();};
-      const leave=()=>{cueSelection.leave(item.id);updateSelection();clearLook();};
-      const focus=()=>{cueSelection.focus(item.id);updateSelection();lookAt();};
-      const blur=()=>{cueSelection.blur(item.id);updateSelection();clearLook();};
+      const enter=()=>{object.dataset.hover='true';cueSelection.enter(item.id);updateSelection();lookAt();};
+      const leave=()=>{object.dataset.hover='false';cueSelection.leave(item.id);updateSelection();clearLook();};
+      const focus=()=>{object.dataset.focus='true';cueSelection.focus(item.id);updateSelection();lookAt();};
+      const blur=()=>{object.dataset.focus='false';cueSelection.blur(item.id);updateSelection();clearLook();};
       button.addEventListener('pointerenter', enter); button.addEventListener('focus', focus);
       button.addEventListener('pointerleave', leave); button.addEventListener('blur', blur);
       const select = (action,intent) => { cueSelection.select(item.id); updateSelection(); return action(item.id,intent); };
@@ -153,8 +149,9 @@ export function mountPhysicalPresentation({ document: doc = document, sprites, s
     back.disabled = ['loading','asset-blocked','transitioning','suspended','recovery-required'].includes(view.phase);
     for (const button of hotspots.querySelectorAll('.physical-hotspot')) button.classList.toggle('within-reach', view.nearby.some(item => item.id === button.dataset.physicalHotspot));
     const trouble = !['saved','idle','loading','saving'].includes(view.save?.status) || view.phase === 'recovery-required';
-    save.hidden = !trouble;
-    save.textContent = trouble ? (view.notice || '位置尚未确认保存。请先到手账导出恢复备份。') : '';
+    retry.hidden = !view.retryTransitionAvailable; retry.disabled = !['ready','walking'].includes(view.phase);
+    save.hidden = !trouble && !view.assetFailure;
+    save.textContent = trouble ? (view.notice || '位置尚未确认保存。请先到手账导出恢复备份。') : view.assetFailure ? view.notice : '';
     doc.getElementById('roamControls').hidden = !moving;
     doc.getElementById('stopRoam').disabled = !moving;
     doc.getElementById('roamStatus').textContent = moving ? '两位伙伴正在走路' : '';

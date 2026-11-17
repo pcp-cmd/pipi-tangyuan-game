@@ -1,10 +1,18 @@
                                                                                                        
                                                                                                                  
                                                                                                                                                 
+                                                                                           
+                                                                                                                                                                                        
+const diagnostics                   = [];
+export function imageLoadDiagnostics()                            { return diagnostics.map(event => ({ ...event })); }
 export class AssetLoadError extends Error {
            code                  ;
            url        ;
-  constructor(code                  , url        ) { super(`${code}: ${url}`); this.name = 'AssetLoadError'; this.code = code; this.url = url; }
+           phase            ;
+           httpStatus         ;
+  constructor(code                  , url        , phase             = 'request', httpStatus         ) {
+    super(`${code}: ${url}`); this.name = 'AssetLoadError'; this.code = code; this.url = url; this.phase = phase; this.httpStatus = httpStatus;
+  }
 }
                              
                    
@@ -15,10 +23,22 @@ export class AssetLoadError extends Error {
                                            
                                           
                                 
+                                            
+                     
   
 
 export async function loadVerifiedImage(asset            , options                = {})                       {
   const sourceUrl = new URL(asset.src, options.baseUrl ?? import.meta.url).href;
+  const now = options.now ?? (() => performance.now()), started = now();
+  let phase             = 'request';
+  const report = (next            , outcome                           , error                 ) => {
+    phase = next;
+    const at = now();
+    const event                 = { path: new URL(sourceUrl).pathname, phase, outcome, at, elapsedMs: at - started, ...(error ? { code: error.code, ...(error.httpStatus === undefined ? {} : { httpStatus: error.httpStatus }) } : {}) };
+    diagnostics.push(event); if (diagnostics.length > 160) diagnostics.shift();
+    try { options.onEvent?.(event); } catch { /* Observability never changes resource or save outcomes. */ }
+  };
+  report('request', 'started');
   const request = options.fetch ?? fetch;
   const createImage = options.createImage ?? (() => new Image());
   const createUrl = options.createObjectURL ?? URL.createObjectURL.bind(URL);
@@ -40,35 +60,38 @@ export async function loadVerifiedImage(asset            , options              
   };
   let rejectAbort                          ;
   const aborted = new Promise       ((_, reject) => {
-    rejectAbort = () => reject(new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl));
+    rejectAbort = () => reject(new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl, phase));
     controller.signal.addEventListener('abort', rejectAbort, { once: true });
   });
   const work = async ()                       => {
     if (controller.signal.aborted) throw new AssetLoadError('asset-aborted', sourceUrl);
     const response = await request(sourceUrl, { signal: controller.signal });
-    if (!response.ok) throw new AssetLoadError('asset-unavailable', sourceUrl);
+    if (!response.ok) throw new AssetLoadError('asset-unavailable', sourceUrl, 'request', response.status);
+    report('body', 'started');
     const bytes = await response.arrayBuffer();
-    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl);
+    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl, phase);
+    report('verify', 'started');
     if (asset.sha256) {
       const digest = await crypto.subtle.digest('SHA-256', bytes);
       const hash = [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, '0')).join('');
-      if (hash !== asset.sha256) throw new AssetLoadError('asset-identity', sourceUrl);
+      if (hash !== asset.sha256) throw new AssetLoadError('asset-identity', sourceUrl, 'verify');
     }
-    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl);
+    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl, phase);
     if (!options.decodeFromSourceUrl) objectUrl = createUrl(new Blob([bytes], { type: response.headers.get('content-type') ?? 'application/octet-stream' }));
+    report('decode', 'started');
     image = createImage();
     image.decoding = 'async';
     image.src = objectUrl ?? sourceUrl;
-    try { await image.decode(); } catch { throw new AssetLoadError('asset-decode', sourceUrl); }
-    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl);
-    if (image.naturalWidth !== asset.naturalWidth || image.naturalHeight !== asset.naturalHeight) throw new AssetLoadError('asset-dimensions', sourceUrl);
+    try { await image.decode(); } catch { throw new AssetLoadError('asset-decode', sourceUrl, 'decode'); }
+    if (controller.signal.aborted) throw new AssetLoadError(timedOut ? 'asset-timeout' : 'asset-aborted', sourceUrl, phase);
+    if (image.naturalWidth !== asset.naturalWidth || image.naturalHeight !== asset.naturalHeight) throw new AssetLoadError('asset-dimensions', sourceUrl, 'dimensions');
     return { image, sourceUrl, objectUrl: objectUrl ?? sourceUrl, dispose };
   };
-  try { return await Promise.race([work(), aborted]); }
+  try { const result = await Promise.race([work(), aborted]); report('ready', 'passed'); return result; }
   catch (error) {
     dispose();
-    if (error instanceof AssetLoadError) throw error;
-    throw new AssetLoadError(controller.signal.aborted ? timedOut ? 'asset-timeout' : 'asset-aborted' : 'asset-unavailable', sourceUrl);
+    const failure = error instanceof AssetLoadError ? error : new AssetLoadError(controller.signal.aborted ? timedOut ? 'asset-timeout' : 'asset-aborted' : 'asset-unavailable', sourceUrl, phase);
+    report(failure.phase, 'failed', failure); throw failure;
   } finally {
     clearTimeout(timeout);
     options.signal?.removeEventListener('abort', abortParent);

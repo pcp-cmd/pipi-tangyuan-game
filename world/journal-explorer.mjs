@@ -1,3 +1,4 @@
+import { createCourseThumbnails } from './course-thumbnails.mjs';
 import { describeLearningHistory, journalSummary, filterJournalLessons } from './learning-history.mjs';
 import { accessLabel, appendAccessDetails } from './lesson-access-view.mjs';
 import { coursePresentation } from './course-presentation.mjs';
@@ -17,8 +18,10 @@ const attemptDate = value => {
   return { text: new Intl.DateTimeFormat('zh-CN', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(date), iso: date.toISOString() };
 };
 
-export function createJournalExplorer({ lessons, assessmentVersion, evidenceVersionFor = () => assessmentVersion, session, groupOf, selectedGroup, chooseLesson, elements, isVisible = () => true, describeStart = () => false, onNavigationChange = () => {} }) {
+export function createJournalExplorer({ lessons, assessmentVersion, evidenceVersionFor = () => assessmentVersion, session, groupOf, selectedGroup, chooseLesson, elements, isVisible = () => true, describeStart = () => false, onNavigationChange = () => {}, thumbnails = createCourseThumbnails({ document }) }) {
   const { list, search, filter, count, summary, current, clear, empty, notice } = elements;
+  const cards = new Map();
+  let currentArtId = null, currentThumbnail = null;
   let pendingSelection = false;
   let pendingOpener = null, startNodes = null;
   const statusOf = id => session.learningStatus(id);
@@ -137,6 +140,14 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     const view = session.snapshot();
     const game = view.game;
     if (!game) return;
+    const focused = document.activeElement;
+    const focusCard = focused?.closest?.('[data-lesson-card]')?.dataset.lessonCard;
+    const focusClass = focused?.className;
+    const focusDetails = focused?.tagName === 'SUMMARY' ? focused.parentElement?.className : null;
+    const focusAction = focused?.dataset?.lesson ?? focused?.dataset?.prerequisite ?? null;
+    const focusResume = focused?.dataset?.resumeLesson;
+    const scroll = [];
+    for (let node = list; node; node = node.parentElement) scroll.push([node, node.scrollTop, node.scrollLeft]);
     const totals = view.loadedValid ? journalSummary(lessons, statusOf) : null;
     summary.replaceChildren();
     for (const [value, label] of totals ? [[`${totals.passed} / ${totals.total}`, '已有通过记录（含兼容沿用）'], [String(totals.independent), '无辅助标记通过记录'], [String(totals.recheck), '待本版复验']] : [['—', '原记录受保护'], ['—', '实践状态未读取'], ['—', '请先处理恢复提醒']]) {
@@ -158,9 +169,12 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
     const postcard = element('figure', 'journal-course-postcard');
     const mates = element('img', 'journal-course-mates');
     mates.src = './assets/pets/pipi-idle-v2.png'; mates.alt = ''; mates.setAttribute('aria-hidden', 'true');
-    const illustration = element('img', 'journal-current-art');
-    illustration.src = currentArt.contextArt.src; illustration.alt = currentArt.contextArt.alt;
-    illustration.decoding = 'async';
+    if (currentArtId !== active.id) {
+      if (currentThumbnail) thumbnails.release(currentThumbnail);
+      currentThumbnail = thumbnails.create(active.id, { className: 'journal-current-art', alt: currentArt.contextArt.alt, eager: true });
+      currentArtId = active.id;
+    }
+    const illustration = currentThumbnail;
     const stamp = element('figcaption', 'journal-course-stamp', currentArt.locationLabel);
     postcard.append(mates, illustration, stamp);
     current.append(postcard, activeLabel);
@@ -212,11 +226,19 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
       ? '没有符合当前搜索和状态的课程。请调整搜索或状态条件。'
       : '这条路线里没有符合当前搜索和状态的课程。可在「选择路线」切到「全部实践」，或调整搜索与状态。';
     clear.hidden = !search.value && filter.value === 'all';
-    list.replaceChildren();
+    const orderedCards = [];
     for (const lesson of visible) {
       const index = lessons.findIndex(item => item.id === lesson.id);
       const access = session.accessOf(lesson.id);
       const info = view.loadedValid ? describeLearningHistory({ lessonId: lesson.id, status: statusOf(lesson.id), assessmentVersion: evidenceVersionFor(lesson.id) }) : { tone: 'quiet', label: '实践记录未读取' };
+      const signature = JSON.stringify([view.loadedValid, index === game.mission, access, statusOf(lesson.id), view.envelope?.records[lesson.id], Object.hasOwn(game.drafts, lesson.id)]);
+      const previous = cards.get(lesson.id);
+      if (previous?.signature === signature) {
+        orderedCards.push(previous.article);
+        if (index === game.mission) startNodes.list = previous.button;
+        continue;
+      }
+      const openStates = [...previous?.article.querySelectorAll('details') ?? []].map(node => node.open);
       const article = element('article', 'journal-entry course-entry');
       article.dataset.lessonCard = lesson.id;
       article.dataset.current = String(view.loadedValid && index === game.mission);
@@ -242,7 +264,7 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
       button.setAttribute('aria-label', `${button.textContent}：${lesson.title}`);
       if (view.loadedValid && index === game.mission) { button.setAttribute('aria-current', 'step'); startNodes.list = button; }
       button.disabled = pendingSelection;
-      const preview = coursePreview(lesson);
+      const preview = previous?.preview ?? coursePreview(lesson);
       button.addEventListener('click', () => {
         if (!previewOnly) { void navigate(index, button); return; }
         const row = article.querySelector('.course-row-details');
@@ -251,16 +273,28 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
         preview.node.scrollIntoView?.({ block: 'nearest', behavior: 'auto' });
       });
       const presentation = coursePresentation(lesson.id);
-      const art = element('img', 'course-context-art'); art.loading = 'lazy'; art.decoding = 'async';
-      art.alt = presentation.contextArt.alt; art.src = presentation.contextArt.src;
+      const art = previous?.art ?? thumbnails.create(lesson.id, { alt: presentation.contextArt.alt });
       const context = element('p', 'course-context-copy', `${presentation.locationLabel} · ${presentation.scenario}`);
       const detailsContent = [markers, topic, eligibility, context, preview.node];
       if (info.compatibilityNote) detailsContent.push(element('p', 'history-compatibility', info.compatibilityNote));
       detailsContent.push(historyDetails(lesson));
       const row = buildCourseRow({ article, title, ordinal, action: button, art, badge, detailsContent });
       appendAccessDetails(document, row.body, lesson, access, (id, opener) => { void navigate(lessons.findIndex(item => item.id === id), opener); });
-      list.append(article);
+      [...article.querySelectorAll('details')].forEach((node, i) => { if (openStates[i]) { node.open = true; node.dispatchEvent?.(new Event('toggle')); } });
+      cards.set(lesson.id, { signature, article, art, preview, button });
+      orderedCards.push(article);
     }
+    if (list.children.length !== orderedCards.length || orderedCards.some((node, i) => node !== list.children[i])) list.replaceChildren(...orderedCards);
+    if (focused && focused !== document.activeElement) {
+      const replacement = focusCard ? cards.get(focusCard)?.article.querySelectorAll('button,summary,a') : focusResume ? current.querySelectorAll('[data-resume-lesson]') : [];
+      const candidate = [...replacement ?? []].find(node => focusResume ? node.dataset.resumeLesson === focusResume
+        : node.tagName === focused.tagName && node.className === focusClass
+          && (focusDetails === null || node.parentElement?.className === focusDetails)
+          && (focusAction === null || (node.dataset.lesson ?? node.dataset.prerequisite) === focusAction));
+      (focused.isConnected ? focused : candidate)?.focus?.({ preventScroll: true });
+    }
+    for (const [node, top, left] of scroll) { node.scrollTop = top; node.scrollLeft = left; }
+    thumbnails.refresh();
     setNavigationBusy(pendingSelection);
     refreshStartCopy(view);
   }
@@ -270,5 +304,5 @@ export function createJournalExplorer({ lessons, assessmentVersion, evidenceVers
   search.addEventListener('input', render);
   filter.addEventListener('change', render);
   clear.addEventListener('click', () => { resetFilters(); search.focus(); });
-  return Object.freeze({ render, resetFilters, refreshStartCopy, navigationPending: () => pendingSelection });
+  return Object.freeze({ render, resetFilters, refreshStartCopy, navigationPending: () => pendingSelection, dispose: () => thumbnails.dispose() });
 }

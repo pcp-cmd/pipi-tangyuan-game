@@ -1,0 +1,6 @@
+.course-thumb { position: relative; margin: 0; overflow: hidden; display: grid; place-items: center; background: #ecddbc; color: #4c3928; }
+.course-thumb .course-thumb-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+.course-thumb .course-thumb-image[hidden],.course-thumb [hidden] { display: none; }
+.course-thumb-status { padding: 8px 12px; font-size: var(--text-small, 13px); line-height: 1.5; text-align: center; }
+.course-thumb-retry { position: absolute; inset: auto 6px 6px auto; min-width: 44px; min-height: 44px; color: #563d28; }
+.course-thumb[data-image-state="failed"] .course-thumb-status { align-self: start; }

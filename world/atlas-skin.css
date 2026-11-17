@@ -204,7 +204,9 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
   width: max-content;
   max-width: calc(100% - 32px);
 }
-.atlas-page .map-load-notice { top: 184px; }
+.atlas-page .atlas-tools { flex-wrap: wrap; }
+.atlas-page .map-load-notice { position: static; flex-basis: 100%; margin: 0; padding: 6px 10px; border-radius: 4px; background: #f1e0bb; color: #493620; font-size: var(--text-small); }
+.atlas-page .map-load-notice[hidden] { display: none; }
 body.map-open :is(button, summary):focus-visible { outline: 3px solid #ffe3a0; outline-offset: 4px; }
 .atlas-page .region-menu .region-button:focus-visible { outline-color: #28634d; outline-offset: -3px; }
 
@@ -224,7 +226,7 @@ body.map-open :is(button, summary):focus-visible { outline: 3px solid #ffe3a0; o
   .atlas-page .atlas-pin { width: 122px; min-height: 52px; padding: 2px 4px; border-width: 8px; }
   .atlas-page .atlas-pin strong { font-size: 14px; }
   .atlas-page .atlas-pin span { font-size: 11px; }
-  .atlas-page .map-load-notice { top: 148px; }
+
 }
 @media (forced-colors: active) {
   body.map-open .panel-header > div::before,

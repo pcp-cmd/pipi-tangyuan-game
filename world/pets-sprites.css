@@ -6,10 +6,13 @@
 .cat-actor .cat-art:has(>img[src$="-idle-v2.png"]){width:144px;height:156px;left:0;position:relative;animation:none!important;flex:none;overflow:hidden}
 .portrait-art:has(>img[src$="-idle-v2.png"]){width:124.6153846px;height:135px;position:relative;overflow:hidden}
 .workbench-pet:has(>img[src$="-idle-v2.png"]){width:60px;height:65px}
-.cat-sprite .pets-frame>img.pets-sheet{position:absolute;display:block;max-width:none!important;width:800%!important;height:1100%!important;left:var(--pet-x,0%)!important;top:var(--pet-y,0%)!important;object-fit:fill!important;filter:none!important;image-rendering:pixelated;pointer-events:none;user-select:none}
+.cat-sprite .pets-frame>img.pets-sheet{position:absolute;display:block;max-width:none!important;width:800%!important;height:calc(var(--pet-sheet-rows,11)*100%)!important;left:var(--pet-x,0%)!important;top:var(--pet-y,0%)!important;object-fit:fill!important;filter:none!important;image-rendering:pixelated;pointer-events:none;user-select:none}
 .cat-actor .cat-art.pets-ready,.cat-actor[data-actor="tangyuan"] .cat-art.pets-ready{width:144px;height:156px;left:0;position:relative;animation:none!important;flex:none;overflow:hidden}
-.cat-actor:has(>.cat-art.pets-ready){width:160px}
+.cat-actor:has(>.cat-art>img[src$="-idle-v2.png"]){width:160px}
 .portrait-art.pets-ready,.portrait-art.tangyuan.pets-ready{width:124.6153846px;height:135px;position:relative;overflow:hidden}
 /* Animation is visual only; the existing scene controls actor coordinates. */
 html[data-motion="reduced"] .cat-actor{transition:none!important}html[data-motion="reduced"] .cat-actor .cat-art{animation:none!important}
 @media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) .cat-actor{transition:none!important}html:not([data-motion="full"]) .cat-actor .cat-art{animation:none!important}}
+
+.companion-recovery{position:fixed;left:18px;bottom:86px;z-index:110;max-width:min(360px,calc(100vw - 36px));padding:10px 14px;background:#f3e5c9;color:#453b2b;border-radius:8px;box-shadow:0 3px 14px #1b211b38;font:14px/1.5 var(--font-body,serif)}
+.companion-recovery[hidden]{display:none}.companion-recovery p{margin:0 0 6px}.companion-recovery .text-button{min-height:40px}

@@ -1,0 +1,15 @@
+:where(button,a,summary,[role="option"]){transition:filter var(--interaction-duration,180ms) var(--interaction-easing,ease-out),opacity var(--interaction-duration,180ms) var(--interaction-easing,ease-out)}
+:is(button,a,summary,[role="option"]):hover:not(:disabled):not([aria-disabled="true"]){filter:brightness(var(--interaction-hover-brightness,1.08))}
+:is(button,a,summary,[role="option"]):active:not(:disabled):not([aria-disabled="true"]){filter:brightness(var(--interaction-pressed-brightness,.96))}
+button:disabled,[aria-disabled="true"]{opacity:var(--interaction-disabled-opacity,.52);cursor:not-allowed}
+:is(button,a,summary,[role="option"]):focus-visible{outline:2px dashed var(--interaction-focus-color,#74482c);outline-offset:3px}
+:is(button,[role="option"])[aria-selected="true"]:not(:hover):not(:active),button[aria-pressed="true"]:not(:hover):not(:active){filter:brightness(var(--interaction-selected-brightness,.94))}
+.physical-hotspot:focus-visible{outline:0}
+.physical-object-glow{position:absolute;inset:0;pointer-events:none;opacity:0;filter:brightness(1.18) drop-shadow(0 0 var(--interaction-glow-radius,5px) var(--interaction-glow-color,#f5dfa1));transition:opacity var(--interaction-duration,180ms) var(--interaction-easing,ease-out)}
+.object-glow-paint{position:absolute;pointer-events:none;user-select:none}
+.physical-object[data-active="true"] .physical-object-glow{opacity:var(--interaction-glow-opacity,.42)}
+.physical-object[data-selected="true"]:not([data-hover="true"]):not([data-focus="true"]) .physical-object-glow{opacity:calc(var(--interaction-glow-opacity,.42)*.6)}
+.physical-object[data-focus="true"] .physical-object-glow{opacity:var(--interaction-glow-opacity,.42);filter:brightness(1.25) drop-shadow(0 0 2px #fff4d7) drop-shadow(0 0 var(--interaction-glow-radius,5px) var(--interaction-glow-color,#f5dfa1))}
+html[data-motion="reduced"] :is(button,a,summary,[role="option"],.physical-object-glow){transition:none}
+@media(prefers-reduced-motion:reduce){html:not([data-motion="full"]) :is(button,a,summary,[role="option"],.physical-object-glow){transition:none}}
+@media(forced-colors:active){:where(button,a,summary):focus-visible{outline:2px solid Highlight}.physical-object[data-focus="true"] .physical-hotspot{outline:2px solid Highlight;outline-offset:-2px}}

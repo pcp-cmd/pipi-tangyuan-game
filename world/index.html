@@ -28,6 +28,8 @@
 <link rel="stylesheet" href="./atlas-skin.css">
 <link rel="stylesheet" href="./learning-workbench.css">
 <link rel="stylesheet" href="./journal-ui.css">
+<link rel="stylesheet" href="./interaction-presentation.css">
+<link rel="stylesheet" href="./course-thumbnails.css">
 </head>
 <body>
   <a class="skip" href="#questSummary">跳到当前任务</a>
@@ -53,6 +55,10 @@
       <span class="ground-keyboard-help" aria-hidden="true">Shift＋方向键选点 · Enter 出发</span>
     </div>
 
+    <aside id="companionRecovery" class="companion-recovery" hidden aria-label="伙伴动作载入">
+      <p id="companionRecoveryMessage" role="status" aria-live="polite"></p>
+      <button id="retryCompanionArt" type="button" class="text-button">重试伙伴动作</button>
+    </aside>
     <div class="hud top-left">
       <div class="island-plaque">
 <img class="icon compass" src="./assets/icons/compass.svg" alt=""><div>
@@ -101,7 +107,7 @@
 <span id="panelEyebrow" class="eyebrow">启航岛 · 代码工坊</span><h2 id="panelTitle">给冒险一个起点</h2>
 <img loading="lazy" decoding="async" class="atlas-wordmark" src="./assets/journal-v5/title-atlas-v1.svg" alt="" aria-hidden="true" draggable="false">
 </div>
-<button id="closePanel" class="icon-button" type="button" aria-label="关闭面板，回到小岛"><img loading="lazy" decoding="async" class="icon" src="./assets/icons/x.svg" alt=""></button></header>
+<button id="closePanel" class="icon-button" type="button" aria-label="关闭面板，回到小岛"><span class="close-glyph" aria-hidden="true">×</span></button></header>
       <div id="panelNotice" class="panel-notice" role="status" aria-live="polite" hidden></div>
 
       <section id="workshopPanel" class="panel-page" aria-label="代码工坊" hidden>
@@ -212,10 +218,10 @@
         <div class="atlas-zoom" role="group" aria-label="地图视角">
           <button id="atlasZoomOut" type="button" aria-label="缩小地图">−</button><button id="atlasFit" type="button">全图</button><button id="atlasZoomIn" type="button" aria-label="放大地图">＋</button>
         </div>
+        <div id="mapLoadNotice" class="map-load-notice" role="status" hidden>
+          <span id="mapLoadMessage"></span><button id="retryMapImage" class="text-button" type="button" hidden>重试地图图片</button>
+        </div>
       </div>
-      <div id="mapLoadNotice" class="map-load-notice" role="status" hidden>
-<span id="mapLoadMessage"></span><button id="retryMapImage" class="text-button" type="button" hidden>重试地图图片</button>
-</div>
       <p class="atlas-hint">七座岛相连 · 选地点查看航线与课程</p>
       <article id="regionDetail" class="region-detail" tabindex="-1" aria-labelledby="regionName" hidden>
         <span id="regionStatus" class="eyebrow"></span><h3 id="regionName"></h3>
