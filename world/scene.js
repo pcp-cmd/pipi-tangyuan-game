@@ -45,6 +45,7 @@ import { createPresentationTransitions } from './presentation-transitions.mjs';
 import { mountJournalPreferences, mapMovementKey } from './journal-preferences.mjs';
 import { mountHarborCanopyWind } from './harbor-canopy-wind.mjs';
 import { reportStartupStage } from './generated/startup.mjs';
+import { markStartupTiming } from './startup-timing.mjs';
 import { coordinateSceneStartup } from './generated/scene-startup.mjs';
 import { loadJournalRuntime, loadPaperRuntime, loadExternalWorkRuntime } from './generated/journal-runtime.mjs';
 import { mountStartupRecovery } from './generated/startup-recovery.mjs';
@@ -57,7 +58,9 @@ const MAX_CODE = 20000;
 const EXPLORATION_KEY = `${SAVE_KEY}:exploration`;
 const journeys = createJourneys({ storage: localStorage, locks: navigator.locks, selectionStorage: sessionStorage });
 reportStartupStage('save');
+markStartupTiming('journey-open-start');
 const openedJourney = await journeys.open();
+markStartupTiming('journey-open-end');
 if (!openedJourney.ok) {
   const help = document.createElement('section'); help.className = 'journey-start-error';
   const title = document.createElement('h2'); title.textContent = '旅程原件已保留';
@@ -1981,6 +1984,7 @@ function exposeStartupRecovery(reason) {
 
 async function initializeScene() {
   return coordinateSceneStartup({
+    onState: ({ phase }) => markStartupTiming(phase),
     loadSession: async () => {
       await session.load(); state = session.snapshot().game;
       return session.snapshot().loadedValid ? { valid: true } : { valid: false, reason: session.snapshot().status };
@@ -2008,7 +2012,9 @@ async function initializeScene() {
       renderedEditorLessonId = lesson.id;
       assisted = session.snapshot().envelope?.draftAssistance[lesson.id] === true;
       buildScene(); updateProgress();
+      markStartupTiming('companion-wait-start');
       const readiness = await companionSprites.whenPlayable();
+      markStartupTiming(readiness.status === 'ready' ? 'companion-ready' : 'companion-fallback-or-blocked');
       if (pageDisposed || readiness.status === 'disposed') throw new Error('页面已关闭。');
       companionRecovery.update(readiness);
       if (camera.follow) focusCats(false, false); else drawCamera(false);

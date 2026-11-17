@@ -17,16 +17,61 @@ export function mountLighthousePanel({ root, lessons, session, latestResult, onV
   const doc = root.ownerDocument;
   const list = root.querySelector('#reviewCourses'), detail = root.querySelector('#reviewDetail');
   const filter = root.querySelector('#reviewFilter'), search = root.querySelector('#reviewSearch');
-  let selectedId = lessons[0].id, renderedId = null;
+  const index = root.querySelector('.review-index');
+  // Keep this breakpoint in sync with lighthouse-panel.css.
+  const narrow = doc.defaultView.matchMedia('(max-width: 900px)');
+  let selectedId = lessons[0]?.id || null, renderedId = null;
+  let detailOpen = false, listScrollTop = 0;
+  const back = el(doc, 'button', 'secondary-button review-back', '返回课程列表');
+  back.type = 'button'; back.id = 'reviewBackToCourses'; back.setAttribute('aria-controls', 'reviewCourses');
+  const courseButton = id => [...list.querySelectorAll('[data-review-lesson]')].find(button => button.dataset.reviewLesson === id);
+  function syncPanes() {
+    index.hidden = narrow.matches && detailOpen;
+    detail.hidden = narrow.matches && !detailOpen;
+    back.hidden = !narrow.matches;
+  }
+  function returnToList() {
+    detailOpen = false;
+    syncPanes();
+    index.scrollTop = listScrollTop;
+    (courseButton(selectedId) || search).focus({ preventScroll: true });
+  }
+  back.addEventListener('click', returnToList);
+  narrow.addEventListener('change', () => {
+    const active = doc.activeElement;
+    if (narrow.matches) {
+      // Keep a focused detail action visible when the window becomes narrow.
+      detailOpen = !!selectedId && detail.contains(active);
+      listScrollTop = index.scrollTop;
+    }
+    syncPanes();
+    if (!narrow.matches && active === back) courseButton(selectedId)?.focus({ preventScroll: true });
+  });
+  function selectCourse(id) {
+    listScrollTop = index.scrollTop;
+    selectedId = id;
+    // Selection must not unmount the native button that owns keyboard focus.
+    for (const button of list.querySelectorAll('[data-review-lesson]')) {
+      button.setAttribute('aria-pressed', String(button.dataset.reviewLesson === selectedId));
+    }
+    renderDetail();
+    if (narrow.matches) {
+      detailOpen = true;
+      syncPanes();
+      detail.scrollTop = 0;
+      detail.querySelector('h3').focus({ preventScroll: true });
+    }
+  }
   function renderDetail() {
     if (renderedId !== selectedId) { detail.scrollTop = 0; renderedId = selectedId; }
     if (!selectedId) { detail.replaceChildren(el(doc, 'p', 'scope-note', '当前筛选没有课程。调整筛选后，再选择一项验证。')); return; }
     const review = courseReviewView(session, selectedId, latestResult());
     const { course, access, status, draft, history, currentResult } = review;
-    detail.replaceChildren();
+    detail.replaceChildren(back);
     const head = el(doc, 'div', 'review-course-heading');
     const art = el(doc, 'img', 'course-context-art'); art.src = course.contextArt.src; art.alt = course.contextArt.alt;
     const text = el(doc, 'div'); text.append(el(doc, 'span', 'eyebrow', `验证记录 · ${String(learningOrdinal(lessons, course.id)).padStart(2, '0')} / ${lessons.length}`), el(doc, 'h3', '', course.title), el(doc, 'p', 'review-status', status.label));
+    text.querySelector('h3').tabIndex = -1;
     head.append(art, text); detail.append(head, el(doc, 'p', 'review-purpose', course.verificationPrompt));
     const criteria = el(doc, 'section', 'review-criteria');
     criteria.append(el(doc, 'h4', '', '本课检查'));
@@ -84,7 +129,12 @@ export function mountLighthousePanel({ root, lessons, session, latestResult, onV
     const note = el(doc, 'details', 'review-history-note'); note.append(el(doc, 'summary', '', '记录范围'), el(doc, 'p', 'scope-note', review.historyNotice)); records.append(note); detail.append(records);
   }
   function render({ resetSelection = false } = {}) {
-    if (resetSelection) selectedId = lessons[session.snapshot().game.mission]?.id || selectedId;
+    const focusedCourse = list.contains(doc.activeElement) ? doc.activeElement.dataset.reviewLesson : null;
+    if (resetSelection) {
+      selectedId = lessons[session.snapshot().game.mission]?.id || selectedId;
+      detailOpen = false;
+      listScrollTop = 0; index.scrollTop = 0;
+    }
     const query = search.value.trim().toLocaleLowerCase();
     const views = orderedLearningLessons(lessons).map(lesson => courseCardView(session, lesson.id, { mode: 'verify' }));
     const matches = views.filter(item => {
@@ -96,16 +146,19 @@ export function mountLighthousePanel({ root, lessons, session, latestResult, onV
       return true;
     });
     if (!matches.some(item => item.id === selectedId)) selectedId = matches[0]?.id || null;
+    if (!selectedId) detailOpen = false;
     root.querySelector('#reviewCount').textContent = `${matches.length} / ${lessons.length} 课`;
     list.replaceChildren();
     for (const item of matches) {
-      const row = el(doc, 'li'), button = el(doc, 'button', 'review-course paper-selection'); button.type = 'button'; button.dataset.reviewLesson = item.id; button.setAttribute('aria-pressed', String(item.id === selectedId));
+      const row = el(doc, 'li'), button = el(doc, 'button', 'review-course paper-selection'); button.type = 'button'; button.dataset.reviewLesson = item.id; button.setAttribute('aria-pressed', String(item.id === selectedId)); button.setAttribute('aria-controls', 'reviewDetail');
       const art = el(doc, 'img', 'course-context-art'); art.src = item.contextArt.src; art.alt = ''; art.loading = 'lazy';
       const copy = el(doc, 'span'); copy.append(el(doc, 'strong', '', `${String(learningOrdinal(lessons, item.id)).padStart(2, '0')} · ${item.title}`), el(doc, 'small', '', `${item.status.label} · ${item.accessLabel}`)); button.append(art, copy);
-      button.addEventListener('click', () => { selectedId = item.id; render(); }); row.append(button); list.append(row);
+      button.addEventListener('click', () => selectCourse(item.id)); row.append(button); list.append(row);
     }
     if (!matches.length) list.append(el(doc, 'li', 'scope-note', '没有符合条件的记录。'));
     renderDetail();
+    syncPanes();
+    if (focusedCourse && !index.hidden) (courseButton(focusedCourse) || courseButton(selectedId) || search).focus({ preventScroll: true });
   }
   filter.addEventListener('change', () => render()); search.addEventListener('input', () => render());
   return Object.freeze({ render });

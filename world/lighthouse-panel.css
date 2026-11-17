@@ -1,0 +1,15 @@
+/* Narrow lighthouse navigation uses one independently scrolling pane at a time.
+   Keep the breakpoint in sync with mountLighthousePanel's matchMedia query. */
+#lighthousePanel .review-back { margin: 0 0 18px; }
+
+@media (max-width: 900px) {
+  #lighthousePanel .lighthouse-layout { overflow: hidden; }
+  #lighthousePanel .review-index,
+  #lighthousePanel .review-detail {
+    height: 100%; min-height: 0; min-width: 0; overflow: auto;
+    overscroll-behavior: contain; scrollbar-gutter: stable;
+  }
+  #lighthousePanel .review-index { border-bottom: 0; }
+  #lighthousePanel .review-course-heading { flex-wrap: wrap; }
+  #lighthousePanel .review-course-heading > div { min-width: 0; }
+}

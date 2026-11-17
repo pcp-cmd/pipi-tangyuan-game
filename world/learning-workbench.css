@@ -64,4 +64,30 @@
 @media (max-width: 900px) {
   #workshopPanel .learning-workbench-nav { flex-wrap: wrap; gap: 4px 12px; padding-inline: 8px; }
   #workshopPanel .learning-workbench-status { flex-basis: 100%; font-size: 13px; }
+  #workshopPanel .learning-workbench-links { flex: 1 1 100%; min-width: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #workshopPanel .learning-workbench-bookmark { min-width: 0; padding-inline: 8px; }
+}
+
+/* Keep both regions reachable; result focus reallocates space, never hides teaching. */
+#workshopPanel[data-learning-layout] .workbench-result {
+  border-width: 10px 14px;
+  padding: 2px 10px 6px;
+  scroll-padding: 8px;
+}
+
+#workshopPanel[data-learning-layout] .console pre { margin-block: 8px; }
+
+@media (min-width: 901px) {
+  #workshopPanel[data-learning-layout] .workbench-writing {
+    grid-template-rows: minmax(0, 3fr) minmax(0, 2fr);
+  }
+  #workshopPanel[data-learning-layout='result'] .workbench-writing {
+    grid-template-rows: minmax(0, 2fr) minmax(0, 3fr);
+  }
+  /* A short editor column scrolls instead of clipping its toolbar or help. */
+  #workshopPanel[data-learning-layout] .code-area { min-height: 290px; flex-basis: auto; }
+}
+
+@media (max-width: 900px) {
+  #workshopPanel[data-learning-layout='result'] .workbench-result { min-height: min(60vh, 420px); }
 }
