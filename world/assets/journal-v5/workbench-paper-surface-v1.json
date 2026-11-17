@@ -1,0 +1,30 @@
+{
+  "schema": "pipi-workbench-paper-surface/v1",
+  "slice": 128,
+  "fill": true,
+  "apertureThreshold": 128,
+  "innerUnderlapSourcePixels": 4,
+  "sources": [
+    {
+      "path": "assets/journal-v5/paper-leaf-frame-v1.webp",
+      "bytes": 1047056,
+      "sha256": "fa5a360d5e32ae824a4df7d9c3b2c44d7ab75a2397e95c15df8f0ea672ad73e2"
+    },
+    {
+      "path": "assets/journal-v5/paper-grain-v1.webp",
+      "bytes": 1330792,
+      "sha256": "50b90069080fbada49c0848bdb247b3f9595c1e54f6702f9f4ff06ce74280946"
+    }
+  ],
+  "output": {
+    "path": "assets/journal-v5/workbench-paper-surface-v1.webp",
+    "bytes": 1539468,
+    "sha256": "580cafaeb1afe71ad305180df22419764107d4dc67396b82de827530269404ff"
+  },
+  "generator": "tools/build-workbench-paper.py",
+  "toolchain": {
+    "pillow": "12.3.0",
+    "webp": "1.6.0"
+  },
+  "scope": "Original paper frame and grain composition for workshop task/result only. No browser claim."
+}

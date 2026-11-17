@@ -374,7 +374,7 @@
 
 #workshopPanel .workshop-scroll { grid-template-columns: minmax(285px, .42fr) minmax(0, 1fr); }
 #workshopPanel .workbench-writing { grid-template-rows: minmax(300px, 1fr) minmax(120px, .32fr); }
-#workshopPanel .workbench-task, #workshopPanel .workbench-result, #workshopPanel .code-area { background-clip: border-box; }
+#workshopPanel .code-area { background-clip: border-box; }
 #workshopPanel .workbench-task { border-width: 18px; padding: 8px 12px 18px; }
 #workshopPanel .workbench-companions { margin-bottom: 0; }
 #workshopPanel .workbench-pet { max-height: 56px; }

@@ -7,6 +7,7 @@
   --journal-paper: #f1e2bf;
   --journal-frame: url('./assets/journal-v5/paper-leaf-frame-v1.webp');
   --journal-grain: url('./assets/journal-v5/paper-grain-v1.webp');
+  --workbench-paper-surface: url('./assets/journal-v5/workbench-paper-surface-v1.webp');
   --code-frame: url('./assets/journal-v5/workbench-slate-frame-v1.webp');
   --code-grain: url('./assets/journal-v5/workbench-slate-grain-v1.webp');
 }
@@ -74,6 +75,10 @@
   --muted: var(--journal-muted); --gold: var(--journal-green);
   filter: drop-shadow(0 8px 9px #181c2440);
   scrollbar-color: #94794f transparent;
+}
+#workshopPanel .workbench-task,
+#workshopPanel .workbench-result {
+  border-image-source: var(--workbench-paper-surface); border-image-slice: 128 fill;
 }
 #workshopPanel .workbench-task {
   padding: 10px 16px 24px; overflow: auto; scroll-padding: 18px; position: relative;
@@ -304,11 +309,11 @@
   flex-wrap: wrap; gap: 10px; padding: 0 12px 15px; margin: 0 0 16px;
   border: 0; background: transparent; box-shadow: none;
 }
-.journal-course-postcard { position: relative; flex-basis: 100%; height: clamp(190px,26vh,260px); margin: 3px 0 1px; }
-.journal-current-art { position: relative; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(1px 3px 3px #74532e35); }
+.journal-course-postcard { position: relative; display: grid; grid-template-rows: minmax(0, 1fr) auto; gap: 12px; flex-basis: 100%; height: clamp(190px,26vh,260px); margin: 3px 0 1px; padding-bottom: 12px; }
+.journal-current-art { position: relative; grid-row: 1; min-height: 0; min-width: 0; z-index: 1; display: block; width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(1px 3px 3px #74532e35); }
 .journal-course-mates { position: absolute; z-index: 0; width: 32%; max-height: 105px; object-fit: contain; top: 0; left: 1%; transform: rotate(-4deg); }
 #journalPanel .journal-course-stamp {
-  position: absolute; z-index: 2; right: 1%; bottom: 6%; max-width: 110px;
+  position: relative; grid-row: 2; justify-self: end; z-index: 2; max-width: 110px; margin-right: 8px;
   border: 3px double #a94d365e; border-radius: 50%; padding: 10px 9px;
   color: #a05b42; font: 600 12px/1.6 var(--ui); text-align: center; transform: rotate(12deg);
 }
