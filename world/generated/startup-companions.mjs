@@ -54,8 +54,8 @@ function retryPause(ms        , signal             )                {
 }
 const cats                       = ['pipi', 'tangyuan'];
 export const COMPANION_SHEETS                                      = Object.freeze({
-  pipi: new URL('../assets/pets/pipi-original-v2.lossless.webp', import.meta.url).href,
-  tangyuan: new URL('../assets/pets/tangyuan-original-v2.lossless.webp', import.meta.url).href,
+  pipi: new URL('../' + PETS_ASSET_IDENTITIES.pipi.runtime, import.meta.url).href,
+  tangyuan: new URL('../' + PETS_ASSET_IDENTITIES.tangyuan.runtime, import.meta.url).href,
 });
 export const COMPANION_IDLE                                      = Object.freeze({
   pipi: new URL('../assets/pets/pipi-idle-v2.png', import.meta.url).href,

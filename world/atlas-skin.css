@@ -5,6 +5,7 @@ body.map-open .panel {
   background: var(--atlas-paper-field);
   isolation: isolate;
 }
+body.map-open .atlas-page { background: var(--atlas-paper-field); }
 body.map-open .panel-header {
   position: absolute;
   inset: 14px 0 auto;
@@ -109,7 +110,7 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
 .atlas-page .region-menu > summary { --paper-edge: 7px; width: auto; height: auto; min-height: 44px; padding: 3px 8px; gap: 7px; justify-content: center; font-size: 13px; white-space: nowrap; }
 .atlas-page .region-menu > summary .icon { width: 13px; height: 13px; }
 .atlas-page .region-menu .region-list { --paper-edge: 10px; top: 52px; max-height: calc(100dvh - 200px); }
-.atlas-page .region-detail { position: relative; inset: auto; transform: none; width: auto; min-width: 0; min-height: 0; max-height: none; margin: 0; overflow: auto; align-self: stretch; }
+.atlas-page .region-detail { position: relative; inset: auto; transform: none; width: auto; min-width: 0; min-height: 0; max-height: 100%; margin: 0; overflow: auto; align-self: start; }
 .region-detail summary { list-style: none; padding-right: 36px; cursor: pointer; }
 .region-detail summary::-webkit-details-marker { display: none; }
 .region-detail summary h3 { display: inline; }
@@ -126,28 +127,39 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
 .atlas-page .region-menu .region-button :is(small, b) { color: #68523c; }
 .atlas-page .region-menu .region-button > .icon { filter: brightness(.5) sepia(.5); }
 .atlas-page .atlas-zoom {
-  align-items: center;
-  gap: 7px;
+  display: inline-grid;
+  grid-template-columns: 44px 54px 44px;
+  align-self: flex-start;
+  align-items: stretch;
+  gap: 0;
   padding: 0;
-  background: transparent;
-  border: 0;
-  box-shadow: none;
+  border: 2px solid #583d29;
+  border-radius: 7px;
+  background: #694529;
+  box-shadow: 0 2px 6px #66422a54;
 }
 .atlas-page .atlas-zoom button {
-  width: 48px;
-  height: 48px;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 44px;
   min-width: 44px;
   min-height: 44px;
   padding: 0;
-  border: 4px ridge #c6934d;
-  border-radius: 50%;
-  color: #fff0c8;
-  background: #785032;
-  box-shadow: 0 3px 4px #0b2b4280, inset 0 0 0 1px #43301d;
-  font: 600 28px/1 var(--ui);
+  border: 0;
+  border-radius: 0;
+  color: #fff3d8;
+  background: transparent;
+  box-shadow: none;
+  font: 600 23px/1 var(--ui);
 }
-.atlas-page .atlas-zoom #atlasFit { width: 54px; font-size: 13px; border: 3px ridge #c6934d; }
-.atlas-page .atlas-zoom button:disabled { opacity: .65; background: #59432e; }
+.atlas-page .atlas-zoom button + button { border-inline-start: 1px solid #b99063; }
+.atlas-page .atlas-zoom button:first-child { border-radius: 5px 0 0 5px; }
+.atlas-page .atlas-zoom button:last-child { border-radius: 0 5px 5px 0; }
+.atlas-page .atlas-zoom #atlasFit { font-size: 14px; }
+.atlas-page .atlas-zoom button:hover:not(:disabled) { background: #865938; }
+.atlas-page .atlas-zoom button:disabled { color: #dfc6a6; opacity: 1; }
+body.map-open .atlas-zoom button:focus-visible { outline: 2px solid #ffedcc; outline-offset: -4px; }
 .atlas-page .atlas-pin {
   width: clamp(128px, 13vw, 190px);
   min-width: 0;
@@ -189,7 +201,7 @@ body.map-open .panel-header > .icon-button .icon { width: 25px; height: 25px; }
   bottom: 13px;
   border: 0;
   border-radius: 3px;
-  background: #132f41e8;
+  background: #62432ce8;
   padding: 9px 16px;
   color: #ffefc9;
   font-size: 13px;
@@ -216,8 +228,6 @@ body.map-open .atlas-pin:focus-visible { outline-style: dashed; }
   .atlas-page .region-menu > summary { min-height: 44px; }
   .atlas-page .region-menu { min-width: 0; }
   .atlas-page .region-menu .region-list { top: 58px; max-height: calc(100dvh - 170px); }
-  .atlas-page .atlas-zoom { gap: 4px; }
-  .atlas-page .atlas-zoom button { width: 44px; height: 44px; border-width: 3px; }
   .atlas-page .atlas-pin { width: 122px; min-height: 52px; padding: 2px 4px; border-width: 8px; }
   .atlas-page .atlas-pin strong { font-size: 14px; }
   .atlas-page .atlas-pin span { font-size: 11px; }
